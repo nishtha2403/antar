@@ -137,16 +137,18 @@ from zero at a stated precision that travels with the result.
   guardrail, not a proof.
 - **Deep-freeze protects a process, not a disk.** Anyone who can write to `data/`
   can rewrite a file. The defence there is git history and review, not code.
-- **Rules 1, 2, 3 and 7 are not enforced by anything here.** They are governance.
-  See `CONSTITUTION.md`.
+- **Rules 1, 2, 4 and 7 are not enforced by anything here.** They are governance.
+  Rules 3, 8 and 9 are only partly enforced. `CONSTITUTION.md` has the table.
 - **`data/` is empty on purpose.** Seeding a plausible-looking sourced figure to
   make a demo work would be the exact failure this project exists to avoid.
 
 ## Next, per the brief
 
-1. Ratify `CONSTITUTION.md`. `SUCCESSION.md` is adopted, and states plainly that it
-   is not yet binding: no removal authority is named (sunset 31 Aug 2027 or the
-   start of G4, whichever is earlier) and the founder can amend it alone.
+1. Governance documents are in place. `CONSTITUTION.md` is ratified, with an
+   enforcement table stating exactly which rules the code holds and which it does
+   not. `SUCCESSION.md` is adopted and says plainly that it is not yet binding:
+   no removal authority is named (sunset 31 Aug 2027 or the start of G4,
+   whichever is earlier) and the founder can amend it alone.
 2. G1 — the nuclear slice. A human reads the PIB release and records
    `NEM-2047-100GW`; the CEA series needs its real endpoint and parser written
    against the actual page, then hand-checked row by row. The harness, the gap
