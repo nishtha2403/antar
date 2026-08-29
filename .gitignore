@@ -1,0 +1,6 @@
+node_modules/
+*.log
+.DS_Store
+
+# Derived query cache. Rebuilt from data/ on every run. Never a source of truth.
+build/

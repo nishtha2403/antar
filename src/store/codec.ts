@@ -1,0 +1,191 @@
+import { agentIdentity, humanIdentity, KernelError } from '../kernel/identity.ts';
+import { provenance, type Provenance } from '../kernel/provenance.ts';
+import { quantityFromJSON, quantityToJSON, type Quantity } from '../kernel/quantity.ts';
+import {
+  classify,
+  createTarget,
+  type IndicatorType,
+  reviseTarget,
+  type Target,
+  targetId,
+  type TargetClass,
+  type TargetRevision,
+  typeIndicator,
+} from '../kernel/target.ts';
+import { targetYear } from '../kernel/time.ts';
+import { type Attested, attest, reject, verify } from '../kernel/verification.ts';
+
+/**
+ * JSON is the wire format, not the model.
+ *
+ * Decoding routes every field back through the kernel constructors, so a
+ * hand-edited or corrupted file fails on read with the same errors it would have
+ * failed with on write. Nothing enters the model by being shaped correctly; it
+ * enters by being validated.
+ */
+
+type JsonProvenance = Omit<Provenance, 'retrievedBy'> & { retrievedBy: string; retrievedByKind: 'human' | 'agent' };
+
+export const encodeProvenance = (p: Provenance, kind: 'human' | 'agent'): JsonProvenance => ({
+  ...p,
+  retrievedBy: p.retrievedBy,
+  retrievedByKind: kind,
+});
+
+export const decodeProvenance = (j: JsonProvenance): Provenance =>
+  provenance({
+    ...j,
+    retrievedBy: j.retrievedByKind === 'human' ? humanIdentity(j.retrievedBy) : agentIdentity(j.retrievedBy),
+  });
+
+export function encodeAttestedQuantity(a: Attested<Quantity>, kind: 'human' | 'agent') {
+  return {
+    value: quantityToJSON(a.value),
+    provenance: encodeProvenance(a.provenance, kind),
+    verification: a.verification,
+  };
+}
+
+type JsonAttestedQuantity = ReturnType<typeof encodeAttestedQuantity>;
+
+export function decodeAttestedQuantity(j: JsonAttestedQuantity): Attested<Quantity> {
+  const base = attest(quantityFromJSON(j.value), decodeProvenance(j.provenance));
+  switch (j.verification.state) {
+    case 'unverified':
+      return base;
+    case 'verified':
+      return verify(
+        base,
+        humanIdentity(j.verification.verifiedBy),
+        j.verification.verifiedOn,
+        j.verification.method,
+      );
+    case 'rejected':
+      return reject(
+        base,
+        humanIdentity(j.verification.rejectedBy),
+        j.verification.rejectedOn,
+        j.verification.reason,
+      );
+    default: {
+      const state: never = j.verification;
+      throw new KernelError(`Unknown verification state: ${JSON.stringify(state)}`);
+    }
+  }
+}
+
+export type TargetHeaderJson = {
+  id: string;
+  title: string;
+  measure: Target['measure'];
+  classification: { value: string; decidedBy: string; decidedOn: string; rationale: string };
+  indicatorType: { value: string; decidedBy: string; decidedOn: string; rationale: string };
+};
+
+export type RevisionJson = {
+  seq: number;
+  supersedes?: number;
+  value: JsonAttestedQuantity;
+  dueBy: number;
+  announcedBy: string;
+  announcedOn: string;
+  provenance: JsonProvenance;
+  recordedBy: string;
+  recordedOn: string;
+  note: string;
+};
+
+export const encodeTargetHeader = (t: Target): TargetHeaderJson => ({
+  id: t.id,
+  title: t.title,
+  measure: t.measure,
+  classification: { ...t.classification, value: t.classification.value },
+  indicatorType: { ...t.indicatorType, value: t.indicatorType.value },
+});
+
+export const encodeRevision = (r: TargetRevision, kind: 'human' | 'agent'): RevisionJson => ({
+  seq: r.seq,
+  ...(r.supersedes === undefined ? {} : { supersedes: r.supersedes }),
+  value: encodeAttestedQuantity(r.value, kind),
+  dueBy: r.dueBy,
+  announcedBy: r.announcedBy,
+  announcedOn: r.announcedOn,
+  provenance: encodeProvenance(r.provenance, kind),
+  recordedBy: r.recordedBy,
+  recordedOn: r.recordedOn,
+  note: r.note,
+});
+
+const TARGET_CLASSES = new Set(['PROMISE', 'BENCHMARK', 'FLOOR']);
+const INDICATOR_TYPES = new Set(['input', 'execution', 'output', 'outcome']);
+
+/**
+ * Rebuilds a target from its header and its revision files.
+ *
+ * Revisions are replayed in order through `reviseTarget`, so the append-only
+ * rules are re-checked on every load. A file that was edited by hand to rewrite
+ * history fails here rather than being trusted because it is on disk.
+ */
+export function decodeTarget(header: TargetHeaderJson, revisions: readonly RevisionJson[]): Target {
+  if (revisions.length === 0) {
+    throw new KernelError(`Target ${header.id} has no revisions on disk.`);
+  }
+  const ordered = [...revisions].sort((a, b) => a.seq - b.seq);
+  ordered.forEach((r, i) => {
+    if (r.seq !== i + 1) {
+      throw new KernelError(
+        `Target ${header.id} has a gap in its revision sequence at ${r.seq}. ` +
+          'Revisions are contiguous and append-only; a gap means a file was removed.',
+      );
+    }
+  });
+
+  if (!TARGET_CLASSES.has(header.classification.value)) {
+    throw new KernelError(`Unknown target class ${header.classification.value}.`);
+  }
+  if (!INDICATOR_TYPES.has(header.indicatorType.value)) {
+    throw new KernelError(`Unknown indicator type ${header.indicatorType.value}.`);
+  }
+
+  const [first, ...rest] = ordered as [RevisionJson, ...RevisionJson[]];
+  let target = createTarget({
+    id: targetId(header.id),
+    title: header.title,
+    measure: header.measure,
+    classification: classify(
+      header.classification.value as TargetClass,
+      humanIdentity(header.classification.decidedBy),
+      header.classification.decidedOn,
+      header.classification.rationale,
+    ),
+    indicatorType: typeIndicator(
+      header.indicatorType.value as IndicatorType,
+      humanIdentity(header.indicatorType.decidedBy),
+      header.indicatorType.decidedOn,
+      header.indicatorType.rationale,
+    ),
+    original: {
+      value: decodeAttestedQuantity(first.value),
+      dueBy: targetYear(first.dueBy),
+      announcedBy: first.announcedBy,
+      announcedOn: first.announcedOn,
+      provenance: decodeProvenance(first.provenance),
+      recordedBy: humanIdentity(first.recordedBy),
+      recordedOn: first.recordedOn,
+    },
+  });
+
+  for (const r of rest) {
+    target = reviseTarget(target, {
+      value: decodeAttestedQuantity(r.value),
+      dueBy: targetYear(r.dueBy),
+      announcedBy: r.announcedBy,
+      announcedOn: r.announcedOn,
+      provenance: decodeProvenance(r.provenance),
+      recordedBy: humanIdentity(r.recordedBy),
+      recordedOn: r.recordedOn,
+      note: r.note,
+    });
+  }
+  return target;
+}

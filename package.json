@@ -1,0 +1,21 @@
+{
+  "name": "antar",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The distance between the country India was promised and the country it lives in.",
+  "engines": { "node": ">=22.5.0" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint:casts": "node scripts/no-unsafe-casts.mjs",
+    "build:db": "node --experimental-strip-types scripts/build-db.ts",
+    "gate": "npm run typecheck && npm run lint:casts && npm run test"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "@types/node": "^22.10.2"
+  }
+}
