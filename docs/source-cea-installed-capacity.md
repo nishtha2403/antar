@@ -22,21 +22,62 @@ B2 heading, `(IN MW)`.
 cell coordinates. A parser pinned to column I would have kept working and
 returned the grand total the day the layout shifted.
 
-## What does not work
+## The archive — resolved
 
-**Historical reports are not at the predictable path.** Every month before the
-current one returns 404 at the same URL pattern:
+Historical reports exist, but **cannot be addressed by constructing a URL**. Every
+guessed pattern 404s, and the uploads directory returns 403. The filenames are
+not systematic. Ten months sampled:
+
+| Month | Published file |
+|---|---|
+| 2026-07 | `IC_July2026.xlsx` (current month only, on the index page) |
+| 2026-06 | `Website_June.pdf` |
+| 2026-03 | `Website-1.pdf` |
+| 2025-12 | `website.pdf` |
+| 2025-09 | `Website_Report-1.pdf` |
+| 2025-06 | `IC_June_2025_allocation_wise.pdf` |
+| 2024-12 | `IC_Dec_2024_allocation_wise-2.pdf` |
+| 2023-12 | `IC_31_Dec_2023.pdf` |
+
+Discovery is therefore mandatory. The index page's month selector posts to a
+WordPress admin-ajax action, which returns the markup for a month with its links:
 
 ```
-2026/06/IC_June2026.xlsx      404
-2025/12/IC_December2025.xlsx  404
-2024/07/IC_July2024.xlsx      404
+POST https://cea.nic.in/wp-admin/admin-ajax.php
+action=monthly_archive_report&selMonthYear=YYYY-MM&reportType=installed
 ```
 
-The uploads directory returns 403, so it exists but is not browsable. The index
-page's "Select Month" control is rendered by JavaScript and its endpoint is not
-in the static HTML. **A time series cannot currently be assembled from this
-source by URL construction alone.** That is unresolved.
+`src/ingest/cea-archive.ts` wraps this. It is undocumented and could change
+without notice, which is why it verifies what comes back and raises on an empty
+result rather than reporting a month as having no data.
+
+**Only the current month is .xlsx. Everything older is PDF.**
+
+## What reads, and what does not
+
+`src/ingest/cea-pdf.ts` finds the all-India row by checking the table's own
+arithmetic — coal+lignite+gas+diesel = thermal, hydro+RES = renewable, and those
+plus nuclear = grand total — rather than counting columns. Ten numbers satisfying
+all three at once are the row; a neighbouring column fails all three instead of
+returning a plausible wrong figure.
+
+| Report | Reads | Nuclear |
+|---|---|---|
+| 2026-07 (.xlsx) | yes | 8780 MW |
+| 2025-12 (.pdf) | yes | 8780.00 MW |
+| 2025-09 (.pdf) | yes | 8780.00 MW |
+| 2025-06 and older (.pdf) | **no** | — |
+
+**The limit.** Reports up to mid-2025 use an "allocation wise" layout and set
+their table digits in a CID font whose ToUnicode map this reader does not
+resolve. Prose in those documents decodes correctly — the outage note reads
+fine — but every numeric cell comes back empty, so the arithmetic check finds no
+row and the parser refuses rather than guessing. Fixing it means resolving font
+resources per page, which needs xref and object parsing. Pinned by a test in
+`test/cea-pdf.test.ts` so a future fix announces itself by failing there.
+
+**Practical consequence: the series available today runs from September 2025.**
+That is roughly a year of monthly points against a 2047 deadline.
 
 **The CEA API is down, and says so with a 200.**
 
