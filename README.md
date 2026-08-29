@@ -1,6 +1,13 @@
 # Antar — G0 kernel, G1 machinery
 
+[![gate](https://github.com/nishtha2403/antar/actions/workflows/gate.yml/badge.svg?branch=main)](https://github.com/nishtha2403/antar/actions/workflows/gate.yml)
+
 The distance between the country India was promised and the country it lives in.
+
+The badge above is the gate: typecheck, the unsafe-cast linter, and the tests
+that assert the three guarantees. While this repository is private the image
+renders only for people who can already see the repository; everyone else gets a
+broken image rather than a misleading green.
 
 **G0 is complete**: the schema, the verification state machine, the append-only
 revision store, and the test harness that asserts the guarantees.
