@@ -261,3 +261,57 @@ describe('roadmap milestones are superseded, not overwritten', () => {
     expect(await readdir(join(root, 'targets', 'NEM-2047-100GW', 'roadmap'))).toHaveLength(1);
   });
 });
+
+describe('target headers are revised, not frozen', () => {
+  it('supersedes the header when the definition changes', async () => {
+    const target = nuclearTarget();
+    await store.saveTarget(target);
+    await store.saveTarget({ ...target, title: 'A corrected title' });
+
+    const files = (await readdir(join(root, 'targets', 'NEM-2047-100GW'))).filter((f) =>
+      f.startsWith('target'),
+    );
+    expect(files).toHaveLength(2);
+
+    // Operative definition is the correction; the original stays readable.
+    expect((await store.loadTarget('NEM-2047-100GW')).title).toBe('A corrected title');
+    const original = JSON.parse(
+      await readFile(join(root, 'targets', 'NEM-2047-100GW', 'target-r0001.json'), 'utf8'),
+    );
+    expect(original.title).toBe('100 GW of nuclear power capacity by 2047');
+  });
+
+  it('orders header revisions numerically, not by filename', async () => {
+    // "target-r0002.json" precedes "target.json" as a string.
+    const target = nuclearTarget();
+    await store.saveTarget(target);
+    await store.saveTarget({ ...target, title: 'second' });
+    await store.saveTarget({ ...target, title: 'third' });
+    expect((await store.loadTarget('NEM-2047-100GW')).title).toBe('third');
+  });
+
+  it('does not revise the header when nothing changed', async () => {
+    const target = nuclearTarget();
+    await store.saveTarget(target);
+    await store.saveTarget(target);
+    const files = (await readdir(join(root, 'targets', 'NEM-2047-100GW'))).filter((f) =>
+      f.startsWith('target'),
+    );
+    expect(files).toHaveLength(1);
+  });
+
+  it('carries the series that measures the target', async () => {
+    await store.saveTarget(nuclearTarget());
+    expect((await store.loadTarget('NEM-2047-100GW')).series).toBe('cea-nuclear-installed-capacity');
+  });
+
+  it('refuses a target that names no series', async () => {
+    // A target with nothing measuring it cannot have a gap computed.
+    await store.saveTarget(nuclearTarget());
+    const path = join(root, 'targets', 'NEM-2047-100GW', 'target-r0001.json');
+    const header = JSON.parse(await readFile(path, 'utf8'));
+    delete header.series;
+    await writeFile(path, JSON.stringify(header));
+    await expect(store.loadTarget('NEM-2047-100GW')).rejects.toThrow(/names no observation series/);
+  });
+});

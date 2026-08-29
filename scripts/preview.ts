@@ -18,7 +18,7 @@ import { LOCALES, pagePath } from '../src/render/strings.ts';
 const outDir = process.argv[2] ?? 'build/preview';
 const store = new Store('data');
 const target = await store.loadTarget('NEM-2047-100GW');
-const observations = await store.loadSeries('cea-nuclear-installed-capacity');
+const observations = await store.loadSeries(target.series);
 // Absent until recorded, and unverified milestones do not render even then.
 const plan = (await store.hasRoadmap(target.id)) ? await store.loadRoadmap(target.id) : undefined;
 const tables = { hi: await store.loadTranslations('hi') };

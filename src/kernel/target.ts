@@ -7,6 +7,21 @@ import type { Attested } from './verification.ts';
 
 export type TargetId = Brand<string, 'TargetId'>;
 
+/** Directory-safe identifier for a recorded observation series. */
+export type SeriesSlug = Brand<string, 'SeriesSlug'>;
+
+const asSeriesSlug = brandAs<'SeriesSlug'>();
+const SERIES_SLUG = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
+
+export function seriesSlug(slug: string): SeriesSlug {
+  if (!SERIES_SLUG.test(slug)) {
+    throw new KernelError(
+      `Invalid series slug ${JSON.stringify(slug)}. Expected lowercase words joined by hyphens.`,
+    );
+  }
+  return asSeriesSlug(slug);
+}
+
 const asTargetId = brandAs<'TargetId'>();
 const TARGET_ID = /^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$/;
 
@@ -147,6 +162,15 @@ export type TargetRevision = {
 export type Target = {
   readonly id: TargetId;
   readonly title: string;
+  /**
+   * The observation series that measures progress against this target.
+   *
+   * Part of the target's definition rather than a lookup the build performs.
+   * The build script previously hardcoded one slug, which was invisible with a
+   * single indicator and would have compared every future target against
+   * nuclear capacity.
+   */
+  readonly series: SeriesSlug;
   readonly measure: Measure;
   readonly classification: HumanJudgement<TargetClass>;
   readonly indicatorType: HumanJudgement<IndicatorType>;
@@ -167,6 +191,7 @@ export type RevisionInput = {
 export function createTarget(input: {
   readonly id: TargetId;
   readonly title: string;
+  readonly series: SeriesSlug;
   readonly measure: Measure;
   readonly classification: HumanJudgement<TargetClass>;
   readonly indicatorType: HumanJudgement<IndicatorType>;

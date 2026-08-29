@@ -48,7 +48,10 @@ const tables: Partial<Record<Locale, Awaited<ReturnType<Store['loadTranslations'
 
 for (const id of targetIds) {
   const target = await store.loadTarget(id);
-  const observations = await store.loadSeries('cea-nuclear-installed-capacity');
+  // The series comes from the target's own definition. Hardcoding one slug was
+  // invisible with a single indicator and would have compared every future
+  // target against nuclear capacity.
+  const observations = await store.loadSeries(target.series);
   const plan = (await store.hasRoadmap(id)) ? await store.loadRoadmap(id) : undefined;
   const gap = computeGap(target, observations);
 

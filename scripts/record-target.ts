@@ -13,7 +13,7 @@ import { byHuman } from '../src/kernel/identity.ts';
 import { displayName, FOUNDER } from '../src/kernel/people.ts';
 import { provenance } from '../src/kernel/provenance.ts';
 import { formatQuantity, quantity } from '../src/kernel/quantity.ts';
-import { classify, createTarget, targetId, typeIndicator } from '../src/kernel/target.ts';
+import { classify, createTarget, seriesSlug, targetId, typeIndicator } from '../src/kernel/target.ts';
 import { targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
 import { CEA_NUCLEAR_MEASURE } from '../src/ingest/cea.ts';
@@ -37,6 +37,7 @@ const source = provenance({
 const target = createTarget({
   id: targetId('NEM-2047-100GW'),
   title: '100 GW of nuclear power capacity by 2047',
+  series: seriesSlug('cea-nuclear-installed-capacity'),
   // The same measure the observation series uses. A target and its series must
   // describe the same quantity or the gap between them means nothing.
   measure: CEA_NUCLEAR_MEASURE,

@@ -8,6 +8,7 @@ import {
   reviseTarget,
   type Target,
   targetId,
+  seriesSlug,
   type TargetClass,
   type TargetRevision,
   typeIndicator,
@@ -88,6 +89,7 @@ export function decodeAttestedQuantity(j: JsonAttestedQuantity): Attested<Quanti
 export type TargetHeaderJson = {
   id: string;
   title: string;
+  series: string;
   measure: Target['measure'];
   classification: { value: string; decidedBy: string; decidedOn: string; rationale: string };
   indicatorType: { value: string; decidedBy: string; decidedOn: string; rationale: string };
@@ -109,6 +111,7 @@ export type RevisionJson = {
 export const encodeTargetHeader = (t: Target): TargetHeaderJson => ({
   id: t.id,
   title: t.title,
+  series: t.series,
   measure: t.measure,
   classification: { ...t.classification, value: t.classification.value },
   indicatorType: { ...t.indicatorType, value: t.indicatorType.value },
@@ -159,9 +162,17 @@ export function decodeTarget(header: TargetHeaderJson, revisions: readonly Revis
   }
 
   const [first, ...rest] = ordered as [RevisionJson, ...RevisionJson[]];
+  if (!header.series) {
+    throw new KernelError(
+      `Target ${header.id} names no observation series. A target with nothing measuring it ` +
+        'cannot have a gap computed, so this is an error rather than a default.',
+    );
+  }
+
   let target = createTarget({
     id: targetId(header.id),
     title: header.title,
+    series: seriesSlug(header.series),
     measure: header.measure,
     classification: classify(
       header.classification.value as TargetClass,

@@ -79,10 +79,20 @@ export class Store {
    */
   async saveTarget(target: Target): Promise<void> {
     const dir = this.targetDir(target.id);
-    const headerPath = join(dir, 'target.json');
-    if (!existsSync(headerPath)) {
-      await this.writeNew(headerPath, Store.json(encodeTargetHeader(target)));
+
+    // The header carries the target's definition — title, measure, the series
+    // that measures it, the human judgements. Definitions get corrected, so the
+    // header is revised like everything else rather than written once and frozen:
+    // target-r0002.json supersedes target.json, and the original stays readable.
+    const headers = await this.headerFiles(target.id);
+    const encoded = Store.json(encodeTargetHeader(target));
+    const currentHeader =
+      headers.length > 0 ? await readFile(join(dir, headers[headers.length - 1] as string), 'utf8') : undefined;
+    if (currentHeader !== encoded) {
+      const next = String(headers.length + 1).padStart(4, '0');
+      await this.writeNew(join(dir, `target-r${next}.json`), encoded);
     }
+
     for (const revision of target.revisions) {
       const path = join(dir, `rev-${String(revision.seq).padStart(4, '0')}.json`);
       if (existsSync(path)) continue;
@@ -90,9 +100,29 @@ export class Store {
     }
   }
 
+  /** Header filenames for a target, oldest revision first. */
+  private async headerFiles(id: string): Promise<string[]> {
+    const dir = this.targetDir(id);
+    if (!existsSync(dir)) return [];
+    const pattern = /^target(?:-r(\d{4}))?\.json$/;
+    const parsed: { file: string; revision: number }[] = [];
+    for (const file of await readdir(dir)) {
+      const match = pattern.exec(file);
+      if (!match) continue;
+      parsed.push({ file, revision: match[1] ? Number(match[1]) : 1 });
+    }
+    // Numeric, not lexical: "target-r0002.json" precedes "target.json" as a
+    // string, which would return the superseded definition as operative.
+    return parsed.sort((a, b) => a.revision - b.revision).map((p) => p.file);
+  }
+
   async loadTarget(id: string): Promise<Target> {
     const dir = this.targetDir(id);
-    const header = JSON.parse(await readFile(join(dir, 'target.json'), 'utf8')) as TargetHeaderJson;
+    const headers = await this.headerFiles(id);
+    if (headers.length === 0) throw new KernelError(`Target ${id} has no header on disk.`);
+    const header = JSON.parse(
+      await readFile(join(dir, headers[headers.length - 1] as string), 'utf8'),
+    ) as TargetHeaderJson;
     const files = (await readdir(dir)).filter((f) => /^rev-\d{4}\.json$/.test(f)).sort();
     if (files.length === 0) throw new KernelError(`Target ${id} has a header but no revisions.`);
     const revisions = await Promise.all(
