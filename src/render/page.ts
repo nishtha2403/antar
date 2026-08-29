@@ -74,8 +74,14 @@ export function renderTargetPage(target: Target, gap: Gap, locale: Locale): stri
     { label: t.rowRemaining, value: formatQuantity(gap.remaining), when: '' },
   ];
 
-  const pct = Number(formatQuantity(gap.achieved).replace(' %', ''));
-  const barWidth = Math.max(0, Math.min(100, Number.isFinite(pct) ? pct : 0));
+  const asWidth = (q: { digits: bigint; scale: number } | undefined): number => {
+    if (!q) return 0;
+    const n = Number(q.digits) / 10 ** q.scale;
+    return Math.max(0, Math.min(100, Number.isFinite(n) ? n : 0));
+  };
+  const barWidth = asWidth(gap.achieved);
+  const elapsedWidth = asWidth(gap.elapsed);
+  const promisedYear = gap.promisedOn.slice(0, 4);
 
   const rateNote = gap.requiredAnnualAddition
     ? t.requiredRate(escapeHtml(formatQuantity(gap.requiredAnnualAddition)), gap.yearsRemaining)
@@ -90,9 +96,11 @@ export function renderTargetPage(target: Target, gap: Gap, locale: Locale): stri
 <title>${escapeHtml(target.title)} — Antar</title>
 ${alternates}
 <style>
-  :root { color-scheme: light dark; --ink:#1a1a1a; --dim:#5a5a5a; --line:#d8d4cc; --bg:#faf8f4; --accent:#7a2e1e; }
+  :root { color-scheme: light dark; --ink:#1a1a1a; --dim:#5a5a5a; --line:#d8d4cc; --bg:#faf8f4;
+          --accent:#7a2e1e; --accent-bg:#f3ece6; }
   @media (prefers-color-scheme: dark) {
-    :root { --ink:#ece8e1; --dim:#9a948a; --line:#3a3630; --bg:#16140f; --accent:#e0a08a; }
+    :root { --ink:#ece8e1; --dim:#9a948a; --line:#3a3630; --bg:#16140f;
+            --accent:#e0a08a; --accent-bg:#221c17; }
   }
   * { box-sizing: border-box; }
   body { margin:0 auto; padding:1.5rem 1.25rem 4rem; background:var(--bg); color:var(--ink);
@@ -109,9 +117,23 @@ ${alternates}
   th { font-weight:500; color:var(--dim); font-size:.95rem; }
   td.num { text-align:right; font-variant-numeric:tabular-nums; font-size:1.2rem; font-weight:600; white-space:nowrap; }
   td.when { text-align:right; color:var(--dim); font-size:.8rem; white-space:nowrap; padding-left:.75rem; }
-  .bar { height:.5rem; background:var(--line); border-radius:2px; overflow:hidden; margin:.75rem 0 .35rem; }
+  .promise { border:1px solid var(--accent); border-radius:3px; padding:.9rem 1rem;
+             margin:1.5rem 0; background:var(--accent-bg); }
+  .promise-years { display:flex; align-items:baseline; gap:.6rem; font-variant-numeric:tabular-nums; }
+  .promise-years b { font-size:1.75rem; font-weight:680; line-height:1.1; color:var(--accent); }
+  .promise-years span { font-size:.7rem; text-transform:uppercase; letter-spacing:.07em; color:var(--dim); }
+  .promise-years .arrow { font-size:1.2rem; color:var(--dim); }
+  .promise-detail { margin:.5rem 0 0; font-size:.85rem; color:var(--dim); }
+  .promise-revised { margin:.4rem 0 0; font-size:.85rem; color:var(--ink); }
+  .meters { margin:1.5rem 0 .5rem; }
+  .meter + .meter { margin-top:.85rem; }
+  .meter-head { display:flex; justify-content:space-between; align-items:baseline;
+                font-size:.85rem; color:var(--dim); margin-bottom:.3rem; }
+  .meter-head b { color:var(--ink); font-variant-numeric:tabular-nums; font-size:.95rem; }
+  .bar { height:.5rem; background:var(--line); border-radius:2px; overflow:hidden; }
   .bar > span { display:block; height:100%; background:var(--accent); }
-  .pct { font-size:.85rem; color:var(--dim); margin:0; }
+  .bar.time > span { background:var(--dim); }
+  .pct { font-size:.85rem; color:var(--dim); margin:.35rem 0 0; }
   .note { font-size:.9rem; color:var(--dim); border-left:2px solid var(--line); padding-left:.85rem; margin:1.75rem 0; }
   h2 { font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--dim);
        margin:2.5rem 0 .5rem; font-weight:600; }
@@ -127,6 +149,22 @@ ${alternates}
 <p class="measure">${escapeHtml(target.measure.measure)}</p>
 <p><span class="tag">${escapeHtml(cls.label)}</span></p>
 
+<div class="promise">
+  <div class="promise-years">
+    <span>${escapeHtml(t.promisedLabel)}</span><b>${escapeHtml(promisedYear)}</b>
+    <span class="arrow">&rarr;</span>
+    <span>${escapeHtml(t.dueLabel)}</span><b>${published.dueBy}</b>
+  </div>
+  <p class="promise-detail">${escapeHtml(
+    t.promiseDetail(gap.promisedBy, gap.promisedOn, gap.windowYears),
+  )}</p>
+${
+  gap.wasRevised
+    ? `  <p class="promise-revised">${escapeHtml(t.originallyPromised(gap.originallyPromisedOn))}</p>`
+    : ''
+}
+</div>
+
 <table>
   <tbody>
 ${rows
@@ -141,8 +179,28 @@ ${rows
   </tbody>
 </table>
 
-<div class="bar"><span style="width:${barWidth}%"></span></div>
-<p class="pct">${escapeHtml(formatQuantity(gap.achieved))} — ${escapeHtml(t.asOf(gap.observedAsOf))}</p>
+<div class="meters">
+  <div class="meter">
+    <div class="meter-head"><span>${escapeHtml(t.barAchieved)}</span><b>${escapeHtml(
+      formatQuantity(gap.achieved),
+    )}</b></div>
+    <div class="bar"><span style="width:${barWidth}%"></span></div>
+    <p class="pct">${escapeHtml(t.asOf(gap.observedAsOf))}</p>
+  </div>
+${
+  gap.elapsed
+    ? `  <div class="meter">
+    <div class="meter-head"><span>${escapeHtml(t.barElapsed)}</span><b>${escapeHtml(
+      formatQuantity(gap.elapsed),
+    )}</b></div>
+    <div class="bar time"><span style="width:${elapsedWidth}%"></span></div>
+    <p class="pct">${escapeHtml(t.elapsedDetail(formatQuantity(gap.yearsElapsed).replace(' years', ''), gap.windowYears))}</p>
+  </div>`
+    : ''
+}
+</div>
+
+${gap.elapsed ? `<p class="note">${escapeHtml(t.noVerdict)}</p>` : ''}
 
 <p class="note">${rateNote}</p>
 

@@ -3,9 +3,10 @@ import { computeGap } from '../src/kernel/gap.ts';
 import { KernelError } from '../src/kernel/identity.ts';
 import { formatQuantity, quantity, ratioAsPercent } from '../src/kernel/quantity.ts';
 import { latestVerified, series, verificationCoverage } from '../src/kernel/series.ts';
-import { isoDate } from '../src/kernel/time.ts';
+import { reviseTarget } from '../src/kernel/target.ts';
+import { isoDate, targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
-import { FOUNDER, ceaSource, nuclearMeasure, nuclearTarget } from './fixtures.ts';
+import { FOUNDER, ceaSource, nuclearMeasure, nuclearTarget, pibSource } from './fixtures.ts';
 
 /** All figures here are synthetic test fixtures, not sourced claims. */
 const observed = (asOf: string, value: string, verified = true) => ({
@@ -120,5 +121,57 @@ describe('rounding is declared, not incidental', () => {
     // Exactness applies to money at the paise boundary; quantities keep their
     // source precision verbatim and only derived values are rounded.
     expect(formatQuantity(quantity('1.005', 'GW'))).toBe('1.005 GW');
+  });
+});
+
+describe('the promise window', () => {
+  it('records when the promise was made and how long the window is', () => {
+    const gap = computeGap(nuclearTarget(), capacity(observed('2025-12-31', '8.18')));
+    expect(gap.promisedOn).toBe('2025-02-01');
+    expect(gap.promisedBy).toBe('Ministry of Finance');
+    expect(gap.windowYears).toBe(22);
+    expect(gap.wasRevised).toBe(false);
+  });
+
+  it('measures elapsed time in days, not whole years', () => {
+    // 2025-02-01 to 2025-12-31 is eleven months. Whole-year subtraction
+    // reported that as zero, understating the first year of every promise.
+    const gap = computeGap(nuclearTarget(), capacity(observed('2025-12-31', '8.18')));
+    expect(formatQuantity(gap.yearsElapsed)).toBe('0.9 years');
+    expect(gap.elapsed).toBeDefined();
+    expect(Number(formatQuantity(gap.elapsed!).replace(' %', ''))).toBeGreaterThan(3);
+    expect(Number(formatQuantity(gap.elapsed!).replace(' %', ''))).toBeLessThan(5);
+  });
+
+  it('treats "by 2047" as met by the end of 2047', () => {
+    const atDeadline = computeGap(nuclearTarget(), capacity(observed('2047-12-31', '50')));
+    expect(formatQuantity(atDeadline.elapsed!)).toBe('100.00 %');
+  });
+
+  it('keeps the original promise date visible after a revision', () => {
+    const revised = reviseTarget(nuclearTarget(), {
+      value: verify(attest(quantity('100', 'GW'), pibSource), FOUNDER, '2027-03-01', 'checked'),
+      dueBy: targetYear(2052),
+      announcedBy: 'Ministry of Finance',
+      announcedOn: '2027-02-01',
+      provenance: pibSource,
+      recordedBy: FOUNDER,
+      recordedOn: '2027-03-01',
+      note: 'Deadline moved from 2047 to 2052.',
+    });
+    const gap = computeGap(revised, capacity(observed('2028-12-31', '12')));
+    expect(gap.wasRevised).toBe(true);
+    expect(gap.promisedOn).toBe('2027-02-01');
+    expect(gap.originallyPromisedOn).toBe('2025-02-01');
+    // The window is measured from the revised announcement, and the original
+    // date stays on the record so the slip is visible rather than absorbed.
+    expect(gap.windowYears).toBe(25);
+  });
+
+  it('does not divide elapsed time into achieved capacity', () => {
+    const gap = computeGap(nuclearTarget(), capacity(observed('2025-12-31', '8.18')));
+    // Both numbers are present; nothing derives a verdict from the pair.
+    expect(gap).not.toHaveProperty('onTrack');
+    expect(gap).not.toHaveProperty('scheduleVariance');
   });
 });

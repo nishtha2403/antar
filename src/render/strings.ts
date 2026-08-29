@@ -36,6 +36,20 @@ const en = {
 
   asOf: (date: string) => `as of ${date}`,
 
+  promisedLabel: 'Promised',
+  dueLabel: 'Due',
+  promiseDetail: (who: string, when: string, years: number) =>
+    `Announced ${when} by ${who} · a ${years}-year window`,
+  originallyPromised: (when: string) =>
+    `Originally promised ${when}. The deadline has since been revised.`,
+
+  barAchieved: 'Achieved',
+  barElapsed: 'Time elapsed',
+  elapsedDetail: (elapsed: string, total: number) => `${elapsed} of ${total} years`,
+  noVerdict:
+    'These two are shown side by side, not divided into each other. Capacity arrives in steps ' +
+    'when a reactor commissions, so a year with none is not by itself a year behind.',
+
   requiredRate: (rate: string, years: number) =>
     `<strong>${rate} per year</strong> over ${years} years would reach the target. ` +
     'This is division, not a forecast: it assumes nothing about whether that rate is achievable.',
@@ -84,6 +98,20 @@ const hi: Strings = {
   classFloorNote: 'यह कानूनी या योजनागत न्यूनतम है, लक्ष्य नहीं।',
 
   asOf: (date: string) => `${date} तक`,
+
+  promisedLabel: 'वादा किया',
+  dueLabel: 'समय सीमा',
+  promiseDetail: (who: string, when: string, years: number) =>
+    `${when} को ${who} द्वारा घोषित · ${years} वर्ष की अवधि`,
+  originallyPromised: (when: string) =>
+    `मूल रूप से ${when} को वादा किया गया। समय सीमा बाद में बदली गई।`,
+
+  barAchieved: 'हासिल',
+  barElapsed: 'बीता समय',
+  elapsedDetail: (elapsed: string, total: number) => `${total} में से ${elapsed} वर्ष`,
+  noVerdict:
+    'ये दोनों आँकड़े साथ-साथ दिखाए गए हैं, एक को दूसरे से भाग नहीं दिया गया। क्षमता तब जुड़ती है ' +
+    'जब कोई रिएक्टर चालू होता है, इसलिए जिस वर्ष कोई रिएक्टर चालू न हो वह अपने आप पिछड़ा वर्ष नहीं है।',
 
   requiredRate: (rate: string, years: number) =>
     `लक्ष्य तक पहुँचने के लिए <strong>${rate} प्रति वर्ष</strong>, ${years} वर्षों तक जोड़ना होगा। ` +
