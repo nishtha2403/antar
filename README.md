@@ -41,6 +41,18 @@ npm run gate                  # typecheck, casts, tests, build, output check
 3. **The first correction.** The path is built and the page renders, but nothing
    has been written to it. Exercise it before it is needed under pressure.
 
+## The four repositories
+
+| Repository | What it is responsible for | |
+|---|---|---|
+| [`antar`](https://github.com/nishtha2403/antar) | The website and the verification kernel | public |
+| [`antar-data`](https://github.com/nishtha2403/antar-data) | The record — every verified figure, with its source | public |
+| [`antar-ingest`](https://github.com/nishtha2403/antar-ingest) | Scrapers and parsers, in Python | public |
+| `antar-studio` | Editorial tooling: verification and translation queues | private |
+
+`antar-data` is the hub. Ingest opens pull requests against it, Studio commits
+verified records to it, and this repository builds from it and never writes.
+
 ## Architecture
 
 ```

@@ -85,6 +85,12 @@ const en = {
   labelAchieved: 'Achieved',
   labelMeasure: 'Measure',
   labelExcludes: 'What this figure leaves out',
+  labelCoverage: 'Verification coverage',
+  coverage: (verified: number, total: number) =>
+    verified === total
+      ? `all ${total} readings in this series have been checked against their source documents`
+      : `${verified} of ${total} readings have been checked against their source documents. ` +
+        'The rest are recorded but not published, and do not appear in any figure above.',
   announcedBy: (who: string, when: string) => `Announced by ${who} on ${when}.`,
   verifiedBy: (who: string, when: string) => `Verified by ${who} on ${when}.`,
   downloadData: 'Download this data',
@@ -189,6 +195,12 @@ const hi: Copy = {
   labelAchieved: 'अब तक',
   labelMeasure: 'मापदंड',
   labelExcludes: 'यह आँकड़ा क्या छोड़ता है',
+  labelCoverage: 'सत्यापन की सीमा',
+  coverage: (verified: number, total: number) =>
+    verified === total
+      ? `इस शृंखला के सभी ${total} पाठ अपने स्रोत दस्तावेज़ों से मिलाकर जाँचे गए हैं`
+      : `${total} में से ${verified} पाठ स्रोत दस्तावेज़ों से मिलाकर जाँचे गए हैं। ` +
+        'बाक़ी दर्ज तो हैं पर प्रकाशित नहीं, और ऊपर किसी आँकड़े में शामिल नहीं हैं।',
   announcedBy: (who: string, when: string) => `${who} द्वारा ${when} को घोषित।`,
   verifiedBy: (who: string, when: string) => `${who} द्वारा ${when} को सत्यापित।`,
   downloadData: 'यह आँकड़ा डाउनलोड करें',

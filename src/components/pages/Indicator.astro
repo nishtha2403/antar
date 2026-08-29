@@ -171,6 +171,7 @@ const untranslated = [
       {' '}{c.verifiedBy(page.observed.verifiedBy, page.observed.verifiedOn)}
     </li>
     <li><strong>{c.labelMeasure}:</strong> <Text value={page.sourceSeries} /></li>
+    <li><strong>{c.labelCoverage}:</strong> {c.coverage(page.coverage.verified, page.coverage.total)}</li>
     {page.excludes && <li><strong>{c.labelExcludes}:</strong> <Text value={page.excludes} /></li>}
     <li>
       <a href={`${base}/data/${page.slug}.json`}>{c.downloadData} (JSON)</a> ·
