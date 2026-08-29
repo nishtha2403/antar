@@ -1,0 +1,53 @@
+{
+  "label": "Expected by 2031-32, from projects under construction",
+  "value": {
+    "value": {
+      "digits": "22",
+      "scale": 0,
+      "unit": "GW"
+    },
+    "provenance": {
+      "sourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287710&reg=3&lang=1",
+      "sourceTitle": "PARLIAMENT QUESTION: NUCLEAR ENERGY MISSION FOR VIKSIT BHARAT",
+      "publisher": "Press Information Bureau, Department of Atomic Energy",
+      "publishedOn": "2026-07-22",
+      "retrievedOn": "2026-08-30",
+      "retrievedBy": {
+        "kind": "human",
+        "id": "nishtha.sharma"
+      },
+      "locator": "PRID 2287710, roadmap paragraph"
+    },
+    "verification": {
+      "state": "verified",
+      "verifiedBy": "nishtha.sharma",
+      "verifiedOn": "2026-08-30",
+      "method": "Read against PRID 2287710, which states: present capacity 8.78 GW; expected to reach about 22 GW by 2031-32 on progressive completion of projects under implementation; another 32 GW beyond 2032 by NPCIL taking capacity to about 54 GW; balance of 46 GW expected from other public sector enterprises, state governments, private sector and joint ventures."
+    }
+  },
+  "basis": "cumulative",
+  "by": 2032,
+  "actors": [
+    "NPCIL"
+  ],
+  "status": {
+    "value": "planned",
+    "decidedBy": "nishtha.sharma",
+    "decidedOn": "2026-08-30",
+    "rationale": "The release says capacity \"is expected to reach\" this level on progressive completion of projects at various stages of implementation. Construction being under way is evidence of intent, not an undertaking to a date, so this is planned rather than committed."
+  },
+  "provenance": {
+    "sourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287710&reg=3&lang=1",
+    "sourceTitle": "PARLIAMENT QUESTION: NUCLEAR ENERGY MISSION FOR VIKSIT BHARAT",
+    "publisher": "Press Information Bureau, Department of Atomic Energy",
+    "publishedOn": "2026-07-22",
+    "retrievedOn": "2026-08-30",
+    "retrievedBy": {
+      "kind": "human",
+      "id": "nishtha.sharma"
+    },
+    "locator": "PRID 2287710, roadmap paragraph"
+  },
+  "recordedBy": "nishtha.sharma",
+  "recordedOn": "2026-08-30"
+}

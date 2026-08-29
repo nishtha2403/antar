@@ -204,26 +204,65 @@ export class Store {
   }
 
   /**
-   * Persists a roadmap: one immutable file per milestone.
+   * Persists a roadmap: immutable milestone files, superseded rather than edited.
    *
-   * Lives under the target it belongs to, because a roadmap without its target
-   * is a list of numbers with nothing to reconcile against.
+   * `m-0001-r0002.json` supersedes `m-0001-r0001.json`. Milestones need this for
+   * the same reason observations do — a status can move from planned to
+   * committed when an actor actually undertakes something, and a figure recorded
+   * before verification has to be re-recorded after it. Both are events worth
+   * keeping, not states worth overwriting.
+   *
+   * Identity is position in the roadmap, since a milestone has no natural key
+   * the way an observation has its date.
    */
   async saveRoadmap(plan: Roadmap): Promise<void> {
     const dir = join(this.root, 'targets', plan.targetId, 'roadmap');
+    const existing = await this.milestoneFiles(plan.targetId);
     for (const [index, milestone] of plan.milestones.entries()) {
-      const path = join(dir, `m-${String(index + 1).padStart(4, '0')}.json`);
-      if (existsSync(path)) continue;
-      await this.writeNew(path, Store.json(encodeMilestone(milestone)));
+      const key = String(index + 1).padStart(4, '0');
+      const revisions = existing.get(key) ?? [];
+      const encoded = Store.json(encodeMilestone(milestone));
+      if (revisions.length > 0) {
+        const current = await readFile(join(dir, revisions[revisions.length - 1] as string), 'utf8');
+        if (current === encoded) continue;
+      }
+      const next = String(revisions.length + 1).padStart(4, '0');
+      await this.writeNew(join(dir, `m-${key}-r${next}.json`), encoded);
     }
+  }
+
+  /** Milestone filenames per position, oldest revision first. */
+  private async milestoneFiles(targetId: string): Promise<Map<string, string[]>> {
+    const dir = join(this.root, 'targets', targetId, 'roadmap');
+    if (!existsSync(dir)) return new Map();
+    const pattern = /^m-(\d{4})(?:-r(\d{4}))?\.json$/;
+    const parsed: { file: string; key: string; revision: number }[] = [];
+    for (const file of await readdir(dir)) {
+      const match = pattern.exec(file);
+      if (!match) continue;
+      parsed.push({ file, key: match[1] as string, revision: match[2] ? Number(match[2]) : 1 });
+    }
+    const byKey = new Map<string, string[]>();
+    // Numeric sort, not lexical: "-r0002.json" precedes ".json" as a string,
+    // which would hand back the superseded record as the operative one.
+    for (const { file, key } of parsed.sort((a, b) => a.key.localeCompare(b.key) || a.revision - b.revision)) {
+      const list = byKey.get(key);
+      if (list) list.push(file);
+      else byKey.set(key, [file]);
+    }
+    return byKey;
   }
 
   async loadRoadmap(targetId: string): Promise<Roadmap> {
     const dir = join(this.root, 'targets', targetId, 'roadmap');
     if (!existsSync(dir)) throw new KernelError(`No roadmap recorded for ${targetId}.`);
-    const files = (await readdir(dir)).filter((f) => /^m-\d{4}\.json$/.test(f)).sort();
+    const byKey = await this.milestoneFiles(targetId);
+    if (byKey.size === 0) throw new KernelError(`No roadmap milestones recorded for ${targetId}.`);
     const milestones = await Promise.all(
-      files.map(async (f) => decodeMilestone(JSON.parse(await readFile(join(dir, f), 'utf8')) as MilestoneJson)),
+      [...byKey.values()].map(async (revisions) => {
+        const operative = revisions[revisions.length - 1] as string;
+        return decodeMilestone(JSON.parse(await readFile(join(dir, operative), 'utf8')) as MilestoneJson);
+      }),
     );
     return roadmap(targetId as Target['id'], milestones);
   }

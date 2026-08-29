@@ -1,0 +1,52 @@
+{
+  "label": "In service today",
+  "value": {
+    "value": {
+      "digits": "878",
+      "scale": 2,
+      "unit": "GW"
+    },
+    "provenance": {
+      "sourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287710&reg=3&lang=1",
+      "sourceTitle": "PARLIAMENT QUESTION: NUCLEAR ENERGY MISSION FOR VIKSIT BHARAT",
+      "publisher": "Press Information Bureau, Department of Atomic Energy",
+      "publishedOn": "2026-07-22",
+      "retrievedOn": "2026-08-30",
+      "retrievedBy": {
+        "kind": "human",
+        "id": "nishtha.sharma"
+      },
+      "locator": "PRID 2287710, roadmap paragraph"
+    },
+    "verification": {
+      "state": "verified",
+      "verifiedBy": "nishtha.sharma",
+      "verifiedOn": "2026-08-30",
+      "method": "Read against PRID 2287710, which states: present capacity 8.78 GW; expected to reach about 22 GW by 2031-32 on progressive completion of projects under implementation; another 32 GW beyond 2032 by NPCIL taking capacity to about 54 GW; balance of 46 GW expected from other public sector enterprises, state governments, private sector and joint ventures."
+    }
+  },
+  "basis": "cumulative",
+  "actors": [
+    "NPCIL (existing fleet)"
+  ],
+  "status": {
+    "value": "built",
+    "decidedBy": "nishtha.sharma",
+    "decidedOn": "2026-08-30",
+    "rationale": "Capacity already generating, independently observable in the CEA monthly series and corroborated by this release, which gives the same 8.78 GW figure."
+  },
+  "provenance": {
+    "sourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287710&reg=3&lang=1",
+    "sourceTitle": "PARLIAMENT QUESTION: NUCLEAR ENERGY MISSION FOR VIKSIT BHARAT",
+    "publisher": "Press Information Bureau, Department of Atomic Energy",
+    "publishedOn": "2026-07-22",
+    "retrievedOn": "2026-08-30",
+    "retrievedBy": {
+      "kind": "human",
+      "id": "nishtha.sharma"
+    },
+    "locator": "PRID 2287710, roadmap paragraph"
+  },
+  "recordedBy": "nishtha.sharma",
+  "recordedOn": "2026-08-30"
+}

@@ -4,7 +4,8 @@ import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { formatQuantity, quantity } from '../src/kernel/quantity.ts';
 import { series } from '../src/kernel/series.ts';
-import { reviseTarget } from '../src/kernel/target.ts';
+import { milestoneStatus, roadmap } from '../src/kernel/roadmap.ts';
+import { reviseTarget, targetId } from '../src/kernel/target.ts';
 import { isoDate, targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
 import { Store } from '../src/store/store.ts';
@@ -209,5 +210,54 @@ describe('observations can be superseded but never rewritten', () => {
     await store.saveSeries('cea', s);
     const files = (await readdir(join(root, 'series', 'cea'))).filter((f) => f.startsWith('obs-'));
     expect(files).toHaveLength(1);
+  });
+});
+
+describe('roadmap milestones are superseded, not overwritten', () => {
+  const milestoneAt = (amount: string, verified: boolean) => ({
+    label: 'Balance expected from other parties',
+    value: verified
+      ? verify(attest(quantity(amount, 'GW'), pibSource), FOUNDER, '2026-08-30', 'Read against the release.')
+      : attest(quantity(amount, 'GW'), pibSource),
+    basis: 'increment' as const,
+    actors: ['Private sector'],
+    status: milestoneStatus('planned', FOUNDER, '2026-08-30', 'A projection, not an undertaking.'),
+    provenance: pibSource,
+    recordedBy: FOUNDER,
+    recordedOn: isoDate('2026-08-30'),
+  });
+
+  it('records a verification as a new revision over the draft', async () => {
+    const id = targetId('NEM-2047-100GW');
+    await store.saveRoadmap(roadmap(id, [milestoneAt('46', false)]));
+    await store.saveRoadmap(roadmap(id, [milestoneAt('46', true)]));
+
+    const files = await readdir(join(root, 'targets', 'NEM-2047-100GW', 'roadmap'));
+    expect(files).toHaveLength(2);
+
+    // Operative record is the verification; the draft is still on file.
+    const plan = await store.loadRoadmap('NEM-2047-100GW');
+    expect(plan.milestones[0]?.value.verification.state).toBe('verified');
+    const draft = JSON.parse(
+      await readFile(join(root, 'targets', 'NEM-2047-100GW', 'roadmap', files.sort()[0] as string), 'utf8'),
+    );
+    expect(draft.value.verification.state).toBe('unverified');
+  });
+
+  it('orders milestone revisions numerically, not by filename', async () => {
+    const id = targetId('NEM-2047-100GW');
+    await store.saveRoadmap(roadmap(id, [milestoneAt('46', false)]));
+    await store.saveRoadmap(roadmap(id, [milestoneAt('46', true)]));
+    await store.saveRoadmap(roadmap(id, [milestoneAt('47', true)]));
+    const plan = await store.loadRoadmap('NEM-2047-100GW');
+    expect(formatQuantity(plan.milestones[0]!.value.value)).toBe('47 GW');
+  });
+
+  it('does not create a revision when nothing changed', async () => {
+    const id = targetId('NEM-2047-100GW');
+    const plan = roadmap(id, [milestoneAt('46', true)]);
+    await store.saveRoadmap(plan);
+    await store.saveRoadmap(plan);
+    expect(await readdir(join(root, 'targets', 'NEM-2047-100GW', 'roadmap'))).toHaveLength(1);
   });
 });
