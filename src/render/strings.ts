@@ -23,6 +23,29 @@ const en = {
   htmlLang: 'en',
   dir: 'ltr',
 
+  siteName: 'Antar',
+  siteTagline:
+    'The distance between the country India was promised and the country it lives in, in numbers, ' +
+    'with every figure traceable to the document it came from.',
+  panelLakshya: 'लक्ष्य Lakshya',
+  panelLakshyaDesc: 'What India said it would achieve. National promises, versioned.',
+  panelHisaab: 'हिसाब Hisaab',
+  panelHisaabDesc: 'What was actually done with public money, attributed at each step.',
+  panelAntar: 'अंतर Antar',
+  panelAntarDesc: 'The distance between them, and who can act on it.',
+  indexHeading: 'Indicators',
+  indexPromisedDue: (promised: string, due: string) => `Promised ${promised} · due ${due}`,
+  indexScope: (n: number) =>
+    `${n} indicator${n === 1 ? '' : 's'} published. This is an early build: the full Lakshya panel ` +
+    'is 8 to 12 indicators, and Hisaab is not built at all. Nothing here should be read as a ' +
+    'survey of government performance.',
+  indexMethodHeading: 'How to check this',
+  indexMethod:
+    'Every figure carries its source document, the date it was retrieved, and the name of the ' +
+    'person who verified it against that document. The underlying records are public, so a ' +
+    'disagreement can be settled by reading the same source rather than by trusting this site.',
+  indexSource: 'Source code and raw records',
+
   rowTarget: 'Target',
   rowAchieved: 'Achieved so far',
   rowRemaining: 'Remaining',
@@ -100,6 +123,28 @@ export type Strings = typeof en;
 const hi: Strings = {
   htmlLang: 'hi',
   dir: 'ltr',
+
+  siteName: 'अंतर',
+  siteTagline:
+    'जिस भारत का वादा किया गया और जिस भारत में लोग रहते हैं — उन दोनों के बीच की दूरी, आँकड़ों में, ' +
+    'और हर आँकड़े के साथ वह दस्तावेज़ जिससे वह आया है।',
+  panelLakshya: 'लक्ष्य',
+  panelLakshyaDesc: 'भारत ने क्या हासिल करने को कहा। राष्ट्रीय वादे, संस्करण सहित।',
+  panelHisaab: 'हिसाब',
+  panelHisaabDesc: 'सार्वजनिक धन से वास्तव में क्या हुआ, हर चरण पर ज़िम्मेदारी सहित।',
+  panelAntar: 'अंतर',
+  panelAntarDesc: 'दोनों के बीच की दूरी, और कौन उस पर काम कर सकता है।',
+  indexHeading: 'संकेतक',
+  indexPromisedDue: (promised: string, due: string) => `वादा ${promised} · समय सीमा ${due}`,
+  indexScope: (n: number) =>
+    `${n} संकेतक प्रकाशित। यह एक प्रारंभिक संस्करण है: पूरे लक्ष्य पैनल में 8 से 12 संकेतक होंगे, ` +
+    'और हिसाब अभी बना ही नहीं है। इसे सरकारी प्रदर्शन का समग्र आकलन न समझा जाए।',
+  indexMethodHeading: 'इसे कैसे जाँचें',
+  indexMethod:
+    'हर आँकड़े के साथ उसका स्रोत दस्तावेज़, प्राप्ति की तिथि, और उस व्यक्ति का नाम है जिसने उसे ' +
+    'दस्तावेज़ से मिलाकर सत्यापित किया। सभी अभिलेख सार्वजनिक हैं, इसलिए असहमति इस साइट पर भरोसा ' +
+    'करके नहीं, वही स्रोत पढ़कर सुलझाई जा सकती है।',
+  indexSource: 'स्रोत कोड और कच्चे अभिलेख',
 
   rowTarget: 'लक्ष्य',
   rowAchieved: 'अब तक',

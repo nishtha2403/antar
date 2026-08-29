@@ -1,13 +1,20 @@
 # Antar — G0 kernel, G1 machinery
 
 [![gate](https://github.com/nishtha2403/antar/actions/workflows/gate.yml/badge.svg?branch=main)](https://github.com/nishtha2403/antar/actions/workflows/gate.yml)
+[![pages](https://github.com/nishtha2403/antar/actions/workflows/pages.yml/badge.svg?branch=main)](https://github.com/nishtha2403/antar/actions/workflows/pages.yml)
+
+**Live: https://nishtha2403.github.io/antar/**
 
 The distance between the country India was promised and the country it lives in.
 
-The badge above is the gate: typecheck, the unsafe-cast linter, and the tests
-that assert the three guarantees. While this repository is private the image
-renders only for people who can already see the repository; everyone else gets a
-broken image rather than a misleading green.
+The badges above are the gate — typecheck, the unsafe-cast linter, and the tests
+that assert the three guarantees — and the deploy, which depends on the gate
+passing.
+
+The site is rendered from `data/` on every deploy, never from committed HTML, so
+a published page cannot drift from the records it claims to represent. The
+renderer throws on an unverified figure, so a deploy either carries fully
+verified figures or does not happen.
 
 **G0 is complete**: the schema, the verification state machine, the append-only
 revision store, and the test harness that asserts the guarantees.

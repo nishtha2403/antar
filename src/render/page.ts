@@ -28,7 +28,7 @@ import { type Locale, LOCALES, relativeHref, type Strings, STRINGS } from './str
  * 3G, so it is one file with inline CSS that degrades to readable text.
  */
 
-const escapeHtml = (s: string): string =>
+export const escapeHtml = (s: string): string =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string);
 
 export const slugFor = (target: Target): string => target.id.toLowerCase();
