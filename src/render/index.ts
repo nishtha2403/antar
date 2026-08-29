@@ -13,6 +13,19 @@ import { type Locale, LOCALES, pagePath, type Strings, STRINGS } from './strings
  * It says so. A site that lists one indicator without mentioning that is
  * implying a completeness it does not have.
  */
+/**
+ * Relative href from one locale's index to another's.
+ *
+ * English is at the root and every other locale sits one directory below it, so
+ * the answer depends on direction. Emitting the same href from both — as the
+ * first version did — sent the root index to the site's parent and the Hindi
+ * index to a directory that does not exist.
+ */
+function indexHref(from: Locale, to: Locale): string {
+  if (from === to) return './';
+  return from === 'en' ? `${to}/` : '../';
+}
+
 export function renderIndex(targets: readonly Target[], locale: Locale): string {
   const t = STRINGS[locale];
   const other = LOCALES.filter((l) => l !== locale);
@@ -25,7 +38,8 @@ export function renderIndex(targets: readonly Target[], locale: Locale): string 
 
   const rows = targets.map((target) => {
     const revision = currentRevision(target);
-    const href = locale === 'en' ? `${slugFor(target)}.html` : `${slugFor(target)}.html`;
+    // Each locale keeps its pages in one directory, so this is a bare filename.
+    const href = `${slugFor(target)}.html`;
     return `    <li>
       <a href="${escapeHtml(href)}">${escapeHtml(target.title)}</a>
       <span class="meta">${escapeHtml(t.indexPromisedDue(String(revision.announcedOn.slice(0, 4)), String(revision.dueBy)))}</span>
@@ -37,7 +51,7 @@ export function renderIndex(targets: readonly Target[], locale: Locale): string 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(t.siteName)} — ${escapeHtml(t.siteTagline)}</title>
-${LOCALES.map((l) => `<link rel="alternate" hreflang="${l}" href="${l === 'en' ? '../' : `${l}/`}">`).join('\n')}
+${LOCALES.map((l) => `<link rel="alternate" hreflang="${l}" href="${indexHref(locale, l)}">`).join('\n')}
 <style>
   :root { color-scheme: light dark; --ink:#1a1a1a; --dim:#5a5a5a; --line:#d8d4cc; --bg:#faf8f4;
           --accent:#7a2e1e; --accent-bg:#f3ece6; }

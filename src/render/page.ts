@@ -68,6 +68,11 @@ export function renderTargetPage(
     )
     .join(' · ');
 
+  // Every locale keeps its pages in one directory, so "./" is that locale's
+  // index from anywhere within it. Without this a reader arriving on an article
+  // from a search result or a shared link has no route to the rest of the site.
+  const home = `<a href="./">${escapeHtml(t.siteName)}</a>`;
+
   const alternates = LOCALES.map(
     (l) =>
       `<link rel="alternate" hreflang="${l}" href="${escapeHtml(
@@ -153,7 +158,7 @@ ${alternates}
   footer { margin-top:3rem; padding-top:1rem; border-top:1px solid var(--line); font-size:.8rem; color:var(--dim); }
 </style>
 
-<nav>${switchLinks}</nav>
+<nav>${home} · ${switchLinks}</nav>
 
 <h1>${escapeHtml(target.title)}</h1>
 <p class="measure">${escapeHtml(target.measure.measure)}</p>

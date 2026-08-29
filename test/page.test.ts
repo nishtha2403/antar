@@ -6,6 +6,7 @@ import { milestoneStatus, roadmap } from '../src/kernel/roadmap.ts';
 import { reviseTarget, targetId } from '../src/kernel/target.ts';
 import { isoDate, targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
+import { renderIndex } from '../src/render/index.ts';
 import { renderAllLocales, renderTargetPage, slugFor } from '../src/render/page.ts';
 import { type Locale, LOCALES, STRINGS } from '../src/render/strings.ts';
 import { ceaSource, FOUNDER, nuclearMeasure, nuclearTarget, pibSource } from './fixtures.ts';
@@ -253,5 +254,37 @@ describe('the roadmap section', () => {
 
   it('omits the section entirely when there is no roadmap', () => {
     expect(page('en')).not.toContain('How the target is meant to be reached');
+  });
+});
+
+describe('site navigation', () => {
+  it('gives every article a route back to its index', () => {
+    // A reader arriving from a search result or a shared link would otherwise
+    // have no way to reach the rest of the site.
+    expect(page('en')).toContain('<a href="./">Antar</a>');
+    expect(page('hi')).toContain('<a href="./">अंतर</a>');
+  });
+
+  it('points each locale at its own index and the other locale correctly', () => {
+    // English sits at the root and Hindi one directory below, so the href
+    // depends on direction. A single shared value sends the root index to the
+    // site's parent and the Hindi index to a directory that does not exist.
+    const en = renderIndex([nuclearTarget()], 'en');
+    const hi = renderIndex([nuclearTarget()], 'hi');
+    expect(en).toContain('<link rel="alternate" hreflang="en" href="./">');
+    expect(en).toContain('<link rel="alternate" hreflang="hi" href="hi/">');
+    expect(hi).toContain('<link rel="alternate" hreflang="en" href="../">');
+    expect(hi).toContain('<link rel="alternate" hreflang="hi" href="./">');
+  });
+
+  it('links to each indicator by bare filename within its locale directory', () => {
+    for (const locale of LOCALES) {
+      expect(renderIndex([nuclearTarget()], locale)).toContain('href="nem-2047-100gw.html"');
+    }
+  });
+
+  it('says how many indicators exist rather than implying completeness', () => {
+    expect(renderIndex([nuclearTarget()], 'en')).toContain('1 indicator published');
+    expect(renderIndex([nuclearTarget()], 'en')).toContain('Hisaab is not built at all');
   });
 });
