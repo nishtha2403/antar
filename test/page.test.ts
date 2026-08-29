@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { computeGap } from '../src/kernel/gap.ts';
 import { quantity } from '../src/kernel/quantity.ts';
 import { series } from '../src/kernel/series.ts';
+import { contextNote } from '../src/kernel/context.ts';
 import { milestoneStatus, roadmap } from '../src/kernel/roadmap.ts';
 import { translationEntry, translations } from '../src/kernel/translation.ts';
 import { reviseTarget, targetId } from '../src/kernel/target.ts';
@@ -355,5 +356,68 @@ describe('recorded text is translated only where a translation is recorded', () 
     expect(() => translationEntry('Private sector', 'Private sector', FOUNDER, '2026-08-30')).toThrow(
       /identical to the source/,
     );
+  });
+});
+
+describe('context is attributed, never asserted', () => {
+  const note = (verified: boolean) =>
+    contextNote({
+      kind: 'stated-purpose',
+      attributedTo: 'Department of Atomic Energy',
+      statement: verified
+        ? verify(attest('To support the goal of net zero by 2070.', pibSource), FOUNDER, '2026-08-30', 'Read against the release.')
+        : attest('To support the goal of net zero by 2070.', pibSource),
+      saidOn: '2026-07-22',
+      recordedBy: FOUNDER,
+      recordedOn: '2026-08-30',
+    });
+
+  const withContext = (locale: Locale, verified = true) => {
+    const target = nuclearTarget();
+    return renderTargetPage(target, computeGap(target, capacity('8.18')), locale, undefined, undefined, [
+      note(verified),
+    ]);
+  };
+
+  it('renders the statement beside the body that made it', () => {
+    const html = withContext('en');
+    expect(html).toContain('What the government says about this');
+    expect(html).toContain('Department of Atomic Energy');
+    expect(html).toContain('net zero by 2070');
+  });
+
+  it('never emits a statement without its attribution', () => {
+    // The attribution and the statement are produced together or not at all,
+    // for the same reason a figure cannot render without its citation.
+    const html = withContext('en');
+    const statementAt = html.indexOf('net zero by 2070');
+    const attributionAt = html.lastIndexOf('Department of Atomic Energy', statementAt);
+    expect(attributionAt).toBeGreaterThan(-1);
+    expect(statementAt - attributionAt).toBeLessThan(400);
+  });
+
+  it('says the section reports claims rather than endorsing them', () => {
+    expect(withContext('en')).toContain('not this page');
+    expect(withContext('hi')).toContain('यह पृष्ठ यह नहीं कह रहा कि वे सही हैं');
+  });
+
+  it('does not render an unverified statement', () => {
+    expect(withContext('en', false)).not.toContain('What the government says about this');
+  });
+
+  it('omits the section entirely when no context is recorded', () => {
+    expect(page('en')).not.toContain('What the government says about this');
+  });
+
+  it('refuses a statement with no attribution', () => {
+    expect(() =>
+      contextNote({
+        kind: 'stated-purpose',
+        attributedTo: '   ',
+        statement: attest('Something', pibSource),
+        recordedBy: FOUNDER,
+        recordedOn: '2026-08-30',
+      }),
+    ).toThrow(/needs an attribution/);
   });
 });

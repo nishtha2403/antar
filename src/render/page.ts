@@ -2,6 +2,7 @@ import type { Gap } from '../kernel/gap.ts';
 import { displayName } from '../kernel/people.ts';
 import { citation } from '../kernel/provenance.ts';
 import { formatQuantity } from '../kernel/quantity.ts';
+import type { ContextNote } from '../kernel/context.ts';
 import { reconcile, type Roadmap } from '../kernel/roadmap.ts';
 import { inLocale, type Translations } from '../kernel/translation.ts';
 import { currentRevision, type Target } from '../kernel/target.ts';
@@ -53,6 +54,7 @@ export function renderTargetPage(
   locale: Locale,
   plan?: Roadmap,
   table?: Translations,
+  context: readonly ContextNote[] = [],
 ): string {
   const t = STRINGS[locale];
 
@@ -174,6 +176,12 @@ ${alternates}
   .roadmap th { font-weight:500; color:var(--ink); font-size:.9rem; padding-right:.75rem; }
   .actors { color:var(--dim); font-size:.8rem; font-weight:400; }
   .untranslated { opacity:.82; border-bottom:1px dotted var(--line); }
+  ul.context { list-style:none; padding-left:0; }
+  ul.context li { color:var(--ink); font-size:.95rem; border-left:2px solid var(--line);
+                  padding-left:.85rem; margin:1rem 0; }
+  .attribution { display:block; color:var(--dim); font-size:.78rem; text-transform:uppercase;
+                 letter-spacing:.04em; margin-bottom:.25rem; }
+  .cite { font-size:.8rem; color:var(--dim); white-space:nowrap; }
   .roadmap td.when { font-size:.75rem; line-height:1.35; }
   footer { margin-top:3rem; padding-top:1rem; border-top:1px solid var(--line); font-size:.8rem; color:var(--dim); }
 </style>
@@ -239,6 +247,8 @@ ${gap.elapsed ? `<p class="note">${escapeHtml(t.noVerdict)}</p>` : ''}
 
 <p class="note">${rateNote}</p>
 
+${renderContext(t, context, tr)}
+
 <h2>${escapeHtml(t.sourcesHeading)}</h2>
 <ul>
   <li><strong>${escapeHtml(t.labelTarget)}:</strong> ${escapeHtml(published.figure.citation)} —
@@ -287,6 +297,44 @@ ${
 <footer>Antar · ${escapeHtml(target.id)}<br>${escapeHtml(t.footer)}</footer>
 </html>
 `;
+}
+
+/**
+ * The attributed-context section.
+ *
+ * Every statement renders beside the body that made it. There is no code path
+ * that emits a statement without its attribution, for the same reason
+ * `PublishedFigure` has no bare-value field: separating the two turns a report
+ * of what someone said into this page saying it.
+ *
+ * Only verified statements render, like every other claim on the page.
+ */
+function renderContext(
+  t: Strings,
+  notes: readonly ContextNote[],
+  tr: (s: string) => string,
+): string {
+  const verified = notes.filter((n) => n.statement.verification.state === 'verified');
+  if (verified.length === 0) return '';
+
+  const kindLabel = (k: ContextNote['kind']): string =>
+    k === 'stated-purpose' ? t.kindPurpose : k === 'stated-plan' ? t.kindPlan : t.kindEvent;
+
+  const items = verified.map((n) => `  <li>
+    <span class="attribution">${tr(n.attributedTo)}${
+      n.saidOn ? escapeHtml(`, ${n.saidOn}`) : ''
+    } · ${escapeHtml(kindLabel(n.kind))}</span>
+    ${tr(n.statement.value)}
+    <a class="cite" href="${escapeHtml(n.statement.provenance.sourceUrl)}">${escapeHtml(
+      t.sourceLinkLabel,
+    )}</a>
+  </li>`);
+
+  return `<h2>${escapeHtml(t.contextHeading)}</h2>
+<ul class="context">
+${items.join('\n')}
+</ul>
+<p class="note">${escapeHtml(t.contextCaveat)}</p>`;
 }
 
 /**
@@ -343,8 +391,9 @@ export function renderAllLocales(
   gap: Gap,
   plan?: Roadmap,
   tables?: Partial<Record<Locale, Translations | undefined>>,
+  context: readonly ContextNote[] = [],
 ): Record<Locale, string> {
   return Object.fromEntries(
-    LOCALES.map((l) => [l, renderTargetPage(target, gap, l, plan, tables?.[l])]),
+    LOCALES.map((l) => [l, renderTargetPage(target, gap, l, plan, tables?.[l], context)]),
   ) as Record<Locale, string>;
 }

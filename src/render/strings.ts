@@ -79,6 +79,14 @@ const en = {
   targetMet: 'Target met.',
   deadlinePassed: 'The deadline has passed.',
 
+  contextHeading: 'What the government says about this',
+  contextCaveat:
+    'Everything in this section is attributed. These are statements the named body has made, ' +
+    'reported here with their sources — not this page\'s assessment of whether they are right.',
+  kindPurpose: 'stated purpose',
+  kindPlan: 'stated plan',
+  kindEvent: 'recorded event',
+
   sourcesHeading: 'Where these figures come from',
   sourceLinkLabel: 'source',
   labelTarget: 'Target',
@@ -184,6 +192,14 @@ const hi: Strings = {
     'यह केवल भाग है, पूर्वानुमान नहीं: इससे यह नहीं कहा जा रहा कि यह दर संभव है।',
   targetMet: 'लक्ष्य पूरा हुआ।',
   deadlinePassed: 'समय सीमा बीत चुकी है।',
+
+  contextHeading: 'सरकार इस बारे में क्या कहती है',
+  contextCaveat:
+    'इस भाग की हर बात किसी न किसी को उद्धृत करके कही गई है। ये नामित संस्था के अपने कथन हैं, ' +
+    'स्रोत सहित — यह पृष्ठ यह नहीं कह रहा कि वे सही हैं या ग़लत।',
+  kindPurpose: 'घोषित उद्देश्य',
+  kindPlan: 'घोषित योजना',
+  kindEvent: 'दर्ज घटना',
 
   sourcesHeading: 'ये आँकड़े कहाँ से आए',
   sourceLinkLabel: 'स्रोत',

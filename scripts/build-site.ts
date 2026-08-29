@@ -53,12 +53,13 @@ for (const id of targetIds) {
   // target against nuclear capacity.
   const observations = await store.loadSeries(target.series);
   const plan = (await store.hasRoadmap(id)) ? await store.loadRoadmap(id) : undefined;
+  const context = await store.loadContext(id);
   const gap = computeGap(target, observations);
 
   for (const locale of LOCALES) {
     write(
       join(dir(locale), `${slugFor(target)}.html`),
-      renderTargetPage(target, gap, locale, plan, tables[locale]),
+      renderTargetPage(target, gap, locale, plan, tables[locale], context),
     );
   }
   targets.push(target);

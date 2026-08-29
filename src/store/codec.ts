@@ -14,6 +14,7 @@ import {
   typeIndicator,
 } from '../kernel/target.ts';
 import { isoDate, targetYear } from '../kernel/time.ts';
+import { type ContextKind, type ContextNote, contextNote } from '../kernel/context.ts';
 import type { Observation } from '../kernel/series.ts';
 import { type Milestone, type MilestoneBasis, milestoneStatus, type MilestoneStatus } from '../kernel/roadmap.ts';
 import { type Attested, attest, reject, verify } from '../kernel/verification.ts';
@@ -49,6 +50,65 @@ export const decodeProvenance = (j: JsonProvenance): Provenance =>
         ? byHuman(humanIdentity(j.retrievedBy.id))
         : byAgent(agentIdentity(j.retrievedBy.id)),
   });
+
+/** The attested-value envelope, independent of what is inside it. */
+function encodeVerification(a: Attested<unknown>) {
+  return { provenance: encodeProvenance(a.provenance), verification: a.verification };
+}
+
+export function encodeAttestedString(a: Attested<string>) {
+  return { value: a.value, ...encodeVerification(a) };
+}
+
+type JsonAttestedString = ReturnType<typeof encodeAttestedString>;
+
+export function decodeAttestedString(j: JsonAttestedString): Attested<string> {
+  const base = attest(j.value, decodeProvenance(j.provenance));
+  switch (j.verification.state) {
+    case 'unverified':
+      return base;
+    case 'verified':
+      return verify(base, humanIdentity(j.verification.verifiedBy), j.verification.verifiedOn, j.verification.method);
+    case 'rejected':
+      return reject(base, humanIdentity(j.verification.rejectedBy), j.verification.rejectedOn, j.verification.reason);
+    default: {
+      const state: never = j.verification;
+      throw new KernelError(`Unknown verification state: ${JSON.stringify(state)}`);
+    }
+  }
+}
+
+export type ContextNoteJson = {
+  kind: ContextKind;
+  attributedTo: string;
+  statement: JsonAttestedString;
+  saidOn?: string;
+  recordedBy: string;
+  recordedOn: string;
+};
+
+export const encodeContextNote = (n: ContextNote): ContextNoteJson => ({
+  kind: n.kind,
+  attributedTo: n.attributedTo,
+  statement: encodeAttestedString(n.statement),
+  ...(n.saidOn === undefined ? {} : { saidOn: n.saidOn }),
+  recordedBy: n.recordedBy,
+  recordedOn: n.recordedOn,
+});
+
+const CONTEXT_KINDS = new Set(['stated-purpose', 'stated-plan', 'recorded-event']);
+
+export function decodeContextNote(j: ContextNoteJson): ContextNote {
+  if (!CONTEXT_KINDS.has(j.kind)) throw new KernelError(`Unknown context kind ${j.kind}.`);
+  return contextNote({
+    kind: j.kind,
+    attributedTo: j.attributedTo,
+    statement: decodeAttestedString(j.statement),
+    ...(j.saidOn === undefined ? {} : { saidOn: j.saidOn }),
+    recordedBy: humanIdentity(j.recordedBy),
+    recordedOn: j.recordedOn,
+  });
+}
 
 export function encodeAttestedQuantity(a: Attested<Quantity>) {
   return {

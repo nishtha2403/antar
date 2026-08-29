@@ -6,7 +6,11 @@ import { translationEntry, translations, type Translations } from '../kernel/tra
 import { currentRevision, type Target } from '../kernel/target.ts';
 import { roadmap, type Roadmap } from '../kernel/roadmap.ts';
 import { series, type Series } from '../kernel/series.ts';
+import type { ContextNote } from '../kernel/context.ts';
 import {
+  decodeContextNote,
+  encodeContextNote,
+  type ContextNoteJson,
   decodeMilestone,
   encodeMilestone,
   type MilestoneJson,
@@ -332,6 +336,53 @@ export class Store {
       json.entries.map((e) =>
         translationEntry(e.source, e.text, humanIdentity(e.translatedBy), e.translatedOn, e.note),
       ),
+    );
+  }
+
+  /**
+   * Persists context notes for a target, one immutable file each.
+   *
+   * Kept beside the target because a statement about why a promise exists is
+   * only meaningful next to that promise.
+   */
+  async saveContext(targetId: string, notes: readonly ContextNote[]): Promise<void> {
+    const dir = join(this.root, 'targets', targetId, 'context');
+    const existing = existsSync(dir)
+      ? (await readdir(dir)).filter((f) => /^c-\d{4}(-r\d{4})?\.json$/.test(f))
+      : [];
+    for (const [index, note] of notes.entries()) {
+      const key = String(index + 1).padStart(4, '0');
+      const revisions = existing.filter((f) => f.startsWith(`c-${key}`)).sort();
+      const encoded = Store.json(encodeContextNote(note));
+      if (revisions.length > 0) {
+        const current = await readFile(join(dir, revisions[revisions.length - 1] as string), 'utf8');
+        if (current === encoded) continue;
+      }
+      const next = String(revisions.length + 1).padStart(4, '0');
+      await this.writeNew(join(dir, `c-${key}-r${next}.json`), encoded);
+    }
+  }
+
+  async loadContext(targetId: string): Promise<ContextNote[]> {
+    const dir = join(this.root, 'targets', targetId, 'context');
+    if (!existsSync(dir)) return [];
+    const pattern = /^c-(\d{4})(?:-r(\d{4}))?\.json$/;
+    const byKey = new Map<string, { file: string; revision: number }[]>();
+    for (const file of await readdir(dir)) {
+      const match = pattern.exec(file);
+      if (!match) continue;
+      const key = match[1] as string;
+      const list = byKey.get(key) ?? [];
+      list.push({ file, revision: match[2] ? Number(match[2]) : 1 });
+      byKey.set(key, list);
+    }
+    return Promise.all(
+      [...byKey.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(async ([, revisions]) => {
+          const operative = revisions.sort((a, b) => a.revision - b.revision).at(-1)!.file;
+          return decodeContextNote(JSON.parse(await readFile(join(dir, operative), 'utf8')) as ContextNoteJson);
+        }),
     );
   }
 

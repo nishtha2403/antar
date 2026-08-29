@@ -39,8 +39,14 @@ This keeps the science-backed, non-partisan positioning honest. Being
 non-partisan is not a claim you make in an About page; it is a property of never
 publishing a sentence you cannot source.
 
-**Decision needed.** If you want the explainer voice instead, say so — it is a
-different product and the kernel needs different guarantees, not more of them.
+**DECIDED, 30 August 2026: measurement pages with sourced context.**
+
+Antar reports figures and attributes context. It does not assert. "The mission's
+stated purpose is X" is publishable; "this matters because X" is not. Where a
+voice is wanted later, it goes in a separately signed analysis stream that never
+presents itself as the data.
+
+This resolves open decisions 1 and 2 in §10. Everything below follows from it.
 
 ---
 
@@ -230,8 +236,8 @@ Build in this order:
 
 ## 10. Open decisions
 
-1. **Measurement or explainer?** (§1) Everything else follows.
-2. **Is "why this matters" always cited, never asserted?**
+1. ~~Measurement or explainer?~~ **Decided: measurement with sourced context.**
+2. ~~Is "why this matters" always cited, never asserted?~~ **Decided: always cited.**
 3. **One repo or three?** (§2)
 4. **Does trend data influence selection, or only timing?** (§5)
 5. **What is the first category, and the next three topics?**
