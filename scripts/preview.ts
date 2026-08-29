@@ -21,8 +21,9 @@ const target = await store.loadTarget('NEM-2047-100GW');
 const observations = await store.loadSeries('cea-nuclear-installed-capacity');
 // Absent until recorded, and unverified milestones do not render even then.
 const plan = (await store.hasRoadmap(target.id)) ? await store.loadRoadmap(target.id) : undefined;
+const tables = { hi: await store.loadTranslations('hi') };
 
-const pages = renderAllLocales(target, computeGap(target, observations), plan);
+const pages = renderAllLocales(target, computeGap(target, observations), plan, tables);
 for (const locale of LOCALES) {
   const path = `${outDir}/${pagePath('nem-2047-100gw', locale)}`;
   mkdirSync(dirname(path), { recursive: true });

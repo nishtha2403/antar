@@ -112,6 +112,12 @@ const en = {
   notSayingCause: 'It makes no claim about why the gap exists.',
 
   footer: 'Every figure carries its source. No unverified figure is published.',
+  untranslatedNote: (n: number) =>
+    n === 0
+      ? 'Source documents are cited by their own titles, in the language they were published in.'
+      : `${n} passage${n === 1 ? '' : 's'} on this page ${n === 1 ? 'is' : 'are'} still shown in English, ` +
+        'marked with a dotted underline: no translation has been recorded for them. Source documents ' +
+        'are always cited by their own titles, in the language they were published in.',
 
   /** Label for the link to the other language. Written in the target language. */
   switchToHi: 'हिन्दी में पढ़ें',
@@ -212,6 +218,11 @@ const hi: Strings = {
   notSayingCause: 'यह अंतर के कारण के बारे में कोई दावा नहीं करता।',
 
   footer: 'हर आँकड़े के साथ उसका स्रोत है। कोई भी असत्यापित आँकड़ा प्रकाशित नहीं होता।',
+  untranslatedNote: (n: number) =>
+    n === 0
+      ? 'स्रोत दस्तावेज़ों के नाम उसी भाषा में दिए गए हैं जिसमें वे प्रकाशित हुए।'
+      : `इस पृष्ठ पर ${n} अंश अब भी अंग्रेज़ी में हैं, बिंदुदार रेखा से चिह्नित: उनका अनुवाद दर्ज नहीं है। ` +
+        'स्रोत दस्तावेज़ों के नाम हमेशा उसी भाषा में रहते हैं जिसमें वे प्रकाशित हुए।',
 
   switchToHi: 'हिन्दी में पढ़ें',
   switchToEn: 'Read in English',

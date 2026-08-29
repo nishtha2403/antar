@@ -44,10 +44,16 @@ for (const id of targetIds) {
   const target = await store.loadTarget(id);
   const observations = await store.loadSeries('cea-nuclear-installed-capacity');
   const plan = (await store.hasRoadmap(id)) ? await store.loadRoadmap(id) : undefined;
+  const tables: Partial<Record<Locale, Awaited<ReturnType<Store['loadTranslations']>>>> = {
+    hi: await store.loadTranslations('hi'),
+  };
   const gap = computeGap(target, observations);
 
   for (const locale of LOCALES) {
-    write(join(dir(locale), `${slugFor(target)}.html`), renderTargetPage(target, gap, locale, plan));
+    write(
+      join(dir(locale), `${slugFor(target)}.html`),
+      renderTargetPage(target, gap, locale, plan, tables[locale]),
+    );
   }
   targets.push(target);
 }

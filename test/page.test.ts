@@ -3,6 +3,7 @@ import { computeGap } from '../src/kernel/gap.ts';
 import { quantity } from '../src/kernel/quantity.ts';
 import { series } from '../src/kernel/series.ts';
 import { milestoneStatus, roadmap } from '../src/kernel/roadmap.ts';
+import { translationEntry, translations } from '../src/kernel/translation.ts';
 import { reviseTarget, targetId } from '../src/kernel/target.ts';
 import { isoDate, targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
@@ -286,5 +287,73 @@ describe('site navigation', () => {
   it('says how many indicators exist rather than implying completeness', () => {
     expect(renderIndex([nuclearTarget()], 'en')).toContain('1 indicator published');
     expect(renderIndex([nuclearTarget()], 'en')).toContain('Hisaab is not built at all');
+  });
+});
+
+describe('recorded text is translated only where a translation is recorded', () => {
+  const hindi = translations('hi', [
+    translationEntry(
+      '100 GW of nuclear power capacity by 2047',
+      '2047 तक 100 गीगावाट परमाणु बिजली क्षमता',
+      FOUNDER,
+      '2026-08-30',
+    ),
+  ]);
+
+  const render = (locale: Locale, table?: ReturnType<typeof translations>) => {
+    const target = nuclearTarget();
+    return renderTargetPage(target, computeGap(target, capacity('8.18')), locale, undefined, table);
+  };
+
+  it('uses the recorded translation', () => {
+    expect(render('hi', hindi)).toContain('2047 तक 100 गीगावाट परमाणु बिजली क्षमता');
+  });
+
+  it('marks untranslated text rather than showing it as though translated', () => {
+    // The measure has no entry, so it falls back to English inside a marked span.
+    const html = render('hi', hindi);
+    expect(html).toContain('<span class="untranslated" lang="en">');
+    expect(html).toContain('Installed nuclear electricity generation capacity');
+  });
+
+  it('counts the fallbacks and says so on the page', () => {
+    expect(render('hi', hindi)).toMatch(/इस पृष्ठ पर \d+ अंश अब भी अंग्रेज़ी में हैं/);
+  });
+
+  it('says only that citations stay in their own language when nothing fell back', () => {
+    const full = translations('hi', [
+      ...[...hindi.entries.entries()],
+      translationEntry(
+        'Installed nuclear electricity generation capacity, all-India',
+        'अखिल भारतीय परमाणु बिजली क्षमता',
+        FOUNDER,
+        '2026-08-30',
+      ),
+      translationEntry(
+        'CEA Installed Capacity Report, All-India, Nuclear',
+        'सीईए स्थापित क्षमता रिपोर्ट',
+        FOUNDER,
+        '2026-08-30',
+      ),
+      translationEntry('Ministry of Finance', 'वित्त मंत्रालय', FOUNDER, '2026-08-30'),
+    ]);
+    const html = render('hi', full);
+    expect(html).not.toContain('class="untranslated"');
+    expect(html).toContain('स्रोत दस्तावेज़ों के नाम उसी भाषा में');
+  });
+
+  it('never marks anything on the English page', () => {
+    expect(render('en')).not.toContain('class="untranslated"');
+  });
+
+  it('puts the translated title in the tab, without markup', () => {
+    expect(render('hi', hindi)).toContain('<title>2047 तक 100 गीगावाट परमाणु बिजली क्षमता — अंतर</title>');
+  });
+
+  it('refuses a translation identical to its source', () => {
+    // An untranslated entry is worse than a missing one: it renders as translated.
+    expect(() => translationEntry('Private sector', 'Private sector', FOUNDER, '2026-08-30')).toThrow(
+      /identical to the source/,
+    );
   });
 });

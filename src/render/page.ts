@@ -3,6 +3,7 @@ import { displayName } from '../kernel/people.ts';
 import { citation } from '../kernel/provenance.ts';
 import { formatQuantity } from '../kernel/quantity.ts';
 import { reconcile, type Roadmap } from '../kernel/roadmap.ts';
+import { inLocale, type Translations } from '../kernel/translation.ts';
 import { currentRevision, type Target } from '../kernel/target.ts';
 import { publishTarget } from './publish.ts';
 import { type Locale, LOCALES, relativeHref, type Strings, STRINGS } from './strings.ts';
@@ -51,8 +52,26 @@ export function renderTargetPage(
   gap: Gap,
   locale: Locale,
   plan?: Roadmap,
+  table?: Translations,
 ): string {
   const t = STRINGS[locale];
+
+  /**
+   * Recorded text, in this locale where a translation exists.
+   *
+   * Untranslated text renders in English inside a marked span with `lang="en"`,
+   * so a reader can see which parts have not been translated and a screen reader
+   * switches voice. Silently showing English would let a partly-translated page
+   * read as a fully translated one.
+   */
+  const untranslated: string[] = [];
+  const tr = (source: string): string => {
+    if (locale === 'en') return escapeHtml(source);
+    const rendered = inLocale(source, table);
+    if (rendered.translated) return escapeHtml(rendered.text);
+    untranslated.push(source);
+    return `<span class="untranslated" lang="en">${escapeHtml(source)}</span>`;
+  };
   const published = publishTarget(target);
   const revision = currentRevision(target);
   const cls = classLabel(t, published.classification);
@@ -105,7 +124,7 @@ export function renderTargetPage(
 <html lang="${t.htmlLang}" dir="${t.dir}">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${escapeHtml(target.title)} — Antar</title>
+<title>${tr(target.title).replace(/<[^>]+>/g, '')} — ${escapeHtml(t.siteName)}</title>
 ${alternates}
 <style>
   :root { color-scheme: light dark; --ink:#1a1a1a; --dim:#5a5a5a; --line:#d8d4cc; --bg:#faf8f4;
@@ -154,14 +173,15 @@ ${alternates}
   a { color:inherit; }
   .roadmap th { font-weight:500; color:var(--ink); font-size:.9rem; padding-right:.75rem; }
   .actors { color:var(--dim); font-size:.8rem; font-weight:400; }
+  .untranslated { opacity:.82; border-bottom:1px dotted var(--line); }
   .roadmap td.when { font-size:.75rem; line-height:1.35; }
   footer { margin-top:3rem; padding-top:1rem; border-top:1px solid var(--line); font-size:.8rem; color:var(--dim); }
 </style>
 
 <nav>${home} · ${switchLinks}</nav>
 
-<h1>${escapeHtml(target.title)}</h1>
-<p class="measure">${escapeHtml(target.measure.measure)}</p>
+<h1>${tr(target.title)}</h1>
+<p class="measure">${tr(target.measure.measure)}</p>
 <p><span class="tag">${escapeHtml(cls.label)}</span></p>
 
 <div class="promise">
@@ -171,8 +191,8 @@ ${alternates}
     <span>${escapeHtml(t.dueLabel)}</span><b>${published.dueBy}</b>
   </div>
   <p class="promise-detail">${escapeHtml(
-    t.promiseDetail(gap.promisedBy, gap.promisedOn, gap.windowYears),
-  )}</p>
+    t.promiseDetail('\u0000', gap.promisedOn, gap.windowYears),
+  ).replace('\u0000', tr(gap.promisedBy))}</p>
 ${
   gap.wasRevised
     ? `  <p class="promise-revised">${escapeHtml(t.originallyPromised(gap.originallyPromisedOn))}</p>`
@@ -223,16 +243,16 @@ ${gap.elapsed ? `<p class="note">${escapeHtml(t.noVerdict)}</p>` : ''}
 <ul>
   <li><strong>${escapeHtml(t.labelTarget)}:</strong> ${escapeHtml(published.figure.citation)} —
       <a href="${escapeHtml(published.figure.sourceUrl)}">${escapeHtml(t.sourceLinkLabel)}</a>.
-      ${escapeHtml(t.announcedBy(published.announcedBy, revision.announcedOn))}
+      ${escapeHtml(t.announcedBy('\u0000', revision.announcedOn)).replace('\u0000', tr(published.announcedBy))}
       ${escapeHtml(t.verifiedBy(published.figure.verifiedBy, published.figure.verifiedOn))}</li>
   <li><strong>${escapeHtml(t.labelAchieved)}:</strong> ${escapeHtml(citation(gap.observed.provenance))} —
       <a href="${escapeHtml(gap.observed.provenance.sourceUrl)}">${escapeHtml(t.sourceLinkLabel)}</a>.
       ${escapeHtml(t.verifiedBy(displayName(gap.observed.verification.verifiedBy), gap.observed.verification.verifiedOn))}</li>
-  <li><strong>${escapeHtml(t.labelMeasure)}:</strong> ${escapeHtml(target.measure.sourceSeries)},
+  <li><strong>${escapeHtml(t.labelMeasure)}:</strong> ${tr(target.measure.sourceSeries)},
       ${escapeHtml(target.measure.vintage === 'current' ? t.vintageCurrent : t.vintageLastAvailable)}.</li>
 ${
   target.measure.excludes
-    ? `  <li><strong>${escapeHtml(t.labelExcludes)}:</strong> ${escapeHtml(target.measure.excludes)}</li>`
+    ? `  <li><strong>${escapeHtml(t.labelExcludes)}:</strong> ${tr(target.measure.excludes)}</li>`
     : ''
 }
 </ul>
@@ -242,14 +262,14 @@ ${
     ? `<h2>${escapeHtml(t.revisedHeading)}</h2>
 <ol>
 ${published.revisionHistory
-  .map((r) => `  <li>${escapeHtml(r.recordedOn)} — ${escapeHtml(r.note)}</li>`)
+  .map((r) => `  <li>${escapeHtml(r.recordedOn)} — ${tr(r.note)}</li>`)
   .join('\n')}
 </ol>
 <p class="note">${escapeHtml(t.revisedNote)}</p>`
     : ''
 }
 
-${plan ? renderRoadmap(t, target, gap, plan) : ''}
+${plan ? renderRoadmap(t, gap, plan, tr) : ''}
 
 <h2>${escapeHtml(t.notSayingHeading)}</h2>
 <ul>
@@ -257,6 +277,12 @@ ${plan ? renderRoadmap(t, target, gap, plan) : ''}
   <li>${escapeHtml(t.notSayingCause)}</li>
   <li>${escapeHtml(cls.note)}</li>
 </ul>
+
+${
+  locale !== 'en'
+    ? `<p class="note">${escapeHtml(t.untranslatedNote(untranslated.length))}</p>`
+    : ''
+}
 
 <footer>Antar · ${escapeHtml(target.id)}<br>${escapeHtml(t.footer)}</footer>
 </html>
@@ -271,7 +297,12 @@ ${plan ? renderRoadmap(t, target, gap, plan) : ''}
  * and the actors are the ones the source names rather than any this project
  * assigns.
  */
-function renderRoadmap(t: Strings, target: Target, gap: Gap, plan: Roadmap): string {
+function renderRoadmap(
+  t: Strings,
+  gap: Gap,
+  plan: Roadmap,
+  tr: (s: string) => string,
+): string {
   const rows = plan.milestones
     .filter((m) => m.value.verification.state === 'verified')
     .map((m) => {
@@ -283,7 +314,7 @@ function renderRoadmap(t: Strings, target: Target, gap: Gap, plan: Roadmap): str
             : t.statusPlanned;
       const basis = m.basis === 'cumulative' ? t.basisCumulative : t.basisIncrement;
       return `    <tr>
-      <th>${escapeHtml(m.label)}<br><span class="actors">${escapeHtml(m.actors.join('; '))}</span></th>
+      <th>${tr(m.label)}<br><span class="actors">${m.actors.map(tr).join('; ')}</span></th>
       <td class="num">${escapeHtml(formatQuantity(m.value.value))}</td>
       <td class="when">${escapeHtml(status)}<br>${escapeHtml(basis)}</td>
     </tr>`;
@@ -311,8 +342,9 @@ export function renderAllLocales(
   target: Target,
   gap: Gap,
   plan?: Roadmap,
+  tables?: Partial<Record<Locale, Translations | undefined>>,
 ): Record<Locale, string> {
   return Object.fromEntries(
-    LOCALES.map((l) => [l, renderTargetPage(target, gap, l, plan)]),
+    LOCALES.map((l) => [l, renderTargetPage(target, gap, l, plan, tables?.[l])]),
   ) as Record<Locale, string>;
 }

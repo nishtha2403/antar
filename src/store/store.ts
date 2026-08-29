@@ -1,7 +1,8 @@
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import { KernelError } from '../kernel/identity.ts';
+import { humanIdentity, KernelError } from '../kernel/identity.ts';
+import { translationEntry, translations, type Translations } from '../kernel/translation.ts';
 import { currentRevision, type Target } from '../kernel/target.ts';
 import { roadmap, type Roadmap } from '../kernel/roadmap.ts';
 import { series, type Series } from '../kernel/series.ts';
@@ -269,6 +270,39 @@ export class Store {
 
   async hasRoadmap(targetId: string): Promise<boolean> {
     return existsSync(join(this.root, 'targets', targetId, 'roadmap'));
+  }
+
+  /**
+   * Persists a locale's translations of recorded text.
+   *
+   * One file per locale per target-independent scope: translations are keyed by
+   * the English string, so the same entry serves every page that uses that
+   * string. Rewritten wholesale rather than appended, because a translation
+   * table is a working document rather than a claim about the world — the claims
+   * are the figures, and those are append-only.
+   */
+  async saveTranslations(table: Translations): Promise<void> {
+    const path = join(this.root, 'translations', `${table.locale}.json`);
+    await mkdir(dirname(path), { recursive: true });
+    const entries = [...table.entries.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([source, entry]) => ({ source, ...entry }));
+    await writeFile(path, Store.json({ locale: table.locale, entries }));
+  }
+
+  async loadTranslations(locale: string): Promise<Translations | undefined> {
+    const path = join(this.root, 'translations', `${locale}.json`);
+    if (!existsSync(path)) return undefined;
+    const json = JSON.parse(await readFile(path, 'utf8')) as {
+      locale: string;
+      entries: { source: string; text: string; translatedBy: string; translatedOn: string; note?: string }[];
+    };
+    return translations(
+      json.locale,
+      json.entries.map((e) =>
+        translationEntry(e.source, e.text, humanIdentity(e.translatedBy), e.translatedOn, e.note),
+      ),
+    );
   }
 
   /**
