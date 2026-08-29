@@ -144,7 +144,9 @@ from zero at a stated precision that travels with the result.
 
 ## Next, per the brief
 
-1. Ratify `CONSTITUTION.md`; write `SUCCESSION.md`. Both are human documents.
+1. Ratify `CONSTITUTION.md`. `SUCCESSION.md` is adopted, and states plainly that it
+   is not yet binding: no removal authority is named (sunset 31 Aug 2027 or the
+   start of G4, whichever is earlier) and the founder can amend it alone.
 2. G1 — the nuclear slice. A human reads the PIB release and records
    `NEM-2047-100GW`; the CEA series needs its real endpoint and parser written
    against the actual page, then hand-checked row by row. The harness, the gap
