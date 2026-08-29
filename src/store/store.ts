@@ -3,8 +3,12 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { KernelError } from '../kernel/identity.ts';
 import { currentRevision, type Target } from '../kernel/target.ts';
+import { roadmap, type Roadmap } from '../kernel/roadmap.ts';
 import { series, type Series } from '../kernel/series.ts';
 import {
+  decodeMilestone,
+  encodeMilestone,
+  type MilestoneJson,
   decodeObservation,
   decodeTarget,
   encodeObservation,
@@ -197,6 +201,35 @@ export class Store {
     if (!existsSync(dir)) return [];
     const entries = await readdir(dir, { withFileTypes: true });
     return entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
+  }
+
+  /**
+   * Persists a roadmap: one immutable file per milestone.
+   *
+   * Lives under the target it belongs to, because a roadmap without its target
+   * is a list of numbers with nothing to reconcile against.
+   */
+  async saveRoadmap(plan: Roadmap): Promise<void> {
+    const dir = join(this.root, 'targets', plan.targetId, 'roadmap');
+    for (const [index, milestone] of plan.milestones.entries()) {
+      const path = join(dir, `m-${String(index + 1).padStart(4, '0')}.json`);
+      if (existsSync(path)) continue;
+      await this.writeNew(path, Store.json(encodeMilestone(milestone)));
+    }
+  }
+
+  async loadRoadmap(targetId: string): Promise<Roadmap> {
+    const dir = join(this.root, 'targets', targetId, 'roadmap');
+    if (!existsSync(dir)) throw new KernelError(`No roadmap recorded for ${targetId}.`);
+    const files = (await readdir(dir)).filter((f) => /^m-\d{4}\.json$/.test(f)).sort();
+    const milestones = await Promise.all(
+      files.map(async (f) => decodeMilestone(JSON.parse(await readFile(join(dir, f), 'utf8')) as MilestoneJson)),
+    );
+    return roadmap(targetId as Target['id'], milestones);
+  }
+
+  async hasRoadmap(targetId: string): Promise<boolean> {
+    return existsSync(join(this.root, 'targets', targetId, 'roadmap'));
   }
 
   /**

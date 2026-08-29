@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { computeGap } from '../src/kernel/gap.ts';
 import { quantity } from '../src/kernel/quantity.ts';
 import { series } from '../src/kernel/series.ts';
-import { reviseTarget } from '../src/kernel/target.ts';
+import { milestoneStatus, roadmap } from '../src/kernel/roadmap.ts';
+import { reviseTarget, targetId } from '../src/kernel/target.ts';
 import { isoDate, targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
 import { renderAllLocales, renderTargetPage, slugFor } from '../src/render/page.ts';
@@ -207,5 +208,50 @@ describe('the measure says what it leaves out', () => {
 
   it('omits the line entirely when a measure excludes nothing', () => {
     expect(page('en')).not.toContain('What this figure leaves out');
+  });
+});
+
+describe('the roadmap section', () => {
+  const plan = (verified = true) =>
+    roadmap(targetId('NEM-2047-100GW'), [
+      {
+        label: 'Balance expected from other parties',
+        value: verified
+          ? verify(attest(quantity('46', 'GW'), pibSource), FOUNDER, '2026-08-30', 'Read against the release.')
+          : attest(quantity('46', 'GW'), pibSource),
+        basis: 'increment' as const,
+        actors: ['Private sector', 'State Governments'],
+        status: milestoneStatus('planned', FOUNDER, '2026-08-30', 'A projection, not an undertaking.'),
+        provenance: pibSource,
+        recordedBy: FOUNDER,
+        recordedOn: isoDate('2026-08-30'),
+      },
+    ]);
+
+  const withPlan = (locale: Locale, verified = true) => {
+    const target = nuclearTarget();
+    return renderTargetPage(target, computeGap(target, capacity('8.18')), locale, plan(verified));
+  };
+
+  it('names the actors the source names, and marks the line planned', () => {
+    const html = withPlan('en');
+    expect(html).toContain('How the target is meant to be reached');
+    expect(html).toContain('Private sector');
+    expect(html).toContain('planned');
+  });
+
+  it('says the named parties have not undertaken to deliver it', () => {
+    expect(withPlan('en')).toContain('no party named below has undertaken to deliver them');
+    expect(withPlan('hi')).toContain('वचन नहीं दिया है');
+  });
+
+  it('does not render an unverified milestone', () => {
+    const html = withPlan('en', false);
+    expect(html).not.toContain('How the target is meant to be reached');
+    expect(html).not.toContain('Private sector');
+  });
+
+  it('omits the section entirely when there is no roadmap', () => {
+    expect(page('en')).not.toContain('How the target is meant to be reached');
   });
 });

@@ -19,8 +19,10 @@ const outDir = process.argv[2] ?? 'build/preview';
 const store = new Store('data');
 const target = await store.loadTarget('NEM-2047-100GW');
 const observations = await store.loadSeries('cea-nuclear-installed-capacity');
+// Absent until recorded, and unverified milestones do not render even then.
+const plan = (await store.hasRoadmap(target.id)) ? await store.loadRoadmap(target.id) : undefined;
 
-const pages = renderAllLocales(target, computeGap(target, observations));
+const pages = renderAllLocales(target, computeGap(target, observations), plan);
 for (const locale of LOCALES) {
   const path = `${outDir}/${pagePath('nem-2047-100gw', locale)}`;
   mkdirSync(dirname(path), { recursive: true });
@@ -30,5 +32,7 @@ for (const locale of LOCALES) {
 const latest = observations.observations[observations.observations.length - 1];
 console.log(
   `\nTarget:       ${target.id} — ${target.classification.value}, ${target.indicatorType.value}\n` +
-    `Observations: ${observations.observations.length} from data/, latest ${latest?.asOf}\n`,
+    `Observations: ${observations.observations.length} from data/, latest ${latest?.asOf}\n` +
+    `Roadmap:      ${plan ? `${plan.milestones.length} milestones, ` +
+      `${plan.milestones.filter((m) => m.value.verification.state === 'verified').length} verified` : 'none recorded'}\n`,
 );

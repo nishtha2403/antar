@@ -14,6 +14,7 @@ import {
 } from '../kernel/target.ts';
 import { isoDate, targetYear } from '../kernel/time.ts';
 import type { Observation } from '../kernel/series.ts';
+import { type Milestone, type MilestoneBasis, milestoneStatus, type MilestoneStatus } from '../kernel/roadmap.ts';
 import { type Attested, attest, reject, verify } from '../kernel/verification.ts';
 
 /**
@@ -219,3 +220,54 @@ export const decodeObservation = (j: ObservationJson): Observation => ({
   asOf: isoDate(j.asOf),
   value: decodeAttestedQuantity(j.value),
 });
+
+export type MilestoneJson = {
+  label: string;
+  value: JsonAttestedQuantity;
+  basis: MilestoneBasis;
+  by?: number;
+  actors: string[];
+  status: { value: string; decidedBy: string; decidedOn: string; rationale: string };
+  provenance: JsonProvenance;
+  recordedBy: string;
+  recordedOn: string;
+};
+
+export const encodeMilestone = (m: Milestone): MilestoneJson => ({
+  label: m.label,
+  value: encodeAttestedQuantity(m.value),
+  basis: m.basis,
+  ...(m.by === undefined ? {} : { by: m.by }),
+  actors: [...m.actors],
+  status: { ...m.status, value: m.status.value },
+  provenance: encodeProvenance(m.provenance),
+  recordedBy: m.recordedBy,
+  recordedOn: m.recordedOn,
+});
+
+const MILESTONE_STATUSES = new Set(['built', 'committed', 'planned']);
+
+export function decodeMilestone(j: MilestoneJson): Milestone {
+  if (!MILESTONE_STATUSES.has(j.status.value)) {
+    throw new KernelError(`Unknown milestone status ${j.status.value}.`);
+  }
+  if (j.basis !== 'cumulative' && j.basis !== 'increment') {
+    throw new KernelError(`Unknown milestone basis ${JSON.stringify(j.basis)}.`);
+  }
+  return {
+    label: j.label,
+    value: decodeAttestedQuantity(j.value),
+    basis: j.basis,
+    ...(j.by === undefined ? {} : { by: targetYear(j.by) }),
+    actors: j.actors,
+    status: milestoneStatus(
+      j.status.value as MilestoneStatus,
+      humanIdentity(j.status.decidedBy),
+      j.status.decidedOn,
+      j.status.rationale,
+    ),
+    provenance: decodeProvenance(j.provenance),
+    recordedBy: humanIdentity(j.recordedBy),
+    recordedOn: isoDate(j.recordedOn),
+  };
+}

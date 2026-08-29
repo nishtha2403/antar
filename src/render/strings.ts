@@ -67,6 +67,20 @@ const en = {
   vintageCurrent: 'current measurement',
   vintageLastAvailable: 'last available measurement',
 
+  roadmapHeading: 'How the target is meant to be reached',
+  roadmapCaveat:
+    'This is the roadmap the government has published. Lines marked planned are its projections: ' +
+    'no party named below has undertaken to deliver them, and this page does not say that any of ' +
+    'them is responsible for the shortfall.',
+  roadmapReconciles: (total: string) => `The roadmap accounts for ${total}, which matches the target.`,
+  roadmapGap: (total: string, missing: string) =>
+    `The roadmap accounts for ${total}, leaving ${missing} the published plan does not explain.`,
+  statusBuilt: 'built',
+  statusCommitted: 'committed',
+  statusPlanned: 'planned',
+  basisCumulative: 'running total',
+  basisIncrement: 'addition',
+
   revisedHeading: 'This target has been revised',
   revisedNote: 'The original target is preserved in the record and was not overwritten.',
 
@@ -130,6 +144,20 @@ const hi: Strings = {
   labelExcludes: 'यह आँकड़ा क्या छोड़ता है',
   vintageCurrent: 'वर्तमान माप',
   vintageLastAvailable: 'अंतिम उपलब्ध माप',
+
+  roadmapHeading: 'लक्ष्य तक पहुँचने की योजना',
+  roadmapCaveat:
+    'यह सरकार द्वारा प्रकाशित योजना है। जिन पंक्तियों पर "नियोजित" लिखा है वे सरकार के अनुमान हैं: ' +
+    'नीचे नामित किसी भी पक्ष ने इन्हें पूरा करने का वचन नहीं दिया है, और यह पृष्ठ यह नहीं कहता कि ' +
+    'उनमें से कोई कमी के लिए ज़िम्मेदार है।',
+  roadmapReconciles: (total: string) => `योजना ${total} तक का हिसाब देती है, जो लक्ष्य के बराबर है।`,
+  roadmapGap: (total: string, missing: string) =>
+    `योजना ${total} तक का हिसाब देती है; ${missing} के लिए प्रकाशित योजना में कोई स्पष्टीकरण नहीं है।`,
+  statusBuilt: 'बन चुका',
+  statusCommitted: 'वचनबद्ध',
+  statusPlanned: 'नियोजित',
+  basisCumulative: 'कुल योग',
+  basisIncrement: 'अतिरिक्त',
 
   revisedHeading: 'इस लक्ष्य में बदलाव हुआ है',
   revisedNote: 'मूल लक्ष्य अभिलेख में सुरक्षित है; उसे मिटाया नहीं गया।',

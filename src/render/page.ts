@@ -2,6 +2,7 @@ import type { Gap } from '../kernel/gap.ts';
 import { displayName } from '../kernel/people.ts';
 import { citation } from '../kernel/provenance.ts';
 import { formatQuantity } from '../kernel/quantity.ts';
+import { reconcile, type Roadmap } from '../kernel/roadmap.ts';
 import { currentRevision, type Target } from '../kernel/target.ts';
 import { publishTarget } from './publish.ts';
 import { type Locale, LOCALES, relativeHref, type Strings, STRINGS } from './strings.ts';
@@ -45,7 +46,12 @@ function classLabel(t: Strings, cls: string): { label: string; note: string } {
   }
 }
 
-export function renderTargetPage(target: Target, gap: Gap, locale: Locale): string {
+export function renderTargetPage(
+  target: Target,
+  gap: Gap,
+  locale: Locale,
+  plan?: Roadmap,
+): string {
   const t = STRINGS[locale];
   const published = publishTarget(target);
   const revision = currentRevision(target);
@@ -141,6 +147,9 @@ ${alternates}
   ol, ul { padding-left:1.1rem; margin:.5rem 0; }
   li { font-size:.875rem; color:var(--dim); margin:.45rem 0; }
   a { color:inherit; }
+  .roadmap th { font-weight:500; color:var(--ink); font-size:.9rem; padding-right:.75rem; }
+  .actors { color:var(--dim); font-size:.8rem; font-weight:400; }
+  .roadmap td.when { font-size:.75rem; line-height:1.35; }
   footer { margin-top:3rem; padding-top:1rem; border-top:1px solid var(--line); font-size:.8rem; color:var(--dim); }
 </style>
 
@@ -235,6 +244,8 @@ ${published.revisionHistory
     : ''
 }
 
+${plan ? renderRoadmap(t, target, gap, plan) : ''}
+
 <h2>${escapeHtml(t.notSayingHeading)}</h2>
 <ul>
   <li>${escapeHtml(t.notSayingIndividual)}</li>
@@ -247,9 +258,56 @@ ${published.revisionHistory
 `;
 }
 
+/**
+ * The roadmap section.
+ *
+ * Only verified milestones render, like every other figure. The status of each
+ * line is printed beside it, so a projection is never mistaken for a commitment,
+ * and the actors are the ones the source names rather than any this project
+ * assigns.
+ */
+function renderRoadmap(t: Strings, target: Target, gap: Gap, plan: Roadmap): string {
+  const rows = plan.milestones
+    .filter((m) => m.value.verification.state === 'verified')
+    .map((m) => {
+      const status =
+        m.status.value === 'built'
+          ? t.statusBuilt
+          : m.status.value === 'committed'
+            ? t.statusCommitted
+            : t.statusPlanned;
+      const basis = m.basis === 'cumulative' ? t.basisCumulative : t.basisIncrement;
+      return `    <tr>
+      <th>${escapeHtml(m.label)}<br><span class="actors">${escapeHtml(m.actors.join('; '))}</span></th>
+      <td class="num">${escapeHtml(formatQuantity(m.value.value))}</td>
+      <td class="when">${escapeHtml(status)}<br>${escapeHtml(basis)}</td>
+    </tr>`;
+    });
+
+  if (rows.length === 0) return '';
+
+  const sums = reconcile(gap.target.value, plan);
+  const summary = sums.reconciles
+    ? t.roadmapReconciles(formatQuantity(sums.total))
+    : t.roadmapGap(formatQuantity(sums.total), formatQuantity(sums.difference));
+
+  return `<h2>${escapeHtml(t.roadmapHeading)}</h2>
+<table class="roadmap">
+  <tbody>
+${rows.join('\n')}
+  </tbody>
+</table>
+<p class="pct">${escapeHtml(summary)}</p>
+<p class="note">${escapeHtml(t.roadmapCaveat)}</p>`;
+}
+
 /** Renders every locale for one target. Keyed by locale, ready to write to disk. */
-export function renderAllLocales(target: Target, gap: Gap): Record<Locale, string> {
+export function renderAllLocales(
+  target: Target,
+  gap: Gap,
+  plan?: Roadmap,
+): Record<Locale, string> {
   return Object.fromEntries(
-    LOCALES.map((l) => [l, renderTargetPage(target, gap, l)]),
+    LOCALES.map((l) => [l, renderTargetPage(target, gap, l, plan)]),
   ) as Record<Locale, string>;
 }
