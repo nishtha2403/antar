@@ -117,11 +117,17 @@ export class Store {
   }
 
   /**
-   * Persists a series: its measure once, then one immutable file per observation.
+   * Persists a series: its measure once, then immutable observation files.
    *
-   * Same append-only rule as revisions. A re-run adds new dates and leaves
-   * existing files byte-for-byte alone, so a figure that has been verified
-   * cannot be quietly replaced by a later scrape of the same month.
+   * An observation can be superseded but never rewritten. Files are named
+   * `obs-<date>-r0001.json`, and saving a date that already exists writes the
+   * next revision rather than replacing the current one, so the earlier record —
+   * including what it claimed about who verified it and how — stays readable.
+   *
+   * This is not hypothetical tidiness. A figure recorded as verified can later
+   * turn out not to have been, and the honest repair is a new revision saying so
+   * on top of a preserved original, not a quiet edit that leaves no trace of the
+   * claim ever having been made.
    */
   async saveSeries(slug: string, s: Series): Promise<void> {
     const dir = join(this.root, 'series', slug);
@@ -129,25 +135,59 @@ export class Store {
     if (!existsSync(measurePath)) {
       await this.writeNew(measurePath, Store.json({ slug, measure: s.measure }));
     }
+    const existing = await this.observationFiles(slug);
     for (const observation of s.observations) {
-      const path = join(dir, `obs-${observation.asOf}.json`);
-      if (existsSync(path)) continue;
-      await this.writeNew(path, Store.json(encodeObservation(observation)));
+      const revisions = existing.get(observation.asOf) ?? [];
+      const encoded = Store.json(encodeObservation(observation));
+      // Identical content is not a new revision; re-running a scrape is not an event.
+      if (revisions.length > 0) {
+        const current = await readFile(join(dir, revisions[revisions.length - 1] as string), 'utf8');
+        if (current === encoded) continue;
+      }
+      const next = String(revisions.length + 1).padStart(4, '0');
+      await this.writeNew(join(dir, `obs-${observation.asOf}-r${next}.json`), encoded);
     }
   }
 
+  /** Observation filenames per date, oldest revision first. */
+  private async observationFiles(slug: string): Promise<Map<string, string[]>> {
+    const dir = join(this.root, 'series', slug);
+    if (!existsSync(dir)) return new Map();
+    const pattern = /^obs-(\d{4}-\d{2}-\d{2})(?:-r(\d{4}))?\.json$/;
+    const parsed: { file: string; date: string; revision: number }[] = [];
+    for (const file of await readdir(dir)) {
+      const match = pattern.exec(file);
+      if (!match) continue;
+      // A file with no -rNNNN suffix is revision 1, from before revisions existed.
+      parsed.push({ file, date: match[1] as string, revision: match[2] ? Number(match[2]) : 1 });
+    }
+
+    const byDate = new Map<string, string[]>();
+    // Sorted by revision number, not by filename: "-r0002.json" sorts before
+    // ".json" lexically, because '-' precedes '.', so a string sort silently
+    // returns the superseded record as the operative one.
+    for (const { file, date } of parsed.sort((a, b) => a.date.localeCompare(b.date) || a.revision - b.revision)) {
+      const list = byDate.get(date);
+      if (list) list.push(file);
+      else byDate.set(date, [file]);
+    }
+    return byDate;
+  }
+
+  /** The operative version of each observation: the highest revision on file. */
   async loadSeries(slug: string): Promise<Series> {
     const dir = join(this.root, 'series', slug);
     if (!existsSync(dir)) throw new KernelError(`No series named ${slug} in the store.`);
     const header = JSON.parse(await readFile(join(dir, 'measure.json'), 'utf8')) as MeasureJson;
-    const files = (await readdir(dir)).filter((f) => /^obs-\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
-    if (files.length === 0) {
+    const byDate = await this.observationFiles(slug);
+    if (byDate.size === 0) {
       throw new KernelError(`Series ${slug} has a measure but no observations.`);
     }
     const observations = await Promise.all(
-      files.map(async (f) =>
-        decodeObservation(JSON.parse(await readFile(join(dir, f), 'utf8')) as ObservationJson),
-      ),
+      [...byDate.values()].map(async (revisions) => {
+        const operative = revisions[revisions.length - 1] as string;
+        return decodeObservation(JSON.parse(await readFile(join(dir, operative), 'utf8')) as ObservationJson);
+      }),
     );
     return series(header.measure, observations);
   }

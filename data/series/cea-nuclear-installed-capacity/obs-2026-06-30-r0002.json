@@ -1,0 +1,24 @@
+{
+  "asOf": "2026-06-30",
+  "value": {
+    "value": {
+      "digits": "8780",
+      "scale": 3,
+      "unit": "GW"
+    },
+    "provenance": {
+      "sourceUrl": "https://cea.nic.in/wp-content/uploads/installed/2026/06/Website_June.pdf",
+      "sourceTitle": "Installed Capacity Report, as on 2026-06-30",
+      "publisher": "Central Electricity Authority",
+      "retrievedOn": "2026-08-29",
+      "retrievedBy": {
+        "kind": "agent",
+        "id": "cea-harvester"
+      },
+      "locator": "ALL INDIA, Total, Nuclear"
+    },
+    "verification": {
+      "state": "unverified"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { mkdtemp, readdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -134,7 +134,7 @@ describe('series persistence', () => {
   it('adds new dates on a re-run and leaves existing files alone', async () => {
     await store.saveSeries('cea-nuclear', series(nuclearMeasure, [observation('2025-12-31', '8.780')]));
     const before = await readFile(
-      join(root, 'series', 'cea-nuclear', 'obs-2025-12-31.json'),
+      join(root, 'series', 'cea-nuclear', 'obs-2025-12-31-r0001.json'),
       'utf8',
     );
     await store.saveSeries(
@@ -142,7 +142,9 @@ describe('series persistence', () => {
       series(nuclearMeasure, [observation('2025-12-31', '9.999'), observation('2026-01-31', '8.780')]),
     );
     // A later scrape cannot silently replace a figure a person already signed off.
-    expect(await readFile(join(root, 'series', 'cea-nuclear', 'obs-2025-12-31.json'), 'utf8')).toBe(before);
+    expect(
+      await readFile(join(root, 'series', 'cea-nuclear', 'obs-2025-12-31-r0001.json'), 'utf8'),
+    ).toBe(before);
     expect((await store.loadSeries('cea-nuclear')).observations).toHaveLength(2);
   });
 
@@ -156,9 +158,56 @@ describe('series persistence', () => {
     // as having been retrieved by a person.
     await store.saveSeries('cea-nuclear', series(nuclearMeasure, [observation('2025-12-31', '8.780')]));
     const raw = JSON.parse(
-      await readFile(join(root, 'series', 'cea-nuclear', 'obs-2025-12-31.json'), 'utf8'),
+      await readFile(join(root, 'series', 'cea-nuclear', 'obs-2025-12-31-r0001.json'), 'utf8'),
     );
     expect(raw.value.provenance.retrievedBy).toEqual({ kind: 'agent', id: 'pib-harvester' });
     expect(raw.value.verification.verifiedBy).toBe('nishtha.sharma');
+  });
+});
+
+describe('observations can be superseded but never rewritten', () => {
+  const at = (asOf: string, verified: boolean, method = 'checked') => ({
+    asOf: isoDate(asOf),
+    value: verified
+      ? verify(attest(quantity('8.780', 'GW'), ceaSource), FOUNDER, asOf, method)
+      : attest(quantity('8.780', 'GW'), ceaSource),
+  });
+
+  it('keeps the original when a verification claim is withdrawn', async () => {
+    await store.saveSeries('cea', series(nuclearMeasure, [at('2025-12-31', true)]));
+    await store.saveSeries('cea', series(nuclearMeasure, [at('2025-12-31', false)]));
+
+    const files = (await readdir(join(root, 'series', 'cea'))).filter((f) => f.startsWith('obs-'));
+    expect(files).toHaveLength(2);
+
+    // The operative record says unverified; the original claim is still readable.
+    const loaded = await store.loadSeries('cea');
+    expect(loaded.observations[0]?.value.verification.state).toBe('unverified');
+    const [first] = files.sort();
+    const original = JSON.parse(await readFile(join(root, 'series', 'cea', first as string), 'utf8'));
+    expect(original.value.verification.state).toBe('verified');
+  });
+
+  it('orders revisions numerically, not by filename', async () => {
+    // "obs-<date>-r0002.json" sorts before "obs-<date>.json" lexically, because
+    // '-' precedes '.'. A string sort therefore returns the superseded record as
+    // the operative one, which is how a withdrawn verification comes back to life.
+    await store.saveSeries('cea', series(nuclearMeasure, [at('2025-12-31', true)]));
+    await store.saveSeries('cea', series(nuclearMeasure, [at('2025-12-31', false)]));
+    await store.saveSeries('cea', series(nuclearMeasure, [at('2025-12-31', true, 'rechecked')]));
+
+    const loaded = await store.loadSeries('cea');
+    const verification = loaded.observations[0]?.value.verification;
+    expect(verification?.state).toBe('verified');
+    expect(verification?.state === 'verified' && verification.method).toBe('rechecked');
+  });
+
+  it('does not create a revision when nothing changed', async () => {
+    const s = series(nuclearMeasure, [at('2025-12-31', true)]);
+    await store.saveSeries('cea', s);
+    await store.saveSeries('cea', s);
+    await store.saveSeries('cea', s);
+    const files = (await readdir(join(root, 'series', 'cea'))).filter((f) => f.startsWith('obs-'));
+    expect(files).toHaveLength(1);
   });
 });
