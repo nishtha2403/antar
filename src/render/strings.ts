@@ -63,6 +63,7 @@ const en = {
   labelMeasure: 'Measure',
   announcedBy: (who: string, when: string) => `Announced by ${who} on ${when}.`,
   verifiedBy: (who: string, when: string) => `Verified by ${who} on ${when}.`,
+  labelExcludes: 'What this figure leaves out',
   vintageCurrent: 'current measurement',
   vintageLastAvailable: 'last available measurement',
 
@@ -126,6 +127,7 @@ const hi: Strings = {
   labelMeasure: 'मापदंड',
   announcedBy: (who: string, when: string) => `${who} द्वारा ${when} को घोषित।`,
   verifiedBy: (who: string, when: string) => `${who} द्वारा ${when} को सत्यापित।`,
+  labelExcludes: 'यह आँकड़ा क्या छोड़ता है',
   vintageCurrent: 'वर्तमान माप',
   vintageLastAvailable: 'अंतिम उपलब्ध माप',
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { computeGap } from '../src/kernel/gap.ts';
 import { ingest, type ScraperSpec } from '../src/ingest/harness.ts';
 import { verificationCoverage } from '../src/kernel/series.ts';
+import { byAgent } from '../src/kernel/identity.ts';
 import { HARVESTER, nuclearMeasure, nuclearTarget } from './fixtures.ts';
 
 /** A stand-in source shaped like a CEA capacity table. Not real data. */
@@ -30,7 +31,7 @@ const spec = (over: Partial<ScraperSpec> = {}): ScraperSpec => ({
     sourceUrl: 'https://example.invalid/capacity.csv',
     sourceTitle: 'Test capacity table',
     publisher: 'Test publisher',
-    retrievedBy: HARVESTER,
+    retrievedBy: byAgent(HARVESTER),
   },
   minimumRows: 3,
   ...over,

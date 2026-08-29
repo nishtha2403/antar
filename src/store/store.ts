@@ -3,10 +3,15 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { KernelError } from '../kernel/identity.ts';
 import { currentRevision, type Target } from '../kernel/target.ts';
+import { series, type Series } from '../kernel/series.ts';
 import {
+  decodeObservation,
   decodeTarget,
+  encodeObservation,
   encodeRevision,
   encodeTargetHeader,
+  type MeasureJson,
+  type ObservationJson,
   type RevisionJson,
   type TargetHeaderJson,
 } from './codec.ts';
@@ -67,7 +72,7 @@ export class Store {
    * Safe to re-run. Existing revision files are left untouched and never
    * compared away; only genuinely new sequence numbers are written.
    */
-  async saveTarget(target: Target, actorKind: 'human' | 'agent' = 'human'): Promise<void> {
+  async saveTarget(target: Target): Promise<void> {
     const dir = this.targetDir(target.id);
     const headerPath = join(dir, 'target.json');
     if (!existsSync(headerPath)) {
@@ -76,7 +81,7 @@ export class Store {
     for (const revision of target.revisions) {
       const path = join(dir, `rev-${String(revision.seq).padStart(4, '0')}.json`);
       if (existsSync(path)) continue;
-      await this.writeNew(path, Store.json(encodeRevision(revision, actorKind)));
+      await this.writeNew(path, Store.json(encodeRevision(revision)));
     }
   }
 
@@ -109,6 +114,49 @@ export class Store {
   async loadAllTargets(): Promise<Target[]> {
     const ids = await this.listTargetIds();
     return Promise.all(ids.map((id) => this.loadTarget(id)));
+  }
+
+  /**
+   * Persists a series: its measure once, then one immutable file per observation.
+   *
+   * Same append-only rule as revisions. A re-run adds new dates and leaves
+   * existing files byte-for-byte alone, so a figure that has been verified
+   * cannot be quietly replaced by a later scrape of the same month.
+   */
+  async saveSeries(slug: string, s: Series): Promise<void> {
+    const dir = join(this.root, 'series', slug);
+    const measurePath = join(dir, 'measure.json');
+    if (!existsSync(measurePath)) {
+      await this.writeNew(measurePath, Store.json({ slug, measure: s.measure }));
+    }
+    for (const observation of s.observations) {
+      const path = join(dir, `obs-${observation.asOf}.json`);
+      if (existsSync(path)) continue;
+      await this.writeNew(path, Store.json(encodeObservation(observation)));
+    }
+  }
+
+  async loadSeries(slug: string): Promise<Series> {
+    const dir = join(this.root, 'series', slug);
+    if (!existsSync(dir)) throw new KernelError(`No series named ${slug} in the store.`);
+    const header = JSON.parse(await readFile(join(dir, 'measure.json'), 'utf8')) as MeasureJson;
+    const files = (await readdir(dir)).filter((f) => /^obs-\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
+    if (files.length === 0) {
+      throw new KernelError(`Series ${slug} has a measure but no observations.`);
+    }
+    const observations = await Promise.all(
+      files.map(async (f) =>
+        decodeObservation(JSON.parse(await readFile(join(dir, f), 'utf8')) as ObservationJson),
+      ),
+    );
+    return series(header.measure, observations);
+  }
+
+  async listSeriesSlugs(): Promise<string[]> {
+    const dir = join(this.root, 'series');
+    if (!existsSync(dir)) return [];
+    const entries = await readdir(dir, { withFileTypes: true });
+    return entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
   }
 
   /**

@@ -216,6 +216,11 @@ ${gap.elapsed ? `<p class="note">${escapeHtml(t.noVerdict)}</p>` : ''}
       ${escapeHtml(t.verifiedBy(displayName(gap.observed.verification.verifiedBy), gap.observed.verification.verifiedOn))}</li>
   <li><strong>${escapeHtml(t.labelMeasure)}:</strong> ${escapeHtml(target.measure.sourceSeries)},
       ${escapeHtml(target.measure.vintage === 'current' ? t.vintageCurrent : t.vintageLastAvailable)}.</li>
+${
+  target.measure.excludes
+    ? `  <li><strong>${escapeHtml(t.labelExcludes)}:</strong> ${escapeHtml(target.measure.excludes)}</li>`
+    : ''
+}
 </ul>
 
 ${

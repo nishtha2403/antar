@@ -45,7 +45,7 @@ mkdirSync(OUT, { recursive: true });
 const reviewer = FOUNDER;
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-type Row = { month: string; asOn: string; gw: string; mw: string; url: string; notes: number };
+type Row = { month: string; asOn: string; gw: string; mw: string; url: string; notes: number; file: string };
 const rows: Row[] = [];
 const failures: string[] = [];
 const allNotes = new Map<string, string>();
@@ -80,6 +80,7 @@ for (const [year, month] of months(fromArg, toArg)) {
       mw: reading.nuclearMw,
       url: entry.url,
       notes: reading.notes.length,
+      file,
     });
     for (const note of reading.notes) {
       if (/outage|removed|added back/i.test(note)) allNotes.set(note.slice(0, 200), label);
@@ -108,6 +109,14 @@ if (failures.length > 0) {
   console.log(`\n${failures.length} month(s) could not be read:\n`);
   for (const f of failures) console.log(`  ${f}`);
 }
+
+// The manifest is the audit link between a figure and the exact bytes it was
+// read from. Verification later reads this rather than re-fetching, so a person
+// signs off the document they actually looked at.
+writeFileSync(
+  `${OUT}/manifest.json`,
+  `${JSON.stringify({ retrievedOn, readings: rows }, null, 2)}\n`,
+);
 
 console.log(
   `\n${rows.length} reading(s), all unverified. Source documents saved to ${OUT}/.\n` +

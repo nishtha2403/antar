@@ -45,7 +45,21 @@ export function agentIdentity(id: string): AgentIdentity {
   return asAgent(id);
 }
 
-export type Actor = HumanIdentity | AgentIdentity;
+/**
+ * Who did something, tagged with which kind of actor they are.
+ *
+ * `HumanIdentity` and `AgentIdentity` are distinct at compile time and identical
+ * at runtime — both are strings once the brand is erased — so a record that
+ * stores only the id cannot say afterwards whether a person or a scraper
+ * retrieved a document. That distinction is the difference between provenance
+ * and decoration, so it is carried explicitly rather than inferred.
+ */
+export type Actor =
+  | { readonly kind: 'human'; readonly id: HumanIdentity }
+  | { readonly kind: 'agent'; readonly id: AgentIdentity };
+
+export const byHuman = (id: HumanIdentity): Actor => ({ kind: 'human', id });
+export const byAgent = (id: AgentIdentity): Actor => ({ kind: 'agent', id });
 
 export class KernelError extends Error {
   override readonly name = 'KernelError';

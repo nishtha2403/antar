@@ -12,7 +12,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { computeGap } from '../src/kernel/gap.ts';
-import { agentIdentity } from '../src/kernel/identity.ts';
+import { agentIdentity, byAgent } from '../src/kernel/identity.ts';
 import { FOUNDER } from '../src/kernel/people.ts';
 import { provenance } from '../src/kernel/provenance.ts';
 import { quantity } from '../src/kernel/quantity.ts';
@@ -32,7 +32,7 @@ const pib = provenance({
   sourceTitle: 'PLACEHOLDER — PIB release not yet retrieved',
   publisher: 'Press Information Bureau',
   retrievedOn: '2026-08-29',
-  retrievedBy: BOT,
+  retrievedBy: byAgent(BOT),
 });
 
 const cea = provenance({
@@ -40,7 +40,7 @@ const cea = provenance({
   sourceTitle: 'PLACEHOLDER — CEA series not yet retrieved',
   publisher: 'Central Electricity Authority',
   retrievedOn: '2026-08-29',
-  retrievedBy: BOT,
+  retrievedBy: byAgent(BOT),
 });
 
 const measure = {

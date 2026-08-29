@@ -182,3 +182,30 @@ describe('what every page must do', () => {
     );
   });
 });
+
+describe('the measure says what it leaves out', () => {
+  it('renders the exclusion as part of the definition, in both locales', () => {
+    const target = nuclearTarget();
+    const withExclusion = {
+      ...target,
+      measure: {
+        ...target.measure,
+        excludes: 'Capacity that is built but under long-term outage.',
+      },
+    };
+    for (const locale of LOCALES) {
+      const html = renderTargetPage(
+        withExclusion,
+        computeGap(withExclusion, capacity('8.18')),
+        locale,
+      );
+      expect(html).toContain('under long-term outage');
+    }
+    expect(renderTargetPage(withExclusion, computeGap(withExclusion, capacity('8.18')), 'en'))
+      .toContain('What this figure leaves out');
+  });
+
+  it('omits the line entirely when a measure excludes nothing', () => {
+    expect(page('en')).not.toContain('What this figure leaves out');
+  });
+});

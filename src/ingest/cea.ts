@@ -1,5 +1,5 @@
 import type { HumanIdentity } from '../kernel/identity.ts';
-import { KernelError } from '../kernel/identity.ts';
+import { agentIdentity, byAgent, KernelError } from '../kernel/identity.ts';
 import { provenance, type Provenance } from '../kernel/provenance.ts';
 import { divideToScale, type Quantity, quantity } from '../kernel/quantity.ts';
 import { type Observation, series, type Series } from '../kernel/series.ts';
@@ -46,6 +46,9 @@ export type CeaReading = {
    */
   readonly notes: readonly string[];
 };
+
+/** The automated fetcher, named so provenance can say who retrieved a file. */
+export const CEA_HARVESTER = agentIdentity('cea-harvester');
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -179,10 +182,14 @@ export type CeaFetch = {
 };
 
 export const CEA_NUCLEAR_MEASURE: Measure = {
-  measure: 'Installed nuclear electricity generation capacity, all-India, utilities',
+  measure: 'Installed nuclear electricity generation capacity in service, all-India, utilities',
   unit: 'GW',
   sourceSeries: 'CEA Monthly Installed Capacity Report, ALL INDIA Total, Nuclear column',
   vintage: 'current',
+  excludes:
+    'Capacity that is built but under long-term outage. CEA removed 100 MW of nuclear ' +
+    'capacity from this figure with effect from 31 May 2025, to be added back if it ' +
+    'generates again. This is therefore capacity in service, not capacity that exists.',
 };
 
 export type CeaIngestResult = {
@@ -213,7 +220,10 @@ export function ingestCeaNuclear(fetches: readonly CeaFetch[], declaredBy: Human
       sourceTitle: `Installed Capacity Report, as on ${reading.asOn}`,
       publisher: 'Central Electricity Authority',
       retrievedOn: fetched.retrievedOn,
-      retrievedBy: declaredBy,
+      // The document was fetched by the harvester. The human in this function
+      // signature is declaring the megawatt-to-gigawatt reading, not claiming
+      // to have downloaded the file.
+      retrievedBy: byAgent(CEA_HARVESTER),
       locator: 'ALL INDIA, Total, Nuclear',
     });
     observations.push({

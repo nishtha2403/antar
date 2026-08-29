@@ -20,7 +20,10 @@ export type Provenance = {
   readonly publishedOn?: IsoDate;
   /** When we fetched it. Government pages are edited in place without notice. */
   readonly retrievedOn: IsoDate;
-  /** Scraper, agent or person. Not a verification — only a record of retrieval. */
+  /**
+   * Scraper, agent or person, tagged as which. Not a verification — only a
+   * record of who fetched the document.
+   */
   readonly retrievedBy: Actor;
   /** Page, table or section. A 300-page budget PDF is not a citation. */
   readonly locator?: string;

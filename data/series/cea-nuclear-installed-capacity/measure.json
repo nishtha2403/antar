@@ -1,0 +1,10 @@
+{
+  "slug": "cea-nuclear-installed-capacity",
+  "measure": {
+    "measure": "Installed nuclear electricity generation capacity in service, all-India, utilities",
+    "unit": "GW",
+    "sourceSeries": "CEA Monthly Installed Capacity Report, ALL INDIA Total, Nuclear column",
+    "vintage": "current",
+    "excludes": "Capacity that is built but under long-term outage. CEA removed 100 MW of nuclear capacity from this figure with effect from 31 May 2025, to be added back if it generates again. This is therefore capacity in service, not capacity that exists."
+  }
+}

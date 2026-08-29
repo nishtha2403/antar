@@ -31,7 +31,7 @@ describe('guarantee 1 — no publish without verification', () => {
     // compiler sees a well-typed Attested<Quantity> and has no way to know the
     // bytes on disk were never verified. The runtime guard is what catches it.
     const onDisk = JSON.parse(
-      JSON.stringify(encodeAttestedQuantity(attest(quantity('100', 'GW'), pibSource), 'agent')),
+      JSON.stringify(encodeAttestedQuantity(attest(quantity('100', 'GW'), pibSource))),
     );
     const fromDisk = decodeAttestedQuantity(onDisk);
     expect(fromDisk.verification.state).toBe('unverified');

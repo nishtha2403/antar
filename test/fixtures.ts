@@ -1,4 +1,4 @@
-import { agentIdentity } from '../src/kernel/identity.ts';
+import { agentIdentity, byAgent } from '../src/kernel/identity.ts';
 import { provenance } from '../src/kernel/provenance.ts';
 import { quantity } from '../src/kernel/quantity.ts';
 import { classify, createTarget, targetId, typeIndicator } from '../src/kernel/target.ts';
@@ -16,7 +16,7 @@ export const pibSource = provenance({
   publisher: 'Press Information Bureau',
   publishedOn: '2025-02-01',
   retrievedOn: '2026-08-29',
-  retrievedBy: HARVESTER,
+  retrievedBy: byAgent(HARVESTER),
   locator: 'para 3',
 });
 
@@ -34,7 +34,7 @@ export const ceaSource = provenance({
   sourceTitle: 'Installed Capacity Report (placeholder — not yet retrieved)',
   publisher: 'Central Electricity Authority',
   retrievedOn: '2026-08-29',
-  retrievedBy: HARVESTER,
+  retrievedBy: byAgent(HARVESTER),
   locator: 'All-India, Nuclear',
 });
 

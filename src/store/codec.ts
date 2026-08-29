@@ -1,4 +1,4 @@
-import { agentIdentity, humanIdentity, KernelError } from '../kernel/identity.ts';
+import { agentIdentity, byAgent, byHuman, humanIdentity, KernelError } from '../kernel/identity.ts';
 import { provenance, type Provenance } from '../kernel/provenance.ts';
 import { quantityFromJSON, quantityToJSON, type Quantity } from '../kernel/quantity.ts';
 import {
@@ -12,7 +12,8 @@ import {
   type TargetRevision,
   typeIndicator,
 } from '../kernel/target.ts';
-import { targetYear } from '../kernel/time.ts';
+import { isoDate, targetYear } from '../kernel/time.ts';
+import type { Observation } from '../kernel/series.ts';
 import { type Attested, attest, reject, verify } from '../kernel/verification.ts';
 
 /**
@@ -24,24 +25,33 @@ import { type Attested, attest, reject, verify } from '../kernel/verification.ts
  * enters by being validated.
  */
 
-type JsonProvenance = Omit<Provenance, 'retrievedBy'> & { retrievedBy: string; retrievedByKind: 'human' | 'agent' };
+type JsonProvenance = Omit<Provenance, 'retrievedBy'> & {
+  retrievedBy: { kind: 'human' | 'agent'; id: string };
+};
 
-export const encodeProvenance = (p: Provenance, kind: 'human' | 'agent'): JsonProvenance => ({
+/**
+ * The actor's kind travels in the record rather than being supplied by the
+ * caller writing it. An earlier version took it as a parameter, and a scraped
+ * document was duly filed as having been retrieved by a human.
+ */
+export const encodeProvenance = (p: Provenance): JsonProvenance => ({
   ...p,
-  retrievedBy: p.retrievedBy,
-  retrievedByKind: kind,
+  retrievedBy: { kind: p.retrievedBy.kind, id: p.retrievedBy.id },
 });
 
 export const decodeProvenance = (j: JsonProvenance): Provenance =>
   provenance({
     ...j,
-    retrievedBy: j.retrievedByKind === 'human' ? humanIdentity(j.retrievedBy) : agentIdentity(j.retrievedBy),
+    retrievedBy:
+      j.retrievedBy.kind === 'human'
+        ? byHuman(humanIdentity(j.retrievedBy.id))
+        : byAgent(agentIdentity(j.retrievedBy.id)),
   });
 
-export function encodeAttestedQuantity(a: Attested<Quantity>, kind: 'human' | 'agent') {
+export function encodeAttestedQuantity(a: Attested<Quantity>) {
   return {
     value: quantityToJSON(a.value),
-    provenance: encodeProvenance(a.provenance, kind),
+    provenance: encodeProvenance(a.provenance),
     verification: a.verification,
   };
 }
@@ -103,14 +113,14 @@ export const encodeTargetHeader = (t: Target): TargetHeaderJson => ({
   indicatorType: { ...t.indicatorType, value: t.indicatorType.value },
 });
 
-export const encodeRevision = (r: TargetRevision, kind: 'human' | 'agent'): RevisionJson => ({
+export const encodeRevision = (r: TargetRevision): RevisionJson => ({
   seq: r.seq,
   ...(r.supersedes === undefined ? {} : { supersedes: r.supersedes }),
-  value: encodeAttestedQuantity(r.value, kind),
+  value: encodeAttestedQuantity(r.value),
   dueBy: r.dueBy,
   announcedBy: r.announcedBy,
   announcedOn: r.announcedOn,
-  provenance: encodeProvenance(r.provenance, kind),
+  provenance: encodeProvenance(r.provenance),
   recordedBy: r.recordedBy,
   recordedOn: r.recordedOn,
   note: r.note,
@@ -189,3 +199,23 @@ export function decodeTarget(header: TargetHeaderJson, revisions: readonly Revis
   }
   return target;
 }
+
+export type ObservationJson = {
+  asOf: string;
+  value: JsonAttestedQuantity;
+};
+
+export type MeasureJson = {
+  slug: string;
+  measure: Target['measure'];
+};
+
+export const encodeObservation = (o: Observation): ObservationJson => ({
+  asOf: o.asOf,
+  value: encodeAttestedQuantity(o.value),
+});
+
+export const decodeObservation = (j: ObservationJson): Observation => ({
+  asOf: isoDate(j.asOf),
+  value: decodeAttestedQuantity(j.value),
+});

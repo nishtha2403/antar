@@ -102,6 +102,20 @@ export type Measure = {
   /** "CEA Installed Capacity Report, All-India, Nuclear". */
   readonly sourceSeries: string;
   readonly vintage: 'current' | 'last-available';
+  /**
+   * What the measure leaves out, in a reader's words.
+   *
+   * Part of the definition, not a footnote. "Installed nuclear capacity" is
+   * ambiguous between capacity in service and capacity that exists, and the CEA
+   * series means the first: it excludes plant that is built but under long-term
+   * outage. A page that does not say so is not wrong in its arithmetic and is
+   * still misleading, which is the failure G1's hostile reviewer is asked to
+   * find.
+   *
+   * The source's own note is what informs this, but the wording is a human
+   * judgement about what materially qualifies the figure.
+   */
+  readonly excludes?: string;
 };
 
 /**
