@@ -98,3 +98,46 @@ export const quantityFromJSON = (j: { digits: string; scale: number; unit: strin
   scale: j.scale,
   unit: j.unit,
 });
+
+/**
+ * Exact division is not always possible, so division states its precision.
+ *
+ * This is a different act from parsing a source figure, and the rules differ.
+ * A source figure is refused if it cannot be represented exactly, because the
+ * inexactness is a fact about the source. A derived ratio has no exact decimal
+ * form to be faithful to — one third is not a decimal — so it is rounded to a
+ * declared number of places, half away from zero, and the precision is part of
+ * the result rather than a detail of how it was printed.
+ */
+export function divideToScale(
+  numerator: bigint,
+  denominator: bigint,
+  scale: number,
+  unit: string,
+): Quantity {
+  if (denominator === 0n) {
+    throw new KernelError('Division by zero. A zero denominator is a data-quality finding, not a ratio.');
+  }
+  const sign = (numerator < 0n) !== (denominator < 0n) ? -1n : 1n;
+  const a = numerator < 0n ? -numerator : numerator;
+  const b = denominator < 0n ? -denominator : denominator;
+  // Scale up by one extra place, then round half away from zero.
+  const scaled = (a * 10n ** BigInt(scale + 1)) / b;
+  const rounded = (scaled + 5n) / 10n;
+  return { digits: sign * rounded, scale, unit };
+}
+
+/** `a` as a percentage of `b`, to `scale` decimal places. Units must match. */
+export function ratioAsPercent(a: Quantity, b: Quantity, scale = 2): Quantity {
+  assertSameUnit(a, b, 'ratio');
+  const [x, y] = alignedDigits(a, b);
+  return divideToScale(x * 100n, y, scale, '%');
+}
+
+/** Splits a quantity into `parts` equal shares, to `scale` decimal places. */
+export function divideQuantity(q: Quantity, parts: bigint, scale: number): Quantity {
+  return divideToScale(q.digits, parts * 10n ** BigInt(q.scale), scale, q.unit);
+}
+
+export const isNegative = (q: Quantity): boolean => q.digits < 0n;
+export const isZero = (q: Quantity): boolean => q.digits === 0n;

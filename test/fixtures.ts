@@ -19,16 +19,28 @@ export const pibSource = provenance({
 });
 
 /** The G1 vertical slice, used as the worked example throughout the tests. */
+export const nuclearMeasure = {
+  measure: 'Installed nuclear electricity generation capacity, all-India',
+  unit: 'GW',
+  sourceSeries: 'CEA Installed Capacity Report, All-India, Nuclear',
+  vintage: 'current',
+} as const;
+
+/** Placeholder source for the observation series. Not a real retrieval. */
+export const ceaSource = provenance({
+  sourceUrl: 'https://cea.nic.in/installed-capacity-report/?lang=en',
+  sourceTitle: 'Installed Capacity Report (placeholder — not yet retrieved)',
+  publisher: 'Central Electricity Authority',
+  retrievedOn: '2026-08-29',
+  retrievedBy: HARVESTER,
+  locator: 'All-India, Nuclear',
+});
+
 export function nuclearTarget() {
   return createTarget({
     id: targetId('NEM-2047-100GW'),
     title: '100 GW of nuclear power capacity by 2047',
-    measure: {
-      measure: 'Installed nuclear electricity generation capacity, all-India',
-      unit: 'GW',
-      sourceSeries: 'CEA Installed Capacity Report, All-India, Nuclear',
-      vintage: 'current',
-    },
+    measure: nuclearMeasure,
     classification: classify(
       'PROMISE',
       FOUNDER,

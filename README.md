@@ -1,9 +1,15 @@
-# Antar — G0 kernel
+# Antar — G0 kernel, G1 machinery
 
 The distance between the country India was promised and the country it lives in.
 
-This repository is **G0 only**: the schema, the verification state machine, the
-append-only revision store, and the test harness that asserts the guarantees.
+**G0 is complete**: the schema, the verification state machine, the append-only
+revision store, and the test harness that asserts the guarantees.
+
+**G1 is built but unfed**: gap calculation, citizen page, and the fail-loud ingest
+harness all exist and are tested. What they lack is data, and that is deliberate —
+the brief assigns source retrieval and the target record to a human. `data/` stays
+empty until someone reads the PIB release.
+
 No data is published from here. No indicator has been collected.
 
 ## What G0 had to prove
@@ -34,13 +40,25 @@ system ever stops rejecting an unverified figure, `tsc` fails.
 ## Layout
 
 ```
-src/kernel/      the model. brands, money, quantities, provenance, verification, targets
+src/kernel/      the model. brands, money, quantities, provenance, verification,
+                 targets, observation series, gap arithmetic
+src/ingest/      the fail-loud scraper contract. every row enters unverified
 src/render/      the publication boundary. the only way a figure reaches a reader
 src/store/       git-tracked JSON. append-only on disk, not just in memory
 data/            the records themselves. empty until a human reads a source
-scripts/         cast linter, derived SQLite build
+scripts/         cast linter, derived SQLite build, layout preview
 test/            the guarantees, as executable claims
 ```
+
+Look at the page design without any data:
+
+```bash
+node scripts/preview.ts build/preview.html
+```
+
+That renders from placeholder values whose provenance is titled PLACEHOLDER, so
+the marking shows up in the rendered citations. It is for reviewing layout and
+is not an ingest path.
 
 ## Decisions worth knowing before you change anything
 
@@ -68,6 +86,23 @@ JSON is right.
 **No build step.** Everything runs under Node's type stripping, enforced by
 `erasableSyntaxOnly`. No enums, no parameter properties.
 
+**A successful scrape changes nothing.** Every ingested row enters `unverified`,
+and `latestVerified` — not "latest" — is what feeds a gap. The published figure
+moves when a person signs off, not when a fetch succeeds. The harness halts on an
+empty payload, a missing expected field, a collapsed row count, or a row it
+cannot parse; none of those degrade to a shorter table.
+
+**The gap calculation does not forecast and does not attribute.**
+`requiredAnnualAddition` is the remaining quantity divided by the remaining years,
+labelled as division wherever it renders. No institution or individual is named
+by the arithmetic — responsibility is a human-tagged edge, and joining a gap to a
+name is the step that turns an observation into an accusation.
+
+**Rounding is declared where it happens.** A source figure that cannot be
+represented exactly is refused, because the inexactness is a fact about the
+source. A derived ratio has no exact decimal form, so it is rounded half away
+from zero at a stated precision that travels with the result.
+
 ## Honest limits
 
 - **TypeScript's types are erased.** A determined `as any` defeats the
@@ -84,7 +119,9 @@ JSON is right.
 ## Next, per the brief
 
 1. Ratify `CONSTITUTION.md`; write `SUCCESSION.md`. Both are human documents.
-2. G1 — the nuclear slice. A human reads the PIB release, records
-   `NEM-2047-100GW`, and the CEA time series gets hand-checked row by row.
+2. G1 — the nuclear slice. A human reads the PIB release and records
+   `NEM-2047-100GW`; the CEA series needs its real endpoint and parser written
+   against the actual page, then hand-checked row by row. The harness, the gap
+   arithmetic and the page are already waiting for it.
 3. Hand it to a hostile reader with one brief: *find what makes this misleading.*
 4. Open the co-founder search. Public finance researcher. Closes before G4.
