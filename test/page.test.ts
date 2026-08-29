@@ -131,7 +131,10 @@ describe('what every page must do', () => {
   it('carries a citation and a verifier for every figure', () => {
     for (const html of [page('en'), page('hi')]) {
       expect(html).toContain('Press Information Bureau');
-      expect(html).toContain('n.sharma');
+      // The verifier is named on the page. The handle is a record key and
+      // has no business being shown to a reader.
+      expect(html).toContain('Nishtha Sharma');
+      expect(html).not.toContain('nishtha.sharma');
       expect(html).toContain('pib.gov.in');
     }
   });

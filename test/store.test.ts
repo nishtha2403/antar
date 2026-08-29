@@ -36,7 +36,7 @@ describe('the store is append-only on disk, not just in memory', () => {
     expect(loaded.revisions).toHaveLength(1);
     expect(loaded.revisions[0]?.value.value).toEqual(quantity('100', 'GW'));
     expect(loaded.classification.value).toBe('PROMISE');
-    expect(loaded.classification.decidedBy).toBe('n.sharma');
+    expect(loaded.classification.decidedBy).toBe('nishtha.sharma');
   });
 
   it('writes a new file per revision and leaves earlier ones untouched', async () => {
@@ -89,7 +89,7 @@ describe('the store is append-only on disk, not just in memory', () => {
       why: 'The measure did not name its source series, so two readers read it two ways.',
       affects: ['RND-2030-2PCT'],
       correctedOn: '2026-08-29',
-      writtenBy: 'n.sharma',
+      writtenBy: 'nishtha.sharma',
     });
     const corrections = await store.listCorrections();
     expect(corrections).toHaveLength(1);
@@ -100,7 +100,7 @@ describe('the store is append-only on disk, not just in memory', () => {
         why: 'Trying to rewrite the same correction.',
         affects: [],
         correctedOn: '2026-08-29',
-        writtenBy: 'n.sharma',
+        writtenBy: 'nishtha.sharma',
       }),
     ).rejects.toThrow(/Refusing to overwrite/);
   });

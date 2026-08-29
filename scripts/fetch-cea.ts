@@ -19,7 +19,7 @@ import { discoverCurrent, discoverMonth } from '../src/ingest/cea-archive.ts';
 import { parseCeaWorkbook } from '../src/ingest/cea.ts';
 import { parseCeaPdf } from '../src/ingest/cea-pdf.ts';
 import { megawattsToGigawatts } from '../src/ingest/cea.ts';
-import { humanIdentity } from '../src/kernel/identity.ts';
+import { FOUNDER } from '../src/kernel/people.ts';
 import { formatQuantity } from '../src/kernel/quantity.ts';
 
 const [fromArg = '2025-09', toArg = '2026-07', retrievedOn = todayFromArgv()] = process.argv.slice(2);
@@ -42,7 +42,7 @@ function* months(from: string, to: string): Generator<[number, number]> {
 const OUT = 'build/sources';
 mkdirSync(OUT, { recursive: true });
 
-const reviewer = humanIdentity('unverified.fetch');
+const reviewer = FOUNDER;
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 type Row = { month: string; asOn: string; gw: string; mw: string; url: string; notes: number };

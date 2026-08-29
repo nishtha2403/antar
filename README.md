@@ -97,6 +97,13 @@ input / execution / output / outcome are human judgements with a name, a date
 and a reason attached. There is no constructor that omits them. This is the
 class of error that two reviewers already caught once.
 
+**A handle is not a name.** `src/kernel/people.ts` holds both: a stable
+lowercase handle that appears in every record and never changes, and the display
+name a reader sees. Collapsing them would either put a person's written name into
+record keys, where a stray capital silently forks one person into two, or ask
+readers to accept `n.sharma` as accountability. Publishing under a handle nobody
+has put a name to raises.
+
 **Git is the append-only log.** The JSON files here are simultaneously the record,
 the audit trail, and the raw-data publication G2 requires. SQLite is a derived
 cache, gitignored and rebuilt on every run; if it disagrees with the JSON, the

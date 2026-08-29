@@ -54,7 +54,9 @@ describe('guarantee 1 — no publish without verification', () => {
       verify(attest(quantity('100', 'GW'), pibSource), FOUNDER, '2026-08-29', 'Read against PIB p.3'),
     );
     expect(published.display).toBe('100 GW');
-    expect(published.verifiedBy).toBe('n.sharma');
+    // Readers see a name; the record keeps the handle.
+    expect(published.verifiedBy).toBe('Nishtha Sharma');
+    expect(published.verifiedById).toBe('nishtha.sharma');
     expect(published.citation).toContain('Press Information Bureau');
     expect(published.sourceUrl).toContain('pib.gov.in');
   });
@@ -165,6 +167,7 @@ describe('guarantee 3 — provenance travels with the value', () => {
       'display',
       'sourceUrl',
       'verifiedBy',
+      'verifiedById',
       'verifiedOn',
     ]);
   });
@@ -180,7 +183,7 @@ describe('human judgement cannot be delegated', () => {
   it('requires a written rationale for classification', () => {
     const target = nuclearTarget();
     expect(target.classification.rationale).toContain('Not a benchmark');
-    expect(target.classification.decidedBy).toBe('n.sharma');
+    expect(target.classification.decidedBy).toBe('nishtha.sharma');
     expect(target.indicatorType.value).toBe('output');
   });
 });

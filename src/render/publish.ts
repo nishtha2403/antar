@@ -1,4 +1,5 @@
 import { formatRupees, type Paise } from '../kernel/money.ts';
+import { displayName } from '../kernel/people.ts';
 import { citation } from '../kernel/provenance.ts';
 import { formatQuantity, type Quantity } from '../kernel/quantity.ts';
 import { currentRevision, type Target } from '../kernel/target.ts';
@@ -22,7 +23,10 @@ export type PublishedFigure = {
   readonly display: string;
   readonly citation: string;
   readonly sourceUrl: string;
+  /** The verifier's name, as they write it. This is what a reader sees. */
   readonly verifiedBy: string;
+  /** The stable handle. Kept for joins and for matching against the record. */
+  readonly verifiedById: string;
   readonly verifiedOn: string;
 };
 
@@ -33,7 +37,8 @@ function publish<T>(figure: Verified<T>, display: string, context: string): Publ
     display,
     citation: citation(provenance),
     sourceUrl: provenance.sourceUrl,
-    verifiedBy: verification.verifiedBy,
+    verifiedBy: displayName(verification.verifiedBy),
+    verifiedById: verification.verifiedBy,
     verifiedOn: verification.verifiedOn,
   };
 }

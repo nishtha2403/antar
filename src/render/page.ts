@@ -1,4 +1,5 @@
 import type { Gap } from '../kernel/gap.ts';
+import { displayName } from '../kernel/people.ts';
 import { citation } from '../kernel/provenance.ts';
 import { formatQuantity } from '../kernel/quantity.ts';
 import { currentRevision, type Target } from '../kernel/target.ts';
@@ -212,7 +213,7 @@ ${gap.elapsed ? `<p class="note">${escapeHtml(t.noVerdict)}</p>` : ''}
       ${escapeHtml(t.verifiedBy(published.figure.verifiedBy, published.figure.verifiedOn))}</li>
   <li><strong>${escapeHtml(t.labelAchieved)}:</strong> ${escapeHtml(citation(gap.observed.provenance))} —
       <a href="${escapeHtml(gap.observed.provenance.sourceUrl)}">${escapeHtml(t.sourceLinkLabel)}</a>.
-      ${escapeHtml(t.verifiedBy(gap.observed.verification.verifiedBy, gap.observed.verification.verifiedOn))}</li>
+      ${escapeHtml(t.verifiedBy(displayName(gap.observed.verification.verifiedBy), gap.observed.verification.verifiedOn))}</li>
   <li><strong>${escapeHtml(t.labelMeasure)}:</strong> ${escapeHtml(target.measure.sourceSeries)},
       ${escapeHtml(target.measure.vintage === 'current' ? t.vintageCurrent : t.vintageLastAvailable)}.</li>
 </ul>

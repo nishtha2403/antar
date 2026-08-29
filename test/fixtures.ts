@@ -1,11 +1,13 @@
-import { agentIdentity, humanIdentity } from '../src/kernel/identity.ts';
+import { agentIdentity } from '../src/kernel/identity.ts';
 import { provenance } from '../src/kernel/provenance.ts';
 import { quantity } from '../src/kernel/quantity.ts';
 import { classify, createTarget, targetId, typeIndicator } from '../src/kernel/target.ts';
 import { targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
 
-export const FOUNDER = humanIdentity('n.sharma');
+import { FOUNDER } from '../src/kernel/people.ts';
+
+export { FOUNDER };
 export const HARVESTER = agentIdentity('pib-harvester');
 
 export const pibSource = provenance({

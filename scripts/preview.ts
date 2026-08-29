@@ -12,7 +12,8 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { computeGap } from '../src/kernel/gap.ts';
-import { agentIdentity, humanIdentity } from '../src/kernel/identity.ts';
+import { agentIdentity } from '../src/kernel/identity.ts';
+import { FOUNDER } from '../src/kernel/people.ts';
 import { provenance } from '../src/kernel/provenance.ts';
 import { quantity } from '../src/kernel/quantity.ts';
 import { series } from '../src/kernel/series.ts';
@@ -23,7 +24,7 @@ import { renderAllLocales } from '../src/render/page.ts';
 import { LOCALES, pagePath } from '../src/render/strings.ts';
 
 const outDir = process.argv[2] ?? 'build/preview';
-const REVIEWER = humanIdentity('placeholder.reviewer');
+const REVIEWER = FOUNDER;
 const BOT = agentIdentity('placeholder-harvester');
 
 const pib = provenance({
