@@ -149,16 +149,17 @@ from zero at a stated precision that travels with the result.
 - **`data/` is empty on purpose.** Seeding a plausible-looking sourced figure to
   make a demo work would be the exact failure this project exists to avoid.
 
-## Next, per the brief
+## Where this stands
 
-1. Governance documents are in place. `CONSTITUTION.md` is ratified, with an
-   enforcement table stating exactly which rules the code holds and which it does
-   not. `SUCCESSION.md` is adopted and says plainly that it is not yet binding:
-   no removal authority is named (sunset 31 Aug 2027 or the start of G4,
-   whichever is earlier) and the founder can amend it alone.
-2. G1 — the nuclear slice. A human reads the PIB release and records
-   `NEM-2047-100GW`; the CEA series needs its real endpoint and parser written
-   against the actual page, then hand-checked row by row. The harness, the gap
-   arithmetic and the page are already waiting for it.
-3. Hand it to a hostile reader with one brief: *find what makes this misleading.*
-4. Open the co-founder search. Public finance researcher. Closes before G4.
+1. **G0 complete.** Kernel, store and guarantees built and tested.
+   `CONSTITUTION.md` ratified; `SUCCESSION.md` adopted and honest about binding
+   nobody.
+2. **G1 built and recorded.** `NEM-2047-100GW` with its source, eleven verified
+   CEA observations, and a four-milestone roadmap. Both citizen pages render from
+   the store.
+3. **G1 ships without its exit criterion.** The gate was *a hostile reviewer
+   cannot find what makes it misleading*; there will be no hostile reviewer, and
+   the co-founder search is closed without a hire. Both removals are recorded in
+   the amendments section of the orchestration brief, along with what they change.
+4. **One person is author, verifier and reviewer.** `src/kernel/people.ts`
+   registers one name. Publication halts permanently if they stop.

@@ -195,3 +195,53 @@ An AI answering confidently about a named politician and public money, from an u
 2. `claude-code`: scaffold G0 — schema, verification state machine, append-only revisions, test harness asserting all three guarantees.
 3. Build the nuclear slice end to end. Hand it to a hostile reader.
 4. Open the co-founder search. Public finance researcher. Deadline: before G4.
+
+
+---
+
+# AMENDMENTS TO THE BOARD
+
+Appended, not edited. The board above is the version locked after four external
+reviews; what follows records where the project has since departed from it, so
+that the divergence is legible rather than silent.
+
+## 2026-08-30 — Two external checks removed
+
+**Decided by:** Nishtha Sharma, founder.
+
+**1. The co-founder search is closed without a hire.** T1 required it to open at
+G0 and close before G4, on the reasoning that two independent reviewers had
+caught the GERD / government-R&D ambiguity — "the exact class of error that ends
+this project and the exact class neither the founder nor an AI is equipped to
+catch." No public finance researcher will be recruited. That class of error is
+now accepted as a standing risk rather than mitigated.
+
+**2. No external adversarial review.** G1's exit criterion was *a hostile reviewer
+cannot find what makes it misleading*. There will be no hostile reviewer. The
+founder is the sole reviewer of their own work, and the project goes live on that
+basis.
+
+**What this changes structurally**
+
+- **G1 has no exit criterion as written.** It cannot be met, because the person
+  it required does not exist. Either the gate is replaced or G1 ships unGated.
+- **T3's standing external adversarial review is void.** "The review round already
+  completed becomes an institution, not an event" no longer holds; the round that
+  produced this board was the last one.
+- **§1 and §2 of SUCCESSION.md are amended accordingly.** No removal authority is
+  planned, and the publication halt is permanent rather than interim.
+- **The four judgement calls already recorded on NEM-2047-100GW ship unreviewed**:
+  PROMISE over FLOOR, GWe treated as GW, the 22 GW line as planned rather than
+  committed, and Union Budget 2025-26 as the anchoring announcement.
+
+**What has not changed.** Every rule the kernel enforces still holds. Nothing
+publishes unverified, nothing overwrites a historical record, every figure still
+carries its source, and the page still names no individual and attributes nothing.
+Removing the reviewers removes a check on judgement, not a check on the machinery.
+
+**What could partly substitute, if wanted.** With no review before publication,
+the remaining defence is making correction after publication cheap, fast and
+visible: a public register of the judgement calls and known weaknesses shipped
+alongside the indicators, and a corrections log surfaced on the page itself rather
+than buried. Neither is built. Both are smaller than a co-founder and neither is
+a replacement for one.
