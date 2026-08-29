@@ -1,0 +1,3 @@
+[submodule "data"]
+	path = data
+	url = https://github.com/nishtha2403/antar-data.git

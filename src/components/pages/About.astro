@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import { COPY } from '../../lib/ui.ts';
+import type { Locale } from '../../lib/locales.ts';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const c = COPY[locale];
+---
+<Base locale={locale} title={c.navAbout} description={c.tagline} path="/about" current="about">
+  <h1>About Antar</h1>
+  <p class="lede">{c.tagline}</p>
+
+  <h2>What this is</h2>
+  <p>
+    Antar records what the government said it would achieve, measures what has happened using the
+    government's own published data, and shows the distance between the two. Every figure carries the
+    document it came from, the date it was retrieved, and the name of the person who checked it.
+  </p>
+  <p>
+    <strong>अंतर</strong> means the distance between two things.
+  </p>
+
+  <h2>What it is not</h2>
+  <p>
+    It is not a scorecard, a ranking, or an assessment of whether any government is doing well. It
+    does not say whether a target is worth pursuing, who is to blame for a shortfall, or what you
+    should conclude. Where context is needed, it is attributed to whoever said it — never asserted here.
+  </p>
+  <p>
+    News coverage of government performance is rarely wrong about the facts. It goes wrong by mixing
+    sourced facts with unsourced interpretation until the two cannot be separated. This site tries not
+    to have that seam at all.
+  </p>
+
+  <h2>Who runs it</h2>
+  <p>
+    Nishtha Sharma. One person, who is currently the author, the verifier and the only reviewer. That
+    is a real weakness and it is written down rather than hidden: the
+    <a href="https://github.com/nishtha2403/antar/blob/main/SUCCESSION.md">succession clause</a>
+    records that nobody can currently remove the founder, and that publication stops entirely if she
+    is unavailable.
+  </p>
+
+  <h2>How to check it, or argue with it</h2>
+  <p>
+    Every record is public and every figure links to its source. A disagreement can be settled by
+    reading the same document rather than by trusting this site. If something here is wrong, it will
+    appear on the <a href="corrections">corrections page</a> — corrections are appended and never
+    deleted.
+  </p>
+
+  <h2>What it will never accept</h2>
+  <p>
+    Political party funding. Any funder's influence over a metric. Requests to suppress inconvenient
+    data. These are written into the project's
+    <a href="https://github.com/nishtha2403/antar/blob/main/CONSTITUTION.md">constitution</a>, which
+    also records honestly which of its rules the code enforces and which rest on trust.
+  </p>
+</Base>

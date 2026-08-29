@@ -1,7 +1,6 @@
 name: gate
 
-# The G0 guarantees, enforced on every push.
-# The build fails loud and publishes nothing on failure — rule 2.
+# The guarantees, on every push. Nothing publishes on failure.
 on: [push, pull_request]
 
 jobs:
@@ -9,15 +8,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { submodules: recursive }
       - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
+        with: { node-version: '24', cache: npm }
       - run: npm ci
-      - name: Typecheck (compile-time guarantees, incl. @ts-expect-error assertions)
+      - name: Typecheck
         run: npm run typecheck
       - name: No unsafe casts past the brands
         run: npm run lint:casts
       - name: Guarantee tests
         run: npm test
-      - name: Rebuild derived query cache
-        run: npm run build:db
+      - name: Build the site from the records
+        run: npm run build
+      - name: Check what would actually be served
+        run: node scripts/check-output.mjs

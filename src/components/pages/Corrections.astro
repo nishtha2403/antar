@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import { COPY } from '../../lib/ui.ts';
+import type { Locale } from '../../lib/locales.ts';
+import { loadRecords } from '../../lib/records.ts';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const c = COPY[locale];
+const { corrections } = await loadRecords();
+---
+<Base locale={locale} title={c.navCorrections} description="Every correction, appended and never deleted." path="/corrections" current="corrections">
+  <h1>{c.navCorrections}</h1>
+  <p class="lede">
+    Appended, never deleted. Corrections also appear on the indicator page they affect, not only here.
+  </p>
+
+  {corrections.length === 0
+    ? <p class="note">{c.correctionsEmpty}</p>
+    : corrections.map((x) => (
+        <div class="corr">
+          <div class="d">{x.correctedOn}{x.affects.length > 0 ? ` · ${x.affects.join(', ')}` : ''}</div>
+          <p class="w">{x.what}</p>
+          <p class="y">{x.why}</p>
+        </div>
+      ))}
+</Base>

@@ -3,19 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "The distance between the country India was promised and the country it lives in.",
-  "engines": { "node": ">=22.5.0" },
+  "description": "The distance between the India that was promised and the India people live in.",
+  "engines": {
+    "node": ">=22.5.0"
+  },
   "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist --output-subdir _pagefind",
+    "preview": "astro preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint:casts": "node scripts/no-unsafe-casts.mjs",
-    "build:db": "node --experimental-strip-types scripts/build-db.ts",
-    "gate": "npm run typecheck && npm run lint:casts && npm run test"
+    "gate": "npm run typecheck && npm run lint:casts && npm run test && npm run build && node scripts/check-output.mjs"
   },
   "devDependencies": {
+    "@types/node": "^22.10.2",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8",
-    "@types/node": "^22.10.2"
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.18.2",
+    "pagefind": "^1.5.2",
+    "sharp": "^0.35.4"
   }
 }

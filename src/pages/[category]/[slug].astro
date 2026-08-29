@@ -1,0 +1,12 @@
+---
+import Indicator from '../../components/pages/Indicator.astro';
+import { loadRecords } from '../../lib/records.ts';
+import { slugFor } from '../../lib/view.ts';
+
+export async function getStaticPaths() {
+  const { targets } = await loadRecords();
+  return targets.map((t) => ({ params: { category: t.category, slug: slugFor(t) }, props: { id: t.id } }));
+}
+const { id } = Astro.props;
+---
+<Indicator locale="en" id={id} />

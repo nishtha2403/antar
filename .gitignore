@@ -4,3 +4,7 @@ node_modules/
 
 # Derived query cache. Rebuilt from data/ on every run. Never a source of truth.
 build/
+
+# Astro
+dist/
+.astro/

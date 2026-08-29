@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import IndicatorList from '../IndicatorList.astro';
+import { COPY } from '../../lib/ui.ts';
+import { type Locale, localePrefix } from '../../lib/locales.ts';
+import { categoryName, loadRecords } from '../../lib/records.ts';
+import { summarise } from '../../lib/view.ts';
+import { TODAY } from '../../lib/today.ts';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const c = COPY[locale];
+const records = await loadRecords();
+const table = records.translations[locale];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const all = records.targets.map((t) =>
+  summarise(t, records.series.get(t.series), locale, table, TODAY),
+);
+// "Due this decade" surfaces the deadlines a reader can still act on, computed
+// from the record rather than chosen by an editor.
+const horizon = Number(TODAY.slice(0, 4)) + 4;
+const soon = all.filter((i) => i.dueBy <= horizon);
+---
+<Base locale={locale} title={c.siteName} description={c.tagline} path="" current="indicators">
+  <h1>{c.tagline}</h1>
+  <p class="lede">
+    Every figure carries the document it came from, the date it was retrieved, and the name of the
+    person who checked it. You are not asked to trust this site.
+  </p>
+
+  {soon.length > 0 && (
+    <Fragment>
+      <h2>{c.dueThisDecade}</h2>
+      <IndicatorList items={soon} locale={locale} />
+    </Fragment>
+  )}
+
+  <h2>{c.allIndicators}</h2>
+  <IndicatorList items={all} locale={locale} />
+
+  <h2>{c.navIndicators}</h2>
+  <p>
+    {records.categories.map((slug, i) => (
+      <Fragment>
+        {i > 0 && ' · '}
+        <a href={`${base}${localePrefix(locale)}/${slug}`}>{categoryName(slug, locale)}</a>
+      </Fragment>
+    ))}
+  </p>
+
+  <p class="note">{c.scopeNote(all.length)}</p>
+</Base>

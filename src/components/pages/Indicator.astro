@@ -1,0 +1,188 @@
+---
+import Base from '../../layouts/Base.astro';
+import Chart from '../Chart.astro';
+import Text from '../Text.astro';
+import { COPY, stateLabel } from '../../lib/ui.ts';
+import { type Locale, localePrefix } from '../../lib/locales.ts';
+import { loadRecords } from '../../lib/records.ts';
+import { buildIndicatorPage } from '../../lib/view.ts';
+import { TODAY } from '../../lib/today.ts';
+
+interface Props { locale: Locale; id: string }
+const { locale, id } = Astro.props;
+const c = COPY[locale];
+const records = await loadRecords();
+const table = records.translations[locale];
+const target = records.targets.find((t) => t.id === id)!;
+const series = records.series.get(target.series)!;
+
+// Throws if any figure on this page is unverified. The build fails and nothing
+// is published, which is the intended behaviour.
+const page = buildIndicatorPage({
+  target,
+  series,
+  roadmap: records.roadmaps.get(id),
+  context: records.context.get(id) ?? [],
+  locale,
+  table,
+  today: TODAY,
+});
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const path = `/${page.category}/${page.slug}`;
+const classLabel =
+  page.classification === 'PROMISE' ? c.classPromise
+  : page.classification === 'BENCHMARK' ? c.classBenchmark
+  : c.classFloor;
+const kindLabel = (k: string) =>
+  k === 'stated-purpose' ? c.kindPurpose : k === 'stated-plan' ? c.kindPlan : c.kindEvent;
+const statusLabel = (s: string) =>
+  s === 'built' ? c.statusBuilt : s === 'committed' ? c.statusCommitted : c.statusPlanned;
+
+const untranslated = [
+  page.title, page.measure, page.announcedBy, page.sourceSeries,
+  ...(page.excludes ? [page.excludes] : []),
+  ...page.milestones.flatMap((m) => [m.label, ...m.actors]),
+  ...page.context.flatMap((n) => [n.attributedTo, n.statement]),
+].filter((t) => !t.translated).length;
+---
+<Base locale={locale} title={page.title.text} description={page.measure.text} path={path} current="indicators">
+  <div class="tags">
+    <span class={`tag ${page.classification.toLowerCase()}`}>{classLabel}</span>
+    {page.states.map((s) => <span class={`tag ${s}`}>{stateLabel(s, c)}</span>)}
+  </div>
+
+  <h1><Text value={page.title} /></h1>
+  <p class="lede"><Text value={page.measure} /> · {c.announcedBy(page.announcedBy.text, page.announcedOn)}</p>
+
+  <div class="figures">
+    <div class="figure-row">
+      <span class="lab">{c.target}</span>
+      <span class="num">{page.target.display}</span>
+      <span class="when">{c.by(page.dueBy)}</span>
+    </div>
+    <div class="figure-row">
+      <span class="lab">{c.inService}</span>
+      <span class="num">{page.observed.display}</span>
+      <span class="when">{page.observedAsOf}</span>
+    </div>
+    <div class="figure-row gap">
+      <span class="lab">{c.remaining}</span>
+      <span class="num">{page.remaining}</span>
+      <span class="when">{page.yearsRemaining > 0 ? c.yearsLeft(page.yearsRemaining) : ''}</span>
+    </div>
+  </div>
+
+  {page.points.length > 1 && (
+    <Fragment>
+      <Chart
+        points={page.points}
+        target={Number(page.target.display.split(' ')[0])}
+        unit={page.target.display.split(' ').slice(1).join(' ')}
+        label={c.chartCaption(page.points.length, page.points[0]!.asOf, page.points.at(-1)!.asOf)}
+      />
+      <p class="chart-cap">{c.chartCaption(page.points.length, page.points[0]!.asOf, page.points.at(-1)!.asOf)}</p>
+    </Fragment>
+  )}
+
+  <div class="meter">
+    <div class="meter-head"><span>{c.achievedMeter}</span><b>{page.achievedLabel}</b></div>
+    <div class="bar"><i style={`width:${Math.max(0, Math.min(100, page.achievedPercent ?? 0))}%`}></i></div>
+    <p class="meter-foot">{c.asOf(page.observedAsOf ?? '')}</p>
+  </div>
+
+  {page.elapsedPercent !== null && (
+    <div class="meter">
+      <div class="meter-head"><span>{c.elapsedMeter}</span><b>{page.elapsedPercent.toFixed(2)} %</b></div>
+      <div class="bar time"><i style={`width:${Math.max(0, Math.min(100, page.elapsedPercent))}%`}></i></div>
+      <p class="meter-foot">{c.elapsedDetail(page.yearsElapsed, page.windowYears)}</p>
+    </div>
+  )}
+
+  <p class="note">{c.noVerdict}</p>
+
+  {page.requiredAnnual
+    ? <p class="note">{c.requiredRate(page.requiredAnnual, page.yearsRemaining)}</p>
+    : <p class="note">{page.met ? c.targetMet : c.deadlinePassed}</p>}
+
+  {page.context.length > 0 && (
+    <Fragment>
+      <h2>{c.contextHeading}</h2>
+      <ul class="context">
+        {page.context.map((n) => (
+          <li>
+            <span class="attribution">
+              <Text value={n.attributedTo} />{n.saidOn ? `, ${n.saidOn}` : ''} · {kindLabel(n.kind)}
+            </span>
+            <Text value={n.statement} />
+            <a class="cite" href={n.sourceUrl}>{c.sourceLink}</a>
+          </li>
+        ))}
+      </ul>
+      <p class="note">{c.contextCaveat}</p>
+    </Fragment>
+  )}
+
+  {page.milestones.length > 0 && (
+    <Fragment>
+      <h2>{c.roadmapHeading}</h2>
+      <div class="figures">
+        {page.milestones.map((m) => (
+          <div class="figure-row">
+            <span class="lab">
+              <Text value={m.label} /><br />
+              <span style="color:var(--dim);font-size:.82rem">
+                {m.actors.map((a, i) => <Fragment>{i > 0 && '; '}<Text value={a} /></Fragment>)}
+              </span>
+            </span>
+            <span class="num">{m.value}</span>
+            <span class="when">{statusLabel(m.status)}<br />{m.basis === 'cumulative' ? c.basisCumulative : c.basisIncrement}</span>
+          </div>
+        ))}
+      </div>
+      {page.roadmapTotal && (
+        <p class="meter-foot">
+          {page.roadmapReconciles ? c.roadmapReconciles(page.roadmapTotal) : c.roadmapGap(page.roadmapTotal)}
+        </p>
+      )}
+      <p class="note">{c.roadmapCaveat}</p>
+    </Fragment>
+  )}
+
+  {page.revisions.length > 0 && (
+    <Fragment>
+      <h2>{c.revisedHeading}</h2>
+      <ul class="sources">
+        {page.revisions.map((r) => <li>{r.recordedOn} — <Text value={r.note} /></li>)}
+      </ul>
+      <p class="note">{c.revisedNote}</p>
+    </Fragment>
+  )}
+
+  <h2>{c.sourcesHeading}</h2>
+  <ul class="sources">
+    <li>
+      <strong>{c.labelTarget}:</strong> {page.target.citation} — <a href={page.target.sourceUrl}>{c.sourceLink}</a>.
+      {' '}{c.announcedBy(page.announcedBy.text, page.announcedOn)}
+      {' '}{c.verifiedBy(page.target.verifiedBy, page.target.verifiedOn)}
+    </li>
+    <li>
+      <strong>{c.labelAchieved}:</strong> {page.observed.citation} — <a href={page.observed.sourceUrl}>{c.sourceLink}</a>.
+      {' '}{c.verifiedBy(page.observed.verifiedBy, page.observed.verifiedOn)}
+    </li>
+    <li><strong>{c.labelMeasure}:</strong> <Text value={page.sourceSeries} /></li>
+    {page.excludes && <li><strong>{c.labelExcludes}:</strong> <Text value={page.excludes} /></li>}
+    <li>
+      <a href={`${base}/data/${page.slug}.json`}>{c.downloadData} (JSON)</a> ·
+      <a href={`${base}/data/${page.slug}.csv`}>CSV</a>
+    </li>
+  </ul>
+
+  <h2>{c.notSayingHeading}</h2>
+  <ul class="sources">
+    <li>{c.notSayingIndividual}</li>
+    <li>{c.notSayingCause}</li>
+  </ul>
+
+  {locale !== 'en' && <p class="note">{c.untranslatedNote(untranslated)}</p>}
+</Base>

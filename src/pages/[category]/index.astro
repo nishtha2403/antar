@@ -1,0 +1,11 @@
+---
+import Category from '../../components/pages/Category.astro';
+import { loadRecords } from '../../lib/records.ts';
+
+export async function getStaticPaths() {
+  const { categories } = await loadRecords();
+  return categories.map((category) => ({ params: { category } }));
+}
+const { category } = Astro.params;
+---
+<Category locale="en" category={category!} />

@@ -1,7 +1,7 @@
 import { agentIdentity, byAgent } from '../src/kernel/identity.ts';
 import { provenance } from '../src/kernel/provenance.ts';
 import { quantity } from '../src/kernel/quantity.ts';
-import { classify, createTarget, seriesSlug, targetId, typeIndicator } from '../src/kernel/target.ts';
+import { category, classify, createTarget, seriesSlug, targetId, typeIndicator } from '../src/kernel/target.ts';
 import { targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
 
@@ -43,6 +43,7 @@ export function nuclearTarget() {
     id: targetId('NEM-2047-100GW'),
     title: '100 GW of nuclear power capacity by 2047',
     series: seriesSlug('cea-nuclear-installed-capacity'),
+    category: category('energy'),
     measure: nuclearMeasure,
     classification: classify(
       'PROMISE',

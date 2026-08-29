@@ -7,6 +7,24 @@ import type { Attested } from './verification.ts';
 
 export type TargetId = Brand<string, 'TargetId'>;
 
+/**
+ * The subject area an indicator belongs to.
+ *
+ * A taxonomy assignment rather than a claim about the world, so it carries no
+ * verification — but it is on the record rather than in the website, because
+ * which promises belong together is part of what the project asserts.
+ */
+export type Category = Brand<string, 'Category'>;
+
+const asCategory = brandAs<'Category'>();
+
+export function category(slug: string): Category {
+  if (!/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(slug)) {
+    throw new KernelError(`Invalid category ${JSON.stringify(slug)}.`);
+  }
+  return asCategory(slug);
+}
+
 /** Directory-safe identifier for a recorded observation series. */
 export type SeriesSlug = Brand<string, 'SeriesSlug'>;
 
@@ -171,6 +189,7 @@ export type Target = {
    * nuclear capacity.
    */
   readonly series: SeriesSlug;
+  readonly category: Category;
   readonly measure: Measure;
   readonly classification: HumanJudgement<TargetClass>;
   readonly indicatorType: HumanJudgement<IndicatorType>;
@@ -192,6 +211,7 @@ export function createTarget(input: {
   readonly id: TargetId;
   readonly title: string;
   readonly series: SeriesSlug;
+  readonly category: Category;
   readonly measure: Measure;
   readonly classification: HumanJudgement<TargetClass>;
   readonly indicatorType: HumanJudgement<IndicatorType>;

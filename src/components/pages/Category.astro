@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import IndicatorList from '../IndicatorList.astro';
+import { COPY, stateLabel } from '../../lib/ui.ts';
+import type { Locale } from '../../lib/locales.ts';
+import { categoryName, loadRecords } from '../../lib/records.ts';
+import { summarise, type MeasurementState } from '../../lib/view.ts';
+import { TODAY } from '../../lib/today.ts';
+
+interface Props { locale: Locale; category: string }
+const { locale, category } = Astro.props;
+const c = COPY[locale];
+const records = await loadRecords();
+const table = records.translations[locale];
+
+const items = records.targets
+  .filter((t) => t.category === category)
+  .map((t) => summarise(t, records.series.get(t.series), locale, table, TODAY));
+
+// Views a reader can run themselves, rather than assertions the site makes.
+const views: { state: MeasurementState; items: typeof items }[] = (
+  ['deadline-passed', 'revised', 'no-data'] as MeasurementState[]
+)
+  .map((state) => ({ state, items: items.filter((i) => i.states.includes(state)) }))
+  .filter((v) => v.items.length > 0);
+const name = categoryName(category, locale);
+---
+<Base locale={locale} title={name} description={c.tagline} path={`/${category}`} current="indicators">
+  <h1>{name}</h1>
+  <p class="lede">
+    {c.readings(items.reduce((n, i) => n + i.readings, 0))} across {items.length}
+    {items.length === 1 ? ' indicator' : ' indicators'}.
+  </p>
+
+  <h2>{c.allIndicators}</h2>
+  <IndicatorList items={items} locale={locale} />
+
+  {views.map((v) => (
+    <Fragment>
+      <h2>{stateLabel(v.state, c)}</h2>
+      <IndicatorList items={v.items} locale={locale} />
+    </Fragment>
+  ))}
+</Base>

@@ -1,0 +1,32 @@
+---
+import Text from './Text.astro';
+import { COPY, stateLabel } from '../lib/ui.ts';
+import { type Locale, localePrefix } from '../lib/locales.ts';
+import type { IndicatorSummary } from '../lib/view.ts';
+
+interface Props { items: readonly IndicatorSummary[]; locale: Locale }
+const { items, locale } = Astro.props;
+const c = COPY[locale];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<ul class="ind-list">
+  {items.map((item) => (
+    <li class="ind">
+      <div>
+        <a href={`${base}${localePrefix(locale)}/${item.category}/${item.slug}`}>
+          <span class="t"><Text value={item.title} /></span>
+        </a>
+        <div class="m">
+          <span>{c.promisedDue(item.promisedYear, item.dueBy)}</span>
+          {item.states.filter((s) => s !== 'measured').map((s) => (
+            <span class={`tag ${s}`}>{stateLabel(s, c)}</span>
+          ))}
+        </div>
+      </div>
+      <div class="r">
+        <span class="pct">{item.achievedPercent === null ? '—' : item.achievedLabel.replace(' %', '%')}</span>
+        <span class="pl">{item.achievedPercent === null ? c.noData : c.achieved}</span>
+      </div>
+    </li>
+  ))}
+</ul>

@@ -1,0 +1,33 @@
+---
+import type { SeriesPoint } from '../lib/view.ts';
+
+interface Props { points: readonly SeriesPoint[]; target: number; unit: string; label: string }
+const { points, target, unit, label } = Astro.props;
+
+const W = 640, H = 170, L = 8, R = 8, T = 18, B = 26;
+const max = Math.max(target, ...points.map((p) => p.value)) * 1.04;
+const x = (i: number) => L + (points.length <= 1 ? (W - L - R) / 2 : (i * (W - L - R)) / (points.length - 1));
+const y = (v: number) => T + (1 - v / max) * (H - T - B);
+const line = points.map((p, i) => `${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(' ');
+const area = points.length > 1 ? `${line} ${x(points.length - 1).toFixed(1)},${H - B} ${x(0).toFixed(1)},${H - B}` : '';
+const last = points.at(-1);
+const first = points.at(0);
+---
+<div class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} preserveAspectRatio="none">
+    <line x1={L} y1={y(target)} x2={W - R} y2={y(target)} stroke="var(--rule)" stroke-dasharray="3 4" stroke-width="1" />
+    <text x={L} y={y(target) - 5} font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--dim)">
+      {target} {unit}
+    </text>
+    <line x1={L} y1={H - B} x2={W - R} y2={H - B} stroke="var(--line)" stroke-width="1" />
+    {area && <polygon points={area} fill="var(--slate)" opacity="0.10" />}
+    {points.length > 1 && <polyline points={line} fill="none" stroke="var(--slate)" stroke-width="2" vector-effect="non-scaling-stroke" />}
+    {last && <circle cx={x(points.length - 1)} cy={y(last.value)} r="3.5" fill="var(--slate)" />}
+    {last && (
+      <text x={x(points.length - 1) - 6} y={y(last.value) - 9} text-anchor="end"
+            font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--slate)">{last.value}</text>
+    )}
+    {first && <text x={L} y={H - 8} font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--dim)">{first.asOf}</text>}
+    {last && <text x={W - R} y={H - 8} text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--dim)">{last.asOf}</text>}
+  </svg>
+</div>

@@ -1,0 +1,8 @@
+---
+import type { Text } from '../lib/view.ts';
+interface Props { value: Text }
+const { value } = Astro.props;
+---
+{/* Untranslated text is shown in English inside a marked span, so a partly
+    translated page cannot read as a fully translated one. */}
+{value.translated ? value.text : <span class="untranslated" lang="en">{value.text}</span>}

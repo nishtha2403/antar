@@ -9,6 +9,7 @@ import {
   type Target,
   targetId,
   seriesSlug,
+  category,
   type TargetClass,
   type TargetRevision,
   typeIndicator,
@@ -150,6 +151,7 @@ export type TargetHeaderJson = {
   id: string;
   title: string;
   series: string;
+  category: string;
   measure: Target['measure'];
   classification: { value: string; decidedBy: string; decidedOn: string; rationale: string };
   indicatorType: { value: string; decidedBy: string; decidedOn: string; rationale: string };
@@ -172,6 +174,7 @@ export const encodeTargetHeader = (t: Target): TargetHeaderJson => ({
   id: t.id,
   title: t.title,
   series: t.series,
+  category: t.category,
   measure: t.measure,
   classification: { ...t.classification, value: t.classification.value },
   indicatorType: { ...t.indicatorType, value: t.indicatorType.value },
@@ -229,10 +232,18 @@ export function decodeTarget(header: TargetHeaderJson, revisions: readonly Revis
     );
   }
 
+  if (!header.category) {
+    throw new KernelError(
+      `Target ${header.id} has no category. Every indicator belongs to a subject area, ` +
+        'and the site cannot place an uncategorised one.',
+    );
+  }
+
   let target = createTarget({
     id: targetId(header.id),
     title: header.title,
     series: seriesSlug(header.series),
+    category: category(header.category),
     measure: header.measure,
     classification: classify(
       header.classification.value as TargetClass,

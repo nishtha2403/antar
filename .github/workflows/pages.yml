@@ -2,14 +2,14 @@ name: pages
 
 # Publishes the site, rendered from the records rather than from committed HTML.
 #
-# The gate runs first and the deploy depends on it, so a failing typecheck, an
-# unjustified cast or a broken guarantee stops publication. The renderer itself
-# throws on an unverified figure, so a deploy either carries fully verified
-# figures or does not happen — nothing publishes on failure.
-
+# The build depends on the gate, and the renderer throws on an unverified
+# figure, so a deploy either carries fully verified figures or does not happen.
 on:
   push:
     branches: [main]
+  # The record repository can move without this one changing.
+  repository_dispatch:
+    types: [records-updated]
   workflow_dispatch:
 
 permissions:
@@ -17,39 +17,29 @@ permissions:
   pages: write
   id-token: write
 
-# Never two deploys at once; never cancel one midway.
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  gate:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { submodules: recursive }
       - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
+        with: { node-version: '24', cache: npm }
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint:casts
       - run: npm test
-
-  build:
-    needs: gate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-      - run: npm ci
       - name: Render the site from data/
-        run: node scripts/build-site.ts build/site
+        run: npm run build
+      - name: Check what would actually be served
+        run: node scripts/check-output.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
-        with:
-          path: build/site
+        with: { path: dist }
 
   deploy:
     needs: build

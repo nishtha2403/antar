@@ -1,7 +1,7 @@
 {
+  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "target": "ES2023",
-    "lib": ["ES2023"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": ["node"],
@@ -13,12 +13,13 @@
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
     // Everything must run under Node's type-stripping with no build step,
     // so no enums, no parameter properties, no namespaces.
     "erasableSyntaxOnly": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true
+    "jsx": "preserve"
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.astro", "test/**/*.ts", "scripts/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }

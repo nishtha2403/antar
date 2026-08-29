@@ -1,0 +1,70 @@
+---
+import '../styles/site.css';
+import { COPY } from '../lib/ui.ts';
+import { type Locale, localePrefix } from '../lib/locales.ts';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description?: string;
+  /** Path after the locale prefix, e.g. "/energy". Used for hreflang and the switch. */
+  path: string;
+  current?: 'indicators' | 'method' | 'corrections' | 'about';
+}
+
+const { locale, title, description, path, current } = Astro.props;
+const c = COPY[locale];
+const other: Locale = locale === 'en' ? 'hi' : 'en';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const href = (l: Locale, p: string) => `${base}${localePrefix(l)}${p}` || '/';
+const fonts =
+  locale === 'hi'
+    ? 'family=Noto+Serif+Devanagari:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500&family=IBM+Plex+Mono:wght@400;500'
+    : 'family=Noto+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500';
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — {c.siteName}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {/* Only the script this page needs: an English page never downloads Devanagari. */}
+    <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${fonts}&display=swap`} />
+    <link rel="alternate" hreflang="en" href={href('en', path)} />
+    <link rel="alternate" hreflang="hi" href={href('hi', path)} />
+    <link rel="canonical" href={href(locale, path)} />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="shell">
+      <header class="masthead">
+        <a class="mark" href={href(locale, '')}>{c.siteName}</a>
+        <nav aria-label="Sections">
+          <a href={href(locale, '')} aria-current={current === 'indicators' ? 'page' : undefined}>{c.navIndicators}</a>
+          <a href={href(locale, '/method')} aria-current={current === 'method' ? 'page' : undefined}>{c.navMethod}</a>
+          <a href={href(locale, '/corrections')} aria-current={current === 'corrections' ? 'page' : undefined}>{c.navCorrections}</a>
+          <a href={href(locale, '/about')} aria-current={current === 'about' ? 'page' : undefined}>{c.navAbout}</a>
+        </nav>
+        <span class="spacer"></span>
+        <a class="lang-switch" href={href(other, path)} hreflang={other} lang={other}>{c.otherLocale}</a>
+      </header>
+
+      <main id="main">
+        <slot />
+      </main>
+
+      <footer class="site">
+        {c.footer}<br />
+        <a href="https://github.com/nishtha2403/antar-data">antar-data</a> ·
+        <a href="https://github.com/nishtha2403/antar-ingest">antar-ingest</a> ·
+        <a href="https://github.com/nishtha2403/antar">antar</a>
+      </footer>
+    </div>
+  </body>
+</html>

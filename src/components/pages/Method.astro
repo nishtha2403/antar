@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import { COPY } from '../../lib/ui.ts';
+import type { Locale } from '../../lib/locales.ts';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const c = COPY[locale];
+
+// The selection criteria are published because the alternative — an unexplained
+// list — reads as personal preference, which is the condition this project set
+// itself as a reason to stop.
+const criteria = [
+  'A dated, sourced target stated by government exists.',
+  'A public time series measures it. Without one there is no gap to show.',
+  'How close its deadline is.',
+  'How much of the promise window has elapsed with no movement in the series.',
+  'The size of the gap relative to the time remaining.',
+  'Whether attribution is clean — an output a body is responsible for, not an outcome with many causes.',
+];
+const steps: { text: string; who: 'human' | 'automated' }[] = [
+  { text: 'A topic is selected against the criteria above. The score suggests; a person chooses.', who: 'human' },
+  { text: 'The source document is read in full by a person. Not summarised.', who: 'human' },
+  { text: 'The target is recorded with four judgements, each carrying a written reason: whether it is a promise, a benchmark or a statutory floor; what kind of indicator it is; what unit; which announcement anchors it.', who: 'human' },
+  { text: 'A scraper fetches the series and archives every source document with its checksum. Everything arrives unverified.', who: 'automated' },
+  { text: 'Every row is checked against the archived document it came from, and signed with a name, a date and the method used.', who: 'human' },
+  { text: 'The published roadmap is recorded, each line tagged built, committed or planned. A government projecting that others will deliver is not those others undertaking to.', who: 'human' },
+  { text: 'Context is recorded as attributed statements — what the source says, never what this site thinks.', who: 'human' },
+  { text: 'Any prose is written by a person; the figures inside it are references to verified records, so a number in a sentence cannot drift from the number in the table.', who: 'human' },
+  { text: 'Translations are recorded by a person. Untranslated text is shown in English and marked, never silently.', who: 'human' },
+  { text: 'Publication. If any figure on a page is unverified the build fails and nothing is published.', who: 'automated' },
+];
+const refusals = [
+  'Name an individual without documented provenance.',
+  'Claim causality without evidence.',
+  'Change methodology retroactively.',
+  'Overwrite a historical target.',
+  'Delete a correction.',
+  'Accept political party funding, or endorse candidates.',
+];
+---
+<Base locale={locale} title={c.navMethod} description="How a figure gets onto this site." path="/method" current="method">
+  <h1>How a figure gets onto this site</h1>
+  <p class="lede">Ten steps. Eight are done by a person, and their name goes on the record.</p>
+
+  <h2>How topics are chosen</h2>
+  <ul class="sources">{criteria.map((x) => <li>{x}</li>)}</ul>
+  <p class="note">
+    Public attention does not choose topics here. What is trending decides when something is posted,
+    never what gets measured — otherwise the agenda belongs to whoever is loudest that week.
+  </p>
+
+  <h2>The ten steps</h2>
+  <ol class="steps">
+    {steps.map((s) => (
+      <li><span>{s.text}<span class={`who ${s.who === 'automated' ? 'auto' : ''}`}>{s.who}</span></span></li>
+    ))}
+  </ol>
+
+  <h2>What this site will not do</h2>
+  <ul class="sources">{refusals.map((x) => <li>{x}</li>)}</ul>
+
+  <h2>What the words mean</h2>
+  <ul class="sources">
+    <li><strong>Promise</strong> — the state undertook to do this. <strong>Benchmark</strong> — a reference point, not a commitment. <strong>Statutory floor</strong> — a legal minimum.</li>
+    <li><strong>Measured</strong> — a verified series exists. <strong>No data yet</strong> — no series is recorded. <strong>Deadline passed</strong> — the due year is behind us. <strong>Revised</strong> — the target has been changed since it was announced, and the original is still on the record.</li>
+    <li>
+      None of these is a verdict. "Deadline passed" is a fact; "behind schedule" would be a judgement,
+      and this site does not make it.
+    </li>
+  </ul>
+
+  <p class="note">
+    The verification code, the constitution it enforces, and every record are public.
+    <a href="https://github.com/nishtha2403/antar-data"> Read the records</a> ·
+    <a href="https://github.com/nishtha2403/antar"> read the code</a>.
+  </p>
+</Base>
