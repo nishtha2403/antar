@@ -1,0 +1,28 @@
+{
+  "kind": "recorded-event",
+  "attributedTo": "Parliament of India",
+  "statement": {
+    "value": "The SHANTI Act, 2025 was enacted to achieve a target of 100 GW by 2047. The Act opens the nuclear energy sector to private participation.",
+    "provenance": {
+      "sourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287710&reg=3&lang=1",
+      "sourceTitle": "PARLIAMENT QUESTION: NUCLEAR ENERGY MISSION FOR VIKSIT BHARAT",
+      "publisher": "Press Information Bureau, Department of Atomic Energy",
+      "publishedOn": "2026-07-22",
+      "retrievedOn": "2026-08-30",
+      "retrievedBy": {
+        "kind": "human",
+        "id": "nishtha.sharma"
+      },
+      "locator": "PRID 2287710"
+    },
+    "verification": {
+      "state": "verified",
+      "verifiedBy": "nishtha.sharma",
+      "verifiedOn": "2026-08-30",
+      "method": "Read against PRID 2287710 and reported as stated there."
+    }
+  },
+  "saidOn": "2026-07-22",
+  "recordedBy": "nishtha.sharma",
+  "recordedOn": "2026-08-30"
+}
