@@ -1,6 +1,7 @@
 import { currentRevision, type Target } from '../kernel/target.ts';
 import { escapeHtml, slugFor } from './page.ts';
-import { type Locale, LOCALES, pagePath, type Strings, STRINGS } from './strings.ts';
+import { inLocale, type Translations } from '../kernel/translation.ts';
+import { type Locale, LOCALES, type Strings, STRINGS } from './strings.ts';
 
 /**
  * The home page.
@@ -26,8 +27,24 @@ function indexHref(from: Locale, to: Locale): string {
   return from === 'en' ? `${to}/` : '../';
 }
 
-export function renderIndex(targets: readonly Target[], locale: Locale): string {
+export function renderIndex(
+  targets: readonly Target[],
+  locale: Locale,
+  table?: Translations,
+): string {
   const t = STRINGS[locale];
+
+  // The index links to the articles, so it must use the same recorded
+  // translations they do. Listing an English title above a Hindi page makes the
+  // translation look absent when it is not.
+  const untranslated: string[] = [];
+  const tr = (source: string): string => {
+    if (locale === 'en') return escapeHtml(source);
+    const rendered = inLocale(source, table);
+    if (rendered.translated) return escapeHtml(rendered.text);
+    untranslated.push(source);
+    return `<span class="untranslated" lang="en">${escapeHtml(source)}</span>`;
+  };
   const other = LOCALES.filter((l) => l !== locale);
   const switchLinks = other
     .map((l) => {
@@ -41,7 +58,7 @@ export function renderIndex(targets: readonly Target[], locale: Locale): string 
     // Each locale keeps its pages in one directory, so this is a bare filename.
     const href = `${slugFor(target)}.html`;
     return `    <li>
-      <a href="${escapeHtml(href)}">${escapeHtml(target.title)}</a>
+      <a href="${escapeHtml(href)}">${tr(target.title)}</a>
       <span class="meta">${escapeHtml(t.indexPromisedDue(String(revision.announcedOn.slice(0, 4)), String(revision.dueBy)))}</span>
     </li>`;
   });
@@ -82,6 +99,7 @@ ${LOCALES.map((l) => `<link rel="alternate" hreflang="${l}" href="${indexHref(lo
   footer { margin-top:3rem; padding-top:1rem; border-top:1px solid var(--line);
            font-size:.8rem; color:var(--dim); }
   a { color:inherit; }
+  .untranslated { opacity:.82; border-bottom:1px dotted var(--line); }
 </style>
 
 <nav>${switchLinks}</nav>
@@ -104,6 +122,8 @@ ${rows.join('\n')}
 
 <h2>${escapeHtml(t.indexMethodHeading)}</h2>
 <p class="note">${escapeHtml(t.indexMethod)}</p>
+
+${locale !== 'en' && untranslated.length > 0 ? `<p class="note">${escapeHtml(t.untranslatedNote(untranslated.length))}</p>` : ''}
 
 <footer>${escapeHtml(t.footer)}<br>
 <a href="https://github.com/nishtha2403/antar">${escapeHtml(t.indexSource)}</a></footer>
