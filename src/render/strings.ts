@@ -1,0 +1,129 @@
+/**
+ * Page copy, per locale.
+ *
+ * English is the root. `en` below is the reference: `Strings` is derived from
+ * it, so every other locale must supply exactly the same keys with exactly the
+ * same signatures, and a translation that falls behind is a compile error
+ * rather than a page with an English sentence in the middle of it.
+ *
+ * What lives here is template copy only. Nothing from the record is translated —
+ * institution names, target titles, revision notes and correction text render
+ * verbatim in whatever language the source used. Translating those would make
+ * the page assert something about what the source said, which is a claim, not a
+ * rendering decision. If a Hindi rendering of a recorded field is wanted, it has
+ * to be recorded by a named human like any other judgement.
+ */
+
+export type Locale = 'en' | 'hi';
+
+export const LOCALES: readonly Locale[] = ['en', 'hi'];
+
+/** English is the root locale. Every other locale is typed against it. */
+const en = {
+  htmlLang: 'en',
+  dir: 'ltr',
+
+  rowTarget: 'Target',
+  rowAchieved: 'Achieved so far',
+  rowRemaining: 'Remaining',
+
+  classPromise: 'Promise',
+  classBenchmark: 'Benchmark',
+  classFloor: 'Statutory minimum',
+  classPromiseNote: 'The government stated this as a commitment.',
+  classBenchmarkNote: 'A reference point, not a commitment.',
+  classFloorNote: 'A legal or scheme minimum, not an ambition.',
+
+  asOf: (date: string) => `as of ${date}`,
+
+  requiredRate: (rate: string, years: number) =>
+    `<strong>${rate} per year</strong> over ${years} years would reach the target. ` +
+    'This is division, not a forecast: it assumes nothing about whether that rate is achievable.',
+  targetMet: 'Target met.',
+  deadlinePassed: 'The deadline has passed.',
+
+  sourcesHeading: 'Where these figures come from',
+  sourceLinkLabel: 'source',
+  labelTarget: 'Target',
+  labelAchieved: 'Achieved',
+  labelMeasure: 'Measure',
+  announcedBy: (who: string, when: string) => `Announced by ${who} on ${when}.`,
+  verifiedBy: (who: string, when: string) => `Verified by ${who} on ${when}.`,
+  vintageCurrent: 'current measurement',
+  vintageLastAvailable: 'last available measurement',
+
+  revisedHeading: 'This target has been revised',
+  revisedNote: 'The original target is preserved in the record and was not overwritten.',
+
+  notSayingHeading: 'What this page does not say',
+  notSayingIndividual: 'It does not assign responsibility to any individual.',
+  notSayingCause: 'It makes no claim about why the gap exists.',
+
+  footer: 'Every figure carries its source. No unverified figure is published.',
+
+  /** Label for the link to the other language. Written in the target language. */
+  switchToHi: 'हिन्दी में पढ़ें',
+  switchToEn: 'Read in English',
+};
+
+export type Strings = typeof en;
+
+const hi: Strings = {
+  htmlLang: 'hi',
+  dir: 'ltr',
+
+  rowTarget: 'लक्ष्य',
+  rowAchieved: 'अब तक',
+  rowRemaining: 'शेष',
+
+  classPromise: 'वादा',
+  classBenchmark: 'मानक',
+  classFloor: 'वैधानिक न्यूनतम',
+  classPromiseNote: 'सरकार ने इसे एक प्रतिबद्धता के रूप में कहा।',
+  classBenchmarkNote: 'यह एक संदर्भ बिंदु है, प्रतिबद्धता नहीं।',
+  classFloorNote: 'यह कानूनी या योजनागत न्यूनतम है, लक्ष्य नहीं।',
+
+  asOf: (date: string) => `${date} तक`,
+
+  requiredRate: (rate: string, years: number) =>
+    `लक्ष्य तक पहुँचने के लिए <strong>${rate} प्रति वर्ष</strong>, ${years} वर्षों तक जोड़ना होगा। ` +
+    'यह केवल भाग है, पूर्वानुमान नहीं: इससे यह नहीं कहा जा रहा कि यह दर संभव है।',
+  targetMet: 'लक्ष्य पूरा हुआ।',
+  deadlinePassed: 'समय सीमा बीत चुकी है।',
+
+  sourcesHeading: 'ये आँकड़े कहाँ से आए',
+  sourceLinkLabel: 'स्रोत',
+  labelTarget: 'लक्ष्य',
+  labelAchieved: 'अब तक',
+  labelMeasure: 'मापदंड',
+  announcedBy: (who: string, when: string) => `${who} द्वारा ${when} को घोषित।`,
+  verifiedBy: (who: string, when: string) => `${who} द्वारा ${when} को सत्यापित।`,
+  vintageCurrent: 'वर्तमान माप',
+  vintageLastAvailable: 'अंतिम उपलब्ध माप',
+
+  revisedHeading: 'इस लक्ष्य में बदलाव हुआ है',
+  revisedNote: 'मूल लक्ष्य अभिलेख में सुरक्षित है; उसे मिटाया नहीं गया।',
+
+  notSayingHeading: 'यह पृष्ठ क्या नहीं कहता',
+  notSayingIndividual: 'यह किसी व्यक्ति को ज़िम्मेदार नहीं ठहराता।',
+  notSayingCause: 'यह अंतर के कारण के बारे में कोई दावा नहीं करता।',
+
+  footer: 'हर आँकड़े के साथ उसका स्रोत है। कोई भी असत्यापित आँकड़ा प्रकाशित नहीं होता।',
+
+  switchToHi: 'हिन्दी में पढ़ें',
+  switchToEn: 'Read in English',
+};
+
+export const STRINGS: Readonly<Record<Locale, Strings>> = { en, hi };
+
+/**
+ * Where each locale's page lives.
+ *
+ * English is the root, so it sits at the top level and Hindi under `/hi/`.
+ */
+export const pagePath = (slug: string, locale: Locale): string =>
+  locale === 'en' ? `${slug}.html` : `${locale}/${slug}.html`;
+
+/** Relative href from one locale's page to another's, for the switch link. */
+export const relativeHref = (slug: string, from: Locale, to: Locale): string =>
+  from === 'en' ? `${to}/${slug}.html` : `../${slug}.html`;

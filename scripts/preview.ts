@@ -9,7 +9,8 @@
  * This script exists to review the page design. It is not an ingest path, and
  * it does not write to data/.
  */
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { computeGap } from '../src/kernel/gap.ts';
 import { agentIdentity, humanIdentity } from '../src/kernel/identity.ts';
 import { provenance } from '../src/kernel/provenance.ts';
@@ -18,9 +19,10 @@ import { series } from '../src/kernel/series.ts';
 import { classify, createTarget, targetId, typeIndicator } from '../src/kernel/target.ts';
 import { isoDate, targetYear } from '../src/kernel/time.ts';
 import { attest, verify } from '../src/kernel/verification.ts';
-import { renderTargetPage } from '../src/render/page.ts';
+import { renderAllLocales } from '../src/render/page.ts';
+import { LOCALES, pagePath } from '../src/render/strings.ts';
 
-const out = process.argv[2] ?? 'build/preview.html';
+const outDir = process.argv[2] ?? 'build/preview';
 const REVIEWER = humanIdentity('placeholder.reviewer');
 const BOT = agentIdentity('placeholder-harvester');
 
@@ -71,5 +73,11 @@ const observations = series(measure, [
   },
 ]);
 
-writeFileSync(out, renderTargetPage(target, computeGap(target, observations)));
-console.log(`Wrote ${out} — PLACEHOLDER DATA, layout review only. Nothing here is sourced.`);
+const pages = renderAllLocales(target, computeGap(target, observations));
+for (const locale of LOCALES) {
+  const path = `${outDir}/${pagePath('nem-2047-100gw', locale)}`;
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, pages[locale]);
+  console.log(`Wrote ${path}`);
+}
+console.log('PLACEHOLDER DATA, layout review only. Nothing here is sourced.');

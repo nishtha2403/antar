@@ -53,12 +53,31 @@ test/            the guarantees, as executable claims
 Look at the page design without any data:
 
 ```bash
-node scripts/preview.ts build/preview.html
+node scripts/preview.ts build/preview
 ```
 
-That renders from placeholder values whose provenance is titled PLACEHOLDER, so
-the marking shows up in the rendered citations. It is for reviewing layout and
-is not an ingest path.
+That renders both locales from placeholder values whose provenance is titled
+PLACEHOLDER, so the marking shows up in the rendered citations. It is for
+reviewing layout and is not an ingest path.
+
+## Languages
+
+English is the root locale. `src/render/strings.ts` defines `en` first and
+derives the `Strings` type from it, so every other locale must supply the same
+keys with the same signatures — a translation that falls behind is a `tsc`
+error, not a page with an English sentence in the middle of it.
+
+One language per page. English sits at the root, Hindi under `/hi/`, and the two
+are linked with `hreflang`. A bilingual page halves its own information density
+and no reader needs both.
+
+**Template copy is translated; the record is not.** Target titles, institution
+names, revision notes and correction text render verbatim in every locale,
+because translating a recorded value would make the page assert something the
+source did not say. The consequence is visible in the preview: the Hindi page
+currently shows an English title, because that is the language the record is in.
+Fixing that means recording translations as human judgements, which is a schema
+decision, not a rendering one.
 
 ## Decisions worth knowing before you change anything
 
