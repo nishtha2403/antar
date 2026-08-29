@@ -1,0 +1,27 @@
+{
+  "asOf": "2025-10-31",
+  "value": {
+    "value": {
+      "digits": "8780",
+      "scale": 3,
+      "unit": "GW"
+    },
+    "provenance": {
+      "sourceUrl": "https://cea.nic.in/wp-content/uploads/installed/2025/10/IC_OCT_2025_allocation_wise.pdf",
+      "sourceTitle": "Installed Capacity Report, as on 2025-10-31",
+      "publisher": "Central Electricity Authority",
+      "retrievedOn": "2026-08-29",
+      "retrievedBy": {
+        "kind": "agent",
+        "id": "cea-harvester"
+      },
+      "locator": "ALL INDIA, Total, Nuclear"
+    },
+    "verification": {
+      "state": "verified",
+      "verifiedBy": "nishtha.sharma",
+      "verifiedOn": "2026-08-30",
+      "method": "Confirmed the all-India Total row reads 8780 MW in the Nuclear column of each month's report."
+    }
+  }
+}

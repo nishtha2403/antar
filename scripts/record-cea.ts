@@ -35,15 +35,32 @@ const dryRun = flags.includes('--dry-run');
  * left off this list is recorded unverified, which is the truthful state and
  * simply means it cannot be published yet.
  */
+/**
+ * When the check was performed.
+ *
+ * Distinct from the retrieval date. A document fetched in August and checked in
+ * September has two different dates, and collapsing them puts a verification on
+ * the record for a day nobody did one.
+ */
+const onArg = flags.find((f) => f.startsWith('--on='));
+
 const verifiedArg = flags.find((f) => f.startsWith('--verified='));
 const verifiedDates = new Set(
   (verifiedArg?.slice('--verified='.length) ?? '').split(',').map((d) => d.trim()).filter(Boolean),
 );
 
 if (!method?.trim()) {
-  console.error('Usage: node scripts/record-cea.ts "<what you checked>" --verified=YYYY-MM-DD[,...]');
+  console.error(
+    'Usage: node scripts/record-cea.ts "<what you checked>" --on=YYYY-MM-DD --verified=YYYY-MM-DD[,...]',
+  );
   process.exit(1);
 }
+if (!onArg) {
+  console.error('A verification date is required: --on=YYYY-MM-DD (the day you checked, not the day it was fetched).');
+  process.exit(1);
+}
+const verifiedOn = onArg.slice('--on='.length);
+
 if (verifiedDates.size === 0) {
   console.error('No --verified dates given. Refusing to record a verification nobody performed.');
   process.exit(1);
@@ -71,7 +88,7 @@ const observations = manifest.readings.map((r) => {
   return {
     asOf: isoDate(r.asOn),
     value: verifiedDates.has(r.asOn)
-      ? verify(figure, FOUNDER, manifest.retrievedOn, method.trim())
+      ? verify(figure, FOUNDER, verifiedOn, method.trim())
       : figure,
   };
 });
@@ -89,6 +106,7 @@ for (const o of built.observations) {
 console.log(`\n  measure:  ${built.measure.measure}`);
 console.log(`  excludes: ${built.measure.excludes ?? '(nothing recorded)'}`);
 console.log(`  method:   ${method.trim()}`);
+console.log(`  verified: ${verifiedOn} by ${displayName(FOUNDER)}`);
 
 if (dryRun) {
   console.log('\nDry run. Nothing written.\n');
