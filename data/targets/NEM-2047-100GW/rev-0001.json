@@ -1,0 +1,46 @@
+{
+  "seq": 1,
+  "value": {
+    "value": {
+      "digits": "100",
+      "scale": 0,
+      "unit": "GW"
+    },
+    "provenance": {
+      "sourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287710&reg=3&lang=1",
+      "sourceTitle": "PARLIAMENT QUESTION: NUCLEAR ENERGY MISSION FOR VIKSIT BHARAT",
+      "publisher": "Press Information Bureau, Department of Atomic Energy",
+      "publishedOn": "2026-07-22",
+      "retrievedOn": "2026-08-30",
+      "retrievedBy": {
+        "kind": "human",
+        "id": "nishtha.sharma"
+      },
+      "locator": "PRID 2287710"
+    },
+    "verification": {
+      "state": "verified",
+      "verifiedBy": "nishtha.sharma",
+      "verifiedOn": "2026-08-30",
+      "method": "Read against the PIB release of 22 July 2026 (PRID 2287710), which states the Nuclear Energy Mission objective of 100 GWe nuclear power generation capacity by 2047, announced in the Union Budget 2025-26. The release writes \"100 GWe\" in one sentence and \"100 GW\" in another; recorded as GW, treating GWe as the same quantity CEA reports as megawatts of installed capacity. That equivalence is a human judgement, not a conversion the kernel performed."
+    }
+  },
+  "dueBy": 2047,
+  "announcedBy": "Ministry of Finance, Union Budget 2025-26",
+  "announcedOn": "2025-02-01",
+  "provenance": {
+    "sourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287710&reg=3&lang=1",
+    "sourceTitle": "PARLIAMENT QUESTION: NUCLEAR ENERGY MISSION FOR VIKSIT BHARAT",
+    "publisher": "Press Information Bureau, Department of Atomic Energy",
+    "publishedOn": "2026-07-22",
+    "retrievedOn": "2026-08-30",
+    "retrievedBy": {
+      "kind": "human",
+      "id": "nishtha.sharma"
+    },
+    "locator": "PRID 2287710"
+  },
+  "recordedBy": "nishtha.sharma",
+  "recordedOn": "2026-08-30",
+  "note": ""
+}
