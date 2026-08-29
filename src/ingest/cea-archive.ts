@@ -27,6 +27,7 @@ export type ArchiveEntry = {
 
 /** Injected so the discovery logic is testable without the network. */
 export type HttpPost = (url: string, body: URLSearchParams, headers: Record<string, string>) => Promise<string>;
+export type HttpGet = (url: string) => Promise<string>;
 
 export const defaultPost: HttpPost = async (url, body, headers) => {
   const response = await fetch(url, { method: 'POST', body, headers });
@@ -85,6 +86,48 @@ export async function discoverMonth(
     throw new KernelError(
       `CEA archive: no report link found for ${year}-${String(month).padStart(2, '0')}. ` +
         'Either the month has no published report or the endpoint changed — both need a person to look.',
+    );
+  }
+  return entries;
+}
+
+export const defaultGet: HttpGet = async (url) => {
+  const response = await fetch(url, { headers: { 'user-agent': 'antar-research/0.1' } });
+  if (!response.ok) throw new KernelError(`CEA index: HTTP ${response.status} from ${url}.`);
+  return response.text();
+};
+
+/**
+ * The current month, which the archive does not list.
+ *
+ * The most recent report sits on the index page rather than in the month
+ * archive, and it is the only one published as a spreadsheet. Without this a
+ * series silently stops one month short of today, which is the kind of gap that
+ * looks like a plateau rather than a missing row.
+ */
+export async function discoverCurrent(get: HttpGet = defaultGet): Promise<ArchiveEntry[]> {
+  const html = await get(REFERER);
+  const seen = new Set<string>();
+  const entries: ArchiveEntry[] = [];
+
+  for (const match of html.matchAll(FILE_LINK)) {
+    const url = match[1] as string;
+    if (seen.has(url)) continue;
+    seen.add(url);
+    // The upload path carries the month: /uploads/installed/YYYY/MM/...
+    const path = /\/installed\/(\d{4})\/(\d{2})\//.exec(url);
+    if (!path) continue;
+    entries.push({
+      year: Number(path[1]),
+      month: Number(path[2]),
+      url,
+      format: (match[2] as string).toLowerCase() as 'xlsx' | 'pdf',
+    });
+  }
+
+  if (entries.length === 0) {
+    throw new KernelError(
+      'CEA index: no report link found on the installed-capacity page. The page layout changed.',
     );
   }
   return entries;

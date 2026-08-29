@@ -77,7 +77,26 @@ resources per page, which needs xref and object parsing. Pinned by a test in
 `test/cea-pdf.test.ts` so a future fix announces itself by failing there.
 
 **Practical consequence: the series available today runs from September 2025.**
-That is roughly a year of monthly points against a 2047 deadline.
+Eleven monthly points, September 2025 to July 2026, all readable.
+
+```bash
+node scripts/fetch-cea.ts 2025-09 2026-07 2026-08-29
+```
+
+That prints a verification worksheet and saves each source document under
+`build/sources/`. It writes nothing to `data/` — every figure it produces is
+unverified, and the point of the worksheet is to put the numbers and their
+sources in front of a person.
+
+**The series is flat.** All eleven months read 8780 MW. Nuclear capacity has not
+moved since at least September 2025, which is plausible — capacity changes only
+when a reactor commissions — but it means the time series currently adds nothing
+to the gap page that a single observation would not. A verifier should confirm
+the flatness is real and not an artefact of reading the same cached figure.
+
+October 2025 is published as `IC_OCT_2025_allocation_wise.pdf` and reads
+correctly, so the "allocation wise" layout is not itself the problem — the
+failing reports are older than that and differ in their font encoding.
 
 **The CEA API is down, and says so with a 200.**
 

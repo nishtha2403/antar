@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { discoverMonth, type HttpPost } from '../src/ingest/cea-archive.ts';
+import { discoverCurrent, discoverMonth, type HttpPost } from '../src/ingest/cea-archive.ts';
 import { parseCeaPdf } from '../src/ingest/cea-pdf.ts';
 import { extractTextRows } from '../src/ingest/pdf.ts';
 
@@ -105,5 +105,26 @@ describe('archive discovery', () => {
 
   it('rejects an impossible month', async () => {
     await expect(discoverMonth(2025, 13, html(''))).rejects.toThrow(/Month must be 1-12/);
+  });
+});
+
+describe('current-month discovery', () => {
+  it('reads the month out of the upload path on the index page', async () => {
+    const entries = await discoverCurrent(
+      async () =>
+        '<a href="https://cea.nic.in/wp-content/uploads/installed/2026/07/IC_July2026.xlsx">x</a>',
+    );
+    expect(entries).toEqual([
+      {
+        year: 2026,
+        month: 7,
+        url: 'https://cea.nic.in/wp-content/uploads/installed/2026/07/IC_July2026.xlsx',
+        format: 'xlsx',
+      },
+    ]);
+  });
+
+  it('raises when the index page has no report link', async () => {
+    await expect(discoverCurrent(async () => '<p>nothing</p>')).rejects.toThrow(/page layout changed/);
   });
 });
