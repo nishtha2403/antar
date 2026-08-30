@@ -58,10 +58,11 @@ for (const file of pages) {
   for (const host of new Set(hosts)) {
     if (!allowed.test(host)) fail(file, `unexpected external host: ${host}`);
   }
-  if (/<script(?![^>]*type="application\/ld\+json")/i.test(page.replace(/pagefind/g, ''))) {
-    // Search ships a script; nothing else should.
-    if (!page.includes('pagefind')) fail(file, 'contains a script tag');
-  }
+  // Two scripts are expected: search and the filter chips. Both are
+  // progressive — every page is readable and complete without them.
+  const scripts = (page.match(/<script/gi) ?? []).length;
+  const expected = (page.includes('pagefind') ? 1 : 0) + (page.includes('data-filters') ? 1 : 0);
+  if (scripts > expected) fail(file, `${scripts} script tags, expected at most ${expected}`);
 }
 
 // An indicator page must carry its citations.

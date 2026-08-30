@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Filters from '../Filters.astro';
 import IndicatorList from '../IndicatorList.astro';
 import { COPY } from '../../lib/ui.ts';
 import { type Locale, localePrefix } from '../../lib/locales.ts';
@@ -37,7 +38,10 @@ const soon = all.filter((i) => i.dueBy <= horizon);
   )}
 
   <h2>{c.allIndicators}</h2>
-  <IndicatorList items={all} locale={locale} />
+  <div>
+    <Filters items={all} copy={c} />
+    <IndicatorList items={all} locale={locale} />
+  </div>
 
   <h2>{c.navIndicators}</h2>
   <p>

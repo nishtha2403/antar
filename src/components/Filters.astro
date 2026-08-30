@@ -1,0 +1,55 @@
+---
+import type { Copy } from '../lib/ui.ts';
+import { stateLabel } from '../lib/ui.ts';
+import type { IndicatorSummary, MeasurementState } from '../lib/view.ts';
+
+/**
+ * Filters, not verdicts.
+ *
+ * Each chip is a view the reader runs over facts already on the page —
+ * deadline passed, revised, no data. Selected is ink-filled, never accent:
+ * selection is not a judgement either. Without JavaScript every indicator is
+ * still listed; the chips only narrow what is already there.
+ */
+interface Props { items: readonly IndicatorSummary[]; copy: Copy }
+const { items, copy: c } = Astro.props;
+
+const states: MeasurementState[] = ['deadline-passed', 'revised', 'no-data'];
+const counts = Object.fromEntries(
+  states.map((s) => [s, items.filter((i) => i.states.includes(s)).length]),
+);
+const shown = states.filter((s) => counts[s]! > 0);
+---
+{shown.length > 0 && (
+  <div class="chips" data-filters role="group" aria-label={c.filterLabel}>
+    <button type="button" class="chip on" data-filter="all" aria-pressed="true">
+      {c.filterAll} <span class="n">{items.length}</span>
+    </button>
+    {shown.map((s) => (
+      <button type="button" class="chip" data-filter={s} aria-pressed="false">
+        {stateLabel(s, c)} <span class="n">{counts[s]}</span>
+      </button>
+    ))}
+  </div>
+)}
+
+<script is:inline>
+  for (const group of document.querySelectorAll('[data-filters]')) {
+    const list = group.parentElement?.querySelector('.ind-list');
+    if (!list) continue;
+    group.addEventListener('click', (event) => {
+      const chip = event.target.closest('[data-filter]');
+      if (!chip) return;
+      for (const other of group.querySelectorAll('[data-filter]')) {
+        const on = other === chip;
+        other.classList.toggle('on', on);
+        other.setAttribute('aria-pressed', String(on));
+      }
+      const want = chip.dataset.filter;
+      for (const row of list.querySelectorAll('[data-states]')) {
+        const has = want === 'all' || row.dataset.states.split(' ').includes(want);
+        row.hidden = !has;
+      }
+    });
+  }
+</script>

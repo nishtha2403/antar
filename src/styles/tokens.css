@@ -1,0 +1,101 @@
+/* Antar — design tokens.
+   Paste-ready. Replaces the :root block in src/styles/site.css.
+
+   The single principle: colour is used for exactly one thing — the gap.
+   Everything else is ink, greys, rules and texture (hatch, tick, outline),
+   differentiated by weight and geometry rather than hue. This is not a style
+   preference. It structurally prevents the page from colour-coding a verdict,
+   and it rules out saffron-and-green by leaving no slot for a good/bad pair.
+   Plum is the accent because it is unclaimed in Indian party colour: not
+   saffron, not green, not the blues of AAP/BSP, not the reds of the left. */
+
+:root {
+  color-scheme: light dark;
+
+  /* ---- ground and ink ---- */
+  --paper:      #EFEFF1;  /* cool light grey. Not cream: cream reads as a       */
+  --sheet:      #FFFFFF;  /* literary blog. Cool grey reads as a record.        */
+  --ink:        #22242B;  /* near-black, faintly blue. 13.5:1 on --paper.       */
+  --ink-mid:    #575B65;  /* secondary prose, captions.        5.9:1 on --paper */
+  --ink-dim:    #666A73;  /* micro-labels only, never body.    3.6:1 on --paper */
+  --rule:       #D6D7DC;  /* structural rules, axis lines, meter troughs        */
+  --hair:       #E4E5E9;  /* list separators, table hairlines                   */
+
+  /* ---- the one accent: the gap ---- */
+  --gap:        #8E2F6B;  /* oklch(.44 .16 340). 6.6:1 on --paper — usable for  */
+  --gap-ink:    #6E2453;  /* text, not only for fills.                          */
+  --gap-soft:   #F0DCE9;  /* area fills, hatch ground                           */
+  --gap-line:   #C77BAB;  /* hatch strokes, dashed arithmetic line              */
+
+  /* ---- texture, for what colour is not allowed to say ---- */
+  --built:      var(--ink);        /* solid          */
+  --committed:  var(--ink-mid);    /* 1px outline    */
+  --planned:    var(--ink-dim);    /* hatched outline */
+
+  /* ---- type ---- */
+  --face-display: "Tiro Devanagari Hindi", Georgia, serif;
+  --face-text:    "Anek Latin", "Anek Devanagari", system-ui, sans-serif;
+  --face-hindi:   "Anek Devanagari", system-ui, sans-serif;
+  --face-figure:  "Martian Mono", ui-monospace, monospace;
+
+  --t-micro:   0.6875rem;                        /* 11px  labels, tracking .1em */
+  --t-small:   0.8125rem;                        /* 13px  captions, citations   */
+  --t-body:    1rem;                             /* 16px                        */
+  --t-lede:    1.1875rem;                        /* 19px                        */
+  --t-h3:      1.3125rem;                        /* 21px                        */
+  --t-h2:      1.625rem;                         /* 26px                        */
+  --t-h1:      clamp(1.75rem, 1.3rem + 2.2vw, 2.75rem);   /* 28 → 44 */
+  --t-figure:  clamp(2rem, 1.4rem + 3vw, 3.5rem);         /* 32 → 56 */
+  --t-display: clamp(2.75rem, 1.8rem + 4.8vw, 5rem);      /* 44 → 80 */
+
+  /* Devanagari needs more leading than Latin at the same size: the matras sit
+     above the shirorekha and the conjuncts below the baseline. These are not
+     the same numbers with a different name. */
+  --lh-body:      1.6;
+  --lh-body-deva: 1.78;
+  --lh-head:      1.14;
+  --lh-head-deva: 1.34;
+
+  /* ---- spacing, 4px base ---- */
+  --s1: 2px;  --s2: 4px;  --s3: 8px;  --s4: 12px; --s5: 16px;
+  --s6: 24px; --s7: 32px; --s8: 48px; --s9: 64px; --s10: 96px;
+
+  --measure: 64ch;
+  --shell:   44rem;
+  --radius:  2px;   /* near-square. Rounded corners read as product UI. */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:    #17181C;
+    --sheet:    #1E2026;
+    --ink:      #E9E9ED;
+    --ink-mid:  #A6A9B2;
+    --ink-dim:  #7C808A;
+    --rule:     #34363E;
+    --hair:     #272930;
+    --gap:      #E48CC2;   /* lifted to 7.5:1 on --paper; the plum hue holds */
+    --gap-ink:  #F0AFD5;
+    --gap-soft: #3A2233;
+    --gap-line: #8A4E70;
+  }
+}
+:root[data-theme="dark"] {
+  --paper:#17181C; --sheet:#1E2026; --ink:#E9E9ED; --ink-mid:#A6A9B2;
+  --ink-dim:#7C808A; /* 4.5:1 on --paper */ --rule:#34363E; --hair:#272930;
+  --gap:#E48CC2; --gap-ink:#F0AFD5; --gap-soft:#3A2233; --gap-line:#8A4E70;
+}
+
+/* ---- script-aware defaults ---- */
+body { font-family: var(--face-text); line-height: var(--lh-body); }
+html[lang="hi"] body { font-family: var(--face-hindi); line-height: var(--lh-body-deva); }
+h1, h2, h3, .display { font-family: var(--face-display); font-weight: 400; }
+.figure { font-family: var(--face-figure); font-variant-numeric: tabular-nums;
+          font-feature-settings: "tnum" 1; letter-spacing: -0.02em; }
+/* Micro-labels are uppercase+tracked in Latin only. Devanagari has no case and
+   letterspacing breaks the shirorekha, so the Hindi label is set at a larger
+   size instead of being shouted. */
+.label { font-family: var(--face-figure); font-size: var(--t-micro);
+         letter-spacing: 0.11em; text-transform: uppercase; color: var(--ink-dim); }
+html[lang="hi"] .label { font-family: var(--face-hindi); font-size: 0.8125rem;
+         letter-spacing: 0; text-transform: none; }

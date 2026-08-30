@@ -1,0 +1,36 @@
+---
+import type { Copy } from '../lib/ui.ts';
+
+/**
+ * The promise window: two ends and the measured distance between them.
+ *
+ * The same dimension-line device as the wordmark. The today marker is a fact
+ * about the calendar — nothing here is shaded to suggest that where it falls is
+ * good or bad.
+ */
+interface Props {
+  promisedYear: number;
+  promisedOn: string;
+  dueBy: number;
+  elapsedPercent: number | null;
+  copy: Copy;
+}
+const { promisedYear, promisedOn, dueBy, elapsedPercent, copy: c } = Astro.props;
+const span = dueBy - promisedYear;
+const at = Math.max(0, Math.min(100, elapsedPercent ?? 0));
+---
+<div class="window">
+  <div class="end">
+    <span class="k">{c.windowPromised}</span>
+    <span class="y">{promisedYear}</span>
+    <span class="d">{promisedOn}</span>
+  </div>
+  <div class="span" aria-hidden="true">
+    <span class="today" style={`left:${at}%`}><span>{c.windowToday}</span></span>
+  </div>
+  <div class="end right">
+    <span class="k">{c.windowDue}</span>
+    <span class="y">{dueBy}</span>
+    <span class="d">{c.windowYears(span)}</span>
+  </div>
+</div>

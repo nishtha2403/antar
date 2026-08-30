@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Anek+Devanagari:wght@100..800&family=Anek+Latin:wght@100..800&family=Martian+Mono:wght@300..700&display=swap">
+<style>
+  body { margin:0; background:#EFEFF1; }
+  a { color:#8E2F6B; } a:hover { color:#6E2453; }
+</style>
+</helmet>
+
+<div style="background:#EFEFF1; color:#22242B; font-family:'Anek Latin',system-ui,sans-serif; padding:64px 40px 120px;">
+<div style="max-width:1120px; margin:0 auto; display:flex; flex-direction:column; gap:80px;">
+
+  <header style="display:flex; flex-direction:column; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:32px;">
+    <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Antar · design specification · sheet 2 of 6</div>
+    <h1 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:44px; line-height:1.14; margin:0;">8.78 against 100</h1>
+    <p style="margin:0; max-width:66ch; font-size:19px; line-height:1.6; color:#575B65;">A truthful axis flattens six years of real movement to a 3px rise at the bottom of the frame. A zoomed axis makes the trend legible and makes a 91-gigawatt gap look like a rounding error. The resolution is not to choose: draw both scales, in the same figure, and state the magnification in words.</p>
+  </header>
+
+  <!-- ============ THE FIGURE ============ -->
+  <section style="display:flex; flex-direction:column; gap:20px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">01</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Nested scale, at full width</h2>
+    </div>
+
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:28px 24px 20px;">
+      <svg viewBox="0 0 1120 470" style="display:block; width:100%; height:auto;" role="img" aria-label="Installed nuclear capacity, 6.78 GW in February 2020 to 8.78 GW in July 2026, plotted at full scale against the 100 GW target for 2047, with a ten-times magnified panel of the same readings.">
+        <defs>
+          <pattern id="hatchGap" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <rect width="7" height="7" fill="#FAF0F6"></rect>
+            <line x1="0" y1="0" x2="0" y2="7" stroke="#DDA6C7" stroke-width="1"></line>
+          </pattern>
+        </defs>
+
+        <!-- ---------- PANEL A : full scale ---------- -->
+        <text x="60" y="18" font-family="Martian Mono, monospace" font-size="11" letter-spacing="1.1" fill="#666A73">FULL SCALE · 0—100 GW</text>
+
+        <line x1="60" y1="410" x2="500" y2="410" stroke="#22242B" stroke-width="1"></line>
+        <line x1="60" y1="315" x2="500" y2="315" stroke="#E4E5E9" stroke-width="1"></line>
+        <line x1="60" y1="220" x2="500" y2="220" stroke="#E4E5E9" stroke-width="1"></line>
+        <line x1="60" y1="125" x2="500" y2="125" stroke="#E4E5E9" stroke-width="1"></line>
+        <text x="52" y="414" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">0</text>
+        <text x="52" y="319" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">25</text>
+        <text x="52" y="224" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">50</text>
+        <text x="52" y="129" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">75</text>
+
+        <polygon points="167.2,376.6 500,30 500,376.6" fill="url(#hatchGap)"></polygon>
+        <line x1="167.2" y1="376.6" x2="500" y2="30" stroke="#8E2F6B" stroke-width="1.5" stroke-dasharray="5 4"></line>
+        <text x="326" y="196" text-anchor="middle" font-family="Martian Mono, monospace" font-size="10" fill="#8E2F6B" transform="rotate(-46.2 326 196)">4.34 GW PER YEAR REACHES 100</text>
+
+        <line x1="60" y1="30" x2="500" y2="30" stroke="#22242B" stroke-width="1"></line>
+        <text x="52" y="34" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#22242B">100</text>
+        <circle cx="500" cy="30" r="4" fill="#22242B"></circle>
+        <text x="500" y="20" text-anchor="end" font-family="Martian Mono, monospace" font-size="11" fill="#22242B">TARGET 100 GW · 2047</text>
+
+        <line x1="60" y1="376.6" x2="500" y2="376.6" stroke="#575B65" stroke-width="1" stroke-dasharray="2 3"></line>
+
+        <path d="M62.6,384.2 H115.7 V381.6 H126.5 V378.9 H145.5 V376.6 H167.2" fill="none" stroke="#22242B" stroke-width="2.5" stroke-linejoin="miter"></path>
+        <circle cx="167.2" cy="376.6" r="3.5" fill="#22242B"></circle>
+
+        <!-- the gap, as a measured distance at the deadline -->
+        <line x1="500" y1="30" x2="500" y2="376.6" stroke="#8E2F6B" stroke-width="1.5"></line>
+        <line x1="492" y1="30" x2="508" y2="30" stroke="#8E2F6B" stroke-width="1.5"></line>
+        <line x1="492" y1="376.6" x2="508" y2="376.6" stroke="#8E2F6B" stroke-width="1.5"></line>
+        <text x="76" y="76" font-family="Martian Mono, monospace" font-size="26" font-weight="500" fill="#8E2F6B">91.22</text>
+        <text x="76" y="94" font-family="Martian Mono, monospace" font-size="10" letter-spacing="1" fill="#8E2F6B">GW REMAINING · 21 YEARS TO RUN</text>
+        <line x1="292" y1="70" x2="492" y2="70" stroke="#C77BAB" stroke-width="1" stroke-dasharray="2 3"></line>
+
+        <rect x="60" y="372" width="440" height="38" fill="none" stroke="#8E2F6B" stroke-width="1"></rect>
+
+        <text x="60" y="450" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">2020</text>
+        <text x="167.2" y="450" text-anchor="middle" font-family="Martian Mono, monospace" font-size="10" fill="#22242B">2026</text>
+        <line x1="167.2" y1="436" x2="167.2" y2="442" stroke="#22242B" stroke-width="1"></line>
+        <text x="500" y="450" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">2047</text>
+        <text x="60" y="428" font-family="Martian Mono, monospace" font-size="10" fill="#8E2F6B">the outlined band, 0—10 GW, is magnified at right ▸</text>
+
+        <!-- ---------- connector wedge ---------- -->
+        <polygon points="500,372 680,30 680,410 500,410" fill="#FBF3F8" stroke="none"></polygon>
+        <line x1="500" y1="372" x2="680" y2="30" stroke="#C77BAB" stroke-width="1" stroke-dasharray="3 3"></line>
+        <line x1="500" y1="410" x2="680" y2="410" stroke="#C77BAB" stroke-width="1" stroke-dasharray="3 3"></line>
+
+        <!-- ---------- PANEL B : ×10 ---------- -->
+        <text x="680" y="18" font-family="Martian Mono, monospace" font-size="11" letter-spacing="1.1" fill="#8E2F6B">MAGNIFIED ×10 · 0—10 GW</text>
+        <rect x="680" y="30" width="410" height="380" fill="none" stroke="#D6D7DC" stroke-width="1"></rect>
+        <line x1="680" y1="220" x2="1090" y2="220" stroke="#E4E5E9" stroke-width="1"></line>
+        <text x="672" y="34" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">10</text>
+        <text x="672" y="224" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">5</text>
+        <text x="672" y="414" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">0</text>
+
+        <path d="M697,152.4 H887.6 V125.8 H926.1 V99.2 H994.4 V76.4 H1072" fill="none" stroke="#22242B" stroke-width="2.5" stroke-linejoin="miter"></path>
+        <circle cx="1072" cy="76.4" r="3.5" fill="#22242B"></circle>
+
+        <line x1="887.6" y1="152.4" x2="887.6" y2="125.8" stroke="#8E2F6B" stroke-width="2.5"></line>
+        <line x1="926.1" y1="125.8" x2="926.1" y2="99.2" stroke="#8E2F6B" stroke-width="2.5"></line>
+        <line x1="994.4" y1="99.2" x2="994.4" y2="76.4" stroke="#8E2F6B" stroke-width="2.5"></line>
+        <line x1="887.6" y1="176" x2="887.6" y2="130" stroke="#C77BAB" stroke-width="1" stroke-dasharray="2 3"></line>
+        <line x1="926.1" y1="200" x2="926.1" y2="103" stroke="#C77BAB" stroke-width="1" stroke-dasharray="2 3"></line>
+        <line x1="994.4" y1="224" x2="994.4" y2="80" stroke="#C77BAB" stroke-width="1" stroke-dasharray="2 3"></line>
+        <text x="887.6" y="192" text-anchor="middle" font-family="Martian Mono, monospace" font-size="10" fill="#8E2F6B">+0.70</text>
+        <text x="926.1" y="216" text-anchor="middle" font-family="Martian Mono, monospace" font-size="10" fill="#8E2F6B">+0.70</text>
+        <text x="994.4" y="240" text-anchor="middle" font-family="Martian Mono, monospace" font-size="10" fill="#8E2F6B">+0.60</text>
+        <text x="887.6" y="208" text-anchor="middle" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">JUN 2023</text>
+        <text x="926.1" y="232" text-anchor="middle" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">FEB 2024</text>
+        <text x="994.4" y="256" text-anchor="middle" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">APR 2025</text>
+
+        <text x="697" y="144" font-family="Martian Mono, monospace" font-size="11" fill="#22242B">6.78</text>
+        <text x="1072" y="68" text-anchor="end" font-family="Martian Mono, monospace" font-size="15" font-weight="500" fill="#22242B">8.78 GW</text>
+
+        <text x="680" y="428" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">the same 78 readings · vertical scale ×10</text>
+        <text x="680" y="450" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">FEB 2020</text>
+        <text x="1090" y="450" text-anchor="end" font-family="Martian Mono, monospace" font-size="10" fill="#666A73">JUL 2026</text>
+      </svg>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px;">
+      <p style="margin:0; font-size:15px; line-height:1.65; color:#575B65;">78 verified readings, February 2020 to July 2026, each checked against its source report. The left panel is drawn to the target; the right panel magnifies the outlined band ten times. Both show the same numbers.</p>
+      <p style="margin:0; font-size:15px; line-height:1.65; color:#575B65;">The dashed line is 4.34 GW per year from July 2026 to 2047, the arithmetic that reaches 100. It is division, not a forecast, and the site says so in the caption rather than leaving the reader to infer it.</p>
+      <p style="margin:0; font-size:15px; line-height:1.65; color:#575B65;">Capacity arrives in steps when a reactor commissions: three steps in six years, marked on the right. A year without one is not a year behind, and nothing here says otherwise.</p>
+    </div>
+  </section>
+
+  <!-- ============ WHY ============ -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">02</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Five rules the figure follows</h2>
+    </div>
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9;">
+      <sc-for list="{{ rules }}" as="r" hint-placeholder-count="5">
+        <div style="display:grid; grid-template-columns:44px 1fr; gap:20px; padding:20px 26px; border-bottom:1px solid #E4E5E9;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#8E2F6B; padding-top:4px;">{{ r.n }}</div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="font-family:'Anek Latin',sans-serif; font-weight:600; font-size:17px; color:#22242B;">{{ r.head }}</div>
+            <div style="font-size:15px; line-height:1.65; color:#575B65; max-width:74ch;">{{ r.body }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin:0; max-width:70ch; font-size:15px; line-height:1.65; color:#575B65; border-left:2px solid #D6D7DC; padding-left:16px;">The magnified panel is never shown on its own — not in the social card, not in an embed, not on the category page. A zoomed axis without its parent frame is the exact misreading this figure exists to prevent, so the two panels are one component and cannot be separated in markup.</p>
+  </section>
+
+  <!-- ============ MOBILE ============ -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">03</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">At 320px</h2>
+    </div>
+    <div style="display:flex; gap:40px; align-items:flex-start; flex-wrap:wrap;">
+      <div style="width:320px; flex:0 0 auto; background:#EFEFF1; border:1px solid #D6D7DC;">
+        <div style="padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#666A73;">Installed capacity</div>
+          <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:12px 10px;">
+            <svg viewBox="0 0 288 470" style="display:block; width:100%; height:auto;" role="img" aria-label="The same figure stacked for a narrow screen.">
+              <defs>
+                <pattern id="hatchGapM" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+                  <rect width="7" height="7" fill="#F0DCE9"></rect>
+                  <line x1="0" y1="0" x2="0" y2="7" stroke="#C77BAB" stroke-width="1"></line>
+                </pattern>
+              </defs>
+
+              <text x="30" y="12" font-family="Martian Mono, monospace" font-size="9" letter-spacing="0.8" fill="#666A73">FULL SCALE · 0—100 GW</text>
+              <line x1="30" y1="200" x2="230" y2="200" stroke="#22242B" stroke-width="1"></line>
+              <line x1="30" y1="115" x2="230" y2="115" stroke="#E4E5E9" stroke-width="1"></line>
+              <text x="25" y="204" text-anchor="end" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">0</text>
+              <text x="25" y="119" text-anchor="end" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">50</text>
+
+              <polygon points="79,185 230,30 230,185" fill="url(#hatchGapM)"></polygon>
+              <line x1="79" y1="185" x2="230" y2="30" stroke="#8E2F6B" stroke-width="1.5" stroke-dasharray="5 4"></line>
+              <line x1="30" y1="30" x2="230" y2="30" stroke="#22242B" stroke-width="1"></line>
+              <text x="25" y="34" text-anchor="end" font-family="Martian Mono, monospace" font-size="9" fill="#22242B">100</text>
+              <circle cx="230" cy="30" r="3.5" fill="#22242B"></circle>
+              <line x1="30" y1="185" x2="230" y2="185" stroke="#575B65" stroke-width="1" stroke-dasharray="2 3"></line>
+              <path d="M31,188.4 H55 V187.3 H60 V186.2 H70 V185 H79" fill="none" stroke="#22242B" stroke-width="2.5"></path>
+
+              <line x1="252" y1="30" x2="252" y2="185" stroke="#8E2F6B" stroke-width="1"></line>
+              <line x1="246" y1="30" x2="258" y2="30" stroke="#8E2F6B" stroke-width="1"></line>
+              <line x1="246" y1="185" x2="258" y2="185" stroke="#8E2F6B" stroke-width="1"></line>
+              <text x="252" y="104" text-anchor="middle" font-family="Martian Mono, monospace" font-size="11" font-weight="500" fill="#8E2F6B" transform="rotate(-90 252 104)">91.22 GW</text>
+
+              <rect x="30" y="181" width="200" height="19" fill="none" stroke="#8E2F6B" stroke-width="1"></rect>
+              <text x="30" y="216" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">2020</text>
+              <text x="230" y="216" text-anchor="end" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">2047</text>
+
+              <!-- bracket down to the magnified panel -->
+              <line x1="30" y1="200" x2="30" y2="238" stroke="#C77BAB" stroke-width="1" stroke-dasharray="3 3"></line>
+              <line x1="230" y1="181" x2="230" y2="238" stroke="#C77BAB" stroke-width="1" stroke-dasharray="3 3"></line>
+              <text x="34" y="234" font-family="Martian Mono, monospace" font-size="9" fill="#8E2F6B">the band above, magnified ×10</text>
+
+              <text x="30" y="256" font-family="Martian Mono, monospace" font-size="9" letter-spacing="0.8" fill="#8E2F6B">MAGNIFIED ×10 · 0—10 GW</text>
+              <rect x="30" y="266" width="200" height="150" fill="none" stroke="#D6D7DC" stroke-width="1"></rect>
+              <line x1="30" y1="341" x2="230" y2="341" stroke="#E4E5E9" stroke-width="1"></line>
+              <text x="25" y="270" text-anchor="end" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">10</text>
+              <text x="25" y="345" text-anchor="end" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">5</text>
+              <text x="25" y="420" text-anchor="end" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">0</text>
+              <path d="M35,314.3 H131 V303.7 H151 V293.1 H187 V284 H225" fill="none" stroke="#22242B" stroke-width="2.5"></path>
+              <line x1="131" y1="314.3" x2="131" y2="303.7" stroke="#8E2F6B" stroke-width="2.5"></line>
+              <line x1="151" y1="303.7" x2="151" y2="293.1" stroke="#8E2F6B" stroke-width="2.5"></line>
+              <line x1="187" y1="293.1" x2="187" y2="284" stroke="#8E2F6B" stroke-width="2.5"></line>
+              <circle cx="225" cy="284" r="3" fill="#22242B"></circle>
+              <text x="35" y="308" font-family="Martian Mono, monospace" font-size="9" fill="#22242B">6.78</text>
+              <text x="225" y="277" text-anchor="end" font-family="Martian Mono, monospace" font-size="11" font-weight="500" fill="#22242B">8.78 GW</text>
+              <text x="30" y="434" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">FEB 2020</text>
+              <text x="230" y="434" text-anchor="end" font-family="Martian Mono, monospace" font-size="9" fill="#666A73">JUL 2026</text>
+              <text x="30" y="452" font-family="Martian Mono, monospace" font-size="9" fill="#8E2F6B">three steps in six years</text>
+            </svg>
+          </div>
+          <div style="font-family:'Martian Mono',monospace; font-size:10px; line-height:1.7; color:#575B65;">78 verified readings, Feb 2020 — Jul 2026. Each checked against its source report.</div>
+        </div>
+      </div>
+
+      <div style="flex:1 1 300px; display:flex; flex-direction:column; gap:16px; min-width:280px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">What changes below 480px</div>
+        <ul style="margin:0; padding-left:20px; font-size:15px; line-height:1.7; color:#575B65;">
+          <li>Panels stack; the connector becomes a bracket down the left and right edges, keeping the containment relationship.</li>
+          <li>The 91.22 measure rotates into the right margin rather than shrinking.</li>
+          <li>Gridlines drop from four to one. Axis labels drop to 0 / 50 / 100 and 0 / 5 / 10.</li>
+          <li>The rotated rate annotation is removed from the plot and moved to the caption, where it is easier to read than at 43°.</li>
+          <li>Nothing scrolls horizontally. A chart the reader has to drag is a chart most readers see half of.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REJECTED ============ -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">04</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Considered and rejected</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1px; background:#E4E5E9; border:1px solid #E4E5E9;">
+      <sc-for list="{{ rejected }}" as="r" hint-placeholder-count="4">
+        <div style="background:#FFFFFF; padding:22px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'Anek Latin',sans-serif; font-weight:600; font-size:16px; color:#22242B;">{{ r.head }}</div>
+          <div style="font-size:14px; line-height:1.65; color:#575B65;">{{ r.body }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      rules: [
+        { n: '01', head: 'The full-scale panel is the primary reading and is always drawn first',
+          body: 'It is on the left in the horizontal layout and on top in the stacked one, and it is the panel the eye lands on. The magnified panel is subordinate by position, size and label — it can only be read as a detail of something larger.' },
+        { n: '02', head: 'The magnification is stated as a number, not implied',
+          body: 'The label reads MAGNIFIED ×10, and the band it magnifies is outlined in the parent frame with a connector between the two. A reader who looks at nothing but the headings still knows the right-hand panel is not at the same scale.' },
+        { n: '03', head: 'The gap is a measured distance, not a colour or an emptiness',
+          body: '91.22 GW is drawn with a dimension line and end ticks — the same device as the wordmark — so the quantity is stated rather than left to be judged from an area. The hatched region is labelled with the arithmetic that produced it.' },
+        { n: '04', head: 'The arithmetic line is not a projection and is captioned as such',
+          body: '4.34 GW per year is 91.22 divided by 21. It is dashed rather than solid, and the caption says it is division. No trend is extrapolated, no completion date is estimated, and no curve is fitted through the steps.' },
+        { n: '05', head: 'Nothing in the figure is a verdict',
+          body: 'No colour codes progress. There is no arrow, no icon, no target-versus-actual delta shaded red. The steps are marked because capacity arrives discretely, which is a fact about how reactors commission, not an excuse and not an accusation.' },
+      ],
+      rejected: [
+        { head: 'A broken y-axis with a zigzag',
+          body: 'One frame, two scales, and no honest way to read a distance across the break. The 91 GW gap becomes a graphic convention rather than a quantity.' },
+        { head: 'A log scale',
+          body: 'Legible, and unreadable to most of the audience. A reader who does not decode it sees 8.78 sitting most of the way to 100.' },
+        { head: 'Percentage of target',
+          body: '8.78% is a single number that hides both the movement and the size. It also invites division of one meter into the other, which the page does not do.' },
+        { head: 'Zoomed axis with a warning note',
+          body: 'The note is read by the people who least need it. The frame has to carry the scale, not the footnote.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

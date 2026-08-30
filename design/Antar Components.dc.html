@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Anek+Devanagari:wght@100..800&family=Anek+Latin:wght@100..800&family=Martian+Mono:wght@300..700&display=swap">
+<style>
+  body { margin:0; background:#EFEFF1; }
+  a { color:#8E2F6B; } a:hover { color:#6E2453; }
+</style>
+</helmet>
+
+<div style="background:#EFEFF1; color:#22242B; font-family:'Anek Latin',system-ui,sans-serif; padding:64px 40px 120px;">
+<div style="max-width:1080px; margin:0 auto; display:flex; flex-direction:column; gap:80px;">
+
+  <header style="display:flex; flex-direction:column; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:32px;">
+    <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Antar · design specification · sheet 3 of 6</div>
+    <h1 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:44px; line-height:1.14; margin:0;">Components</h1>
+    <p style="margin:0; max-width:64ch; font-size:19px; line-height:1.6; color:#575B65;">Each one shown at the width it lives at, in both scripts where the script changes the design. Measurements are in the token scale on sheet 1.</p>
+  </header>
+
+  <!-- ---------- FIGURE ROWS ---------- -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">01</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Figure rows</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:32px;">
+      <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:28px 26px;">
+        <div style="display:grid; grid-template-columns:1fr auto; gap:4px 20px; align-items:baseline; padding:14px 0; border-bottom:1px solid #E4E5E9;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Target</div>
+          <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:34px; letter-spacing:-.02em; color:#22242B; text-align:right;">100 <span style="font-size:16px; font-weight:400; color:#575B65;">GW</span></div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">by 2047</div>
+          <div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr auto; gap:4px 20px; align-items:baseline; padding:14px 0; border-bottom:1px solid #E4E5E9;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Achieved</div>
+          <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:34px; letter-spacing:-.02em; color:#22242B; text-align:right;">8.78 <span style="font-size:16px; font-weight:400; color:#575B65;">GW</span></div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">as of 31 Jul 2026</div>
+          <div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr auto; gap:4px 20px; align-items:baseline; padding:14px 0;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#8E2F6B;">Remaining</div>
+          <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:34px; letter-spacing:-.02em; color:#8E2F6B; text-align:right;">91.22 <span style="font-size:16px; font-weight:400;">GW</span></div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">21 years left</div>
+          <div></div>
+        </div>
+        <div style="margin-top:18px; font-size:13px; line-height:1.6; color:#666A73; border-top:1px solid #E4E5E9; padding-top:14px;">One row per figure, unit demoted to 16px so the number reads first. Only <i>remaining</i> takes the accent — it is the gap.</div>
+      </div>
+
+      <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:28px 26px;" lang="hi">
+        <div style="display:grid; grid-template-columns:1fr auto; gap:4px 20px; align-items:baseline; padding:14px 0; border-bottom:1px solid #E4E5E9;">
+          <div style="font-family:'Anek Devanagari',sans-serif; font-size:13px; color:#666A73;">लक्ष्य</div>
+          <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:34px; letter-spacing:-.02em; color:#22242B; text-align:right;">100 <span style="font-family:'Anek Devanagari',sans-serif; font-size:16px; font-weight:400; color:#575B65;">GW</span></div>
+          <div style="font-family:'Anek Devanagari',sans-serif; font-size:13px; color:#666A73;">2047 तक</div>
+          <div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr auto; gap:4px 20px; align-items:baseline; padding:14px 0; border-bottom:1px solid #E4E5E9;">
+          <div style="font-family:'Anek Devanagari',sans-serif; font-size:13px; color:#666A73;">अब तक</div>
+          <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:34px; letter-spacing:-.02em; color:#22242B; text-align:right;">8.78 <span style="font-family:'Anek Devanagari',sans-serif; font-size:16px; font-weight:400; color:#575B65;">GW</span></div>
+          <div style="font-family:'Anek Devanagari',sans-serif; font-size:13px; color:#666A73;">31 जुलाई 2026 तक</div>
+          <div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr auto; gap:4px 20px; align-items:baseline; padding:14px 0;">
+          <div style="font-family:'Anek Devanagari',sans-serif; font-size:13px; color:#8E2F6B;">शेष</div>
+          <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:34px; letter-spacing:-.02em; color:#8E2F6B; text-align:right;">91.22 <span style="font-family:'Anek Devanagari',sans-serif; font-size:16px; font-weight:400;">GW</span></div>
+          <div style="font-family:'Anek Devanagari',sans-serif; font-size:13px; color:#666A73;">21 वर्ष शेष</div>
+          <div></div>
+        </div>
+        <div style="margin-top:18px; font-family:'Anek Devanagari',sans-serif; font-size:13px; line-height:1.78; color:#666A73; border-top:1px solid #E4E5E9; padding-top:14px;">हिन्दी में लेबल 13px पर, बिना अक्षर-अंतराल और बिना बड़े अक्षरों के। अंक लैटिन में ही रहते हैं, जैसे स्रोत दस्तावेज़ों में हैं।</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- METERS ---------- -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">02</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">The two meters</h2>
+    </div>
+    <p style="margin:0; max-width:68ch; font-size:17px; line-height:1.6; color:#575B65;">The constraint is that these must never combine into a score. Two identical bars side by side invite exactly that — the eye subtracts one from the other. So they are not the same object. Quantity is a filled bar. Time is a dated ruler with a tick per year and a marker at today. They share no geometry, no fill and no axis, and there is no arithmetic that visually relates them.</p>
+
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:32px; display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:48px;">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Achieved</span>
+          <span style="font-family:'Martian Mono',monospace; font-weight:500; font-size:19px; color:#22242B;">8.78 %</span>
+        </div>
+        <div style="height:14px; background:#EFEFF1; border:1px solid #D6D7DC; position:relative;">
+          <div style="position:absolute; left:0; top:0; bottom:0; width:8.78%; background:#22242B;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">8.78 of 100 GW</span>
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">as of 31 Jul 2026</span>
+        </div>
+        <div style="font-size:13px; line-height:1.6; color:#666A73; margin-top:4px;">Solid ink, a continuous quantity, no ticks.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Promise window elapsed</span>
+          <span style="font-family:'Martian Mono',monospace; font-weight:500; font-size:19px; color:#22242B;">7.05 %</span>
+        </div>
+        <div style="position:relative; height:14px; border-bottom:1px solid #22242B;">{{ ruler }}</div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">1.55 of 22 years</span>
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">2025 → 2047</span>
+        </div>
+        <div style="font-size:13px; line-height:1.6; color:#666A73; margin-top:4px;">A ruler, one tick per year, marker at today. Never filled.</div>
+      </div>
+    </div>
+    <p style="margin:0; max-width:68ch; font-size:15px; line-height:1.65; color:#575B65; border-left:2px solid #D6D7DC; padding-left:16px;">Shown side by side, not divided into each other. Capacity arrives in steps when a project commissions, so a year with none is not by itself a year behind.</p>
+  </section>
+
+  <!-- ---------- PROMISE WINDOW ---------- -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">03</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Promise window</h2>
+    </div>
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:34px 32px; display:flex; flex-direction:column; gap:28px;">
+      <div style="display:flex; align-items:flex-start; gap:0;">
+        <div style="display:flex; flex-direction:column; gap:4px; flex:0 0 auto;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Promised</div>
+          <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:30px; color:#22242B;">2025</div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">1 Feb</div>
+        </div>
+        <div style="flex:1 1 auto; padding:0 20px; align-self:center;">{{ window }}</div>
+        <div style="display:flex; flex-direction:column; gap:4px; flex:0 0 auto; text-align:right;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Due</div>
+          <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:30px; color:#22242B;">2047</div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">22 years</div>
+        </div>
+      </div>
+      <div style="font-size:15px; line-height:1.65; color:#575B65; max-width:66ch; border-top:1px solid #E4E5E9; padding-top:18px;">The same dimension-line device as the wordmark: two ends and the distance between them. The <i>today</i> marker is a fact about the calendar. Nothing on this block is shaded to suggest that the position of the marker is good or bad.</div>
+    </div>
+  </section>
+
+  <!-- ---------- CHIPS ---------- -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">04</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Filter chips and state tags</h2>
+    </div>
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:30px 28px; display:flex; flex-direction:column; gap:28px;">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Filters — a view the reader runs, not a claim the site makes</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <span style="display:inline-flex; align-items:center; gap:8px; font-family:'Martian Mono',monospace; font-size:12px; padding:9px 14px; border:1px solid #22242B; background:#22242B; color:#FFFFFF; min-height:44px; box-sizing:border-box;">ALL <span style="opacity:.6;">1</span></span>
+          <span style="display:inline-flex; align-items:center; gap:8px; font-family:'Martian Mono',monospace; font-size:12px; padding:9px 14px; border:1px solid #D6D7DC; color:#22242B; min-height:44px; box-sizing:border-box;">DEADLINE PASSED <span style="color:#666A73;">0</span></span>
+          <span style="display:inline-flex; align-items:center; gap:8px; font-family:'Martian Mono',monospace; font-size:12px; padding:9px 14px; border:1px solid #D6D7DC; color:#22242B; min-height:44px; box-sizing:border-box;">REVISED <span style="color:#666A73;">1</span></span>
+          <span style="display:inline-flex; align-items:center; gap:8px; font-family:'Martian Mono',monospace; font-size:12px; padding:9px 14px; border:1px solid #D6D7DC; color:#666A73; min-height:44px; box-sizing:border-box;">NO DATA <span>0</span></span>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;" lang="hi">
+          <span style="display:inline-flex; align-items:center; gap:8px; font-family:'Anek Devanagari',sans-serif; font-size:15px; padding:9px 14px; border:1px solid #22242B; background:#22242B; color:#FFFFFF; min-height:44px; box-sizing:border-box;">सभी <span style="opacity:.6; font-family:'Martian Mono',monospace; font-size:12px;">1</span></span>
+          <span style="display:inline-flex; align-items:center; gap:8px; font-family:'Anek Devanagari',sans-serif; font-size:15px; padding:9px 14px; border:1px solid #D6D7DC; color:#22242B; min-height:44px; box-sizing:border-box;">समय सीमा बीती <span style="color:#666A73; font-family:'Martian Mono',monospace; font-size:12px;">0</span></span>
+          <span style="display:inline-flex; align-items:center; gap:8px; font-family:'Anek Devanagari',sans-serif; font-size:15px; padding:9px 14px; border:1px solid #D6D7DC; color:#22242B; min-height:44px; box-sizing:border-box;">संशोधित <span style="color:#666A73; font-family:'Martian Mono',monospace; font-size:12px;">1</span></span>
+        </div>
+        <div style="font-size:13px; line-height:1.6; color:#666A73;">44px minimum height at every breakpoint. Selected is ink-filled, not accent-filled — selection is not a verdict either.</div>
+      </div>
+
+      <div style="height:1px; background:#E4E5E9;"></div>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">State tags — facts about the record</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; padding:4px 8px; border:1px solid #22242B; color:#22242B;">PROMISE</span>
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; padding:4px 8px; border:1px solid #D6D7DC; color:#575B65;">BENCHMARK</span>
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; padding:4px 8px; border:1px solid #D6D7DC; color:#575B65;">STATUTORY FLOOR</span>
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; padding:4px 8px; border:1px solid #575B65; color:#575B65;">MEASURED</span>
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; padding:4px 8px; border:1px dashed #666A73; color:#666A73;">NO DATA YET</span>
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; padding:4px 8px; border:1px solid #22242B; background:#22242B; color:#FFFFFF;">DEADLINE PASSED</span>
+          <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; padding:4px 8px; border:1px solid #575B65; color:#575B65; background:repeating-linear-gradient(45deg,#EFEFF1 0 1px,transparent 1px 6px);">REVISED</span>
+        </div>
+        <div style="font-size:13px; line-height:1.6; color:#666A73; max-width:70ch;"><b style="color:#575B65;">Deadline passed</b> is the heaviest tag on the site and it is still ink, not accent. It is a fact about the calendar. Colouring it would make it a verdict, which is the one thing no tag is allowed to be.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- CONTEXT ---------- -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">05</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Attributed context</h2>
+    </div>
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:30px 32px; display:flex; flex-direction:column; gap:26px;">
+      <sc-for list="{{ context }}" as="n" hint-placeholder-count="3">
+        <div style="display:grid; grid-template-columns:180px 1fr; gap:24px;">
+          <div style="display:flex; flex-direction:column; gap:4px; border-top:2px solid #22242B; padding-top:10px;">
+            <div style="font-family:'Anek Latin',sans-serif; font-weight:600; font-size:14px; line-height:1.4; color:#22242B;">{{ n.who }}</div>
+            <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">{{ n.when }}</div>
+            <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:#666A73;">{{ n.kind }}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px; border-top:1px solid #E4E5E9; padding-top:10px;">
+            <div style="font-size:17px; line-height:1.6; color:#22242B; max-width:62ch;">{{ n.text }}</div>
+            <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">{{ n.cite }} · <a href="#" style="color:#8E2F6B;">source</a></div>
+          </div>
+        </div>
+      </sc-for>
+      <div style="font-size:15px; line-height:1.65; color:#575B65; max-width:66ch; border-top:1px solid #E4E5E9; padding-top:18px;">The attribution is a column, not a byline tucked under the quote: who said it is structurally as prominent as what was said. Every statement here is a claim the named body has made, reported with its source — not this site's assessment of whether it is right.</div>
+    </div>
+  </section>
+
+  <!-- ---------- SOURCES ---------- -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">06</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Sources block</h2>
+    </div>
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9;">
+      <sc-for list="{{ sources }}" as="s" hint-placeholder-count="5">
+        <div style="display:grid; grid-template-columns:150px 1fr; gap:24px; padding:18px 30px; border-bottom:1px solid #E4E5E9; align-items:start;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:#666A73; padding-top:3px;">{{ s.k }}</div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="font-size:15px; line-height:1.6; color:#22242B; max-width:70ch;">{{ s.v }}</div>
+            <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73; line-height:1.7;">{{ s.meta }}</div>
+          </div>
+        </div>
+      </sc-for>
+      <div style="padding:18px 30px; display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="#" style="font-family:'Martian Mono',monospace; font-size:12px; padding:10px 14px; border:1px solid #D6D7DC; color:#22242B; text-decoration:none; min-height:44px; display:inline-flex; align-items:center;">DOWNLOAD JSON</a>
+        <a href="#" style="font-family:'Martian Mono',monospace; font-size:12px; padding:10px 14px; border:1px solid #D6D7DC; color:#22242B; text-decoration:none; min-height:44px; display:inline-flex; align-items:center;">CSV</a>
+        <a href="#" style="font-family:'Martian Mono',monospace; font-size:12px; padding:10px 14px; border:1px solid #D6D7DC; color:#22242B; text-decoration:none; min-height:44px; display:inline-flex; align-items:center;">THE RECORD ON GITHUB</a>
+      </div>
+    </div>
+    <p style="margin:0; max-width:68ch; font-size:15px; line-height:1.65; color:#575B65; border-left:2px solid #D6D7DC; padding-left:16px;">Retrieval date, verifier and method are set in the figure face at 11px, in the same column as every other piece of provenance on the site. A reader who wants to check one figure should not have to learn a new layout to check the next.</p>
+  </section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const ticks = [];
+    for (let i = 0; i <= 22; i++) {
+      const isFive = i % 5 === 0;
+      ticks.push(React.createElement('div', {
+        key: i,
+        style: {
+          position: 'absolute', bottom: 0, left: (i / 22 * 100) + '%',
+          width: '1px', height: isFive ? '11px' : '6px',
+          background: isFive ? '#575B65' : '#D6D7DC',
+        },
+      }));
+    }
+    ticks.push(React.createElement('div', {
+      key: 'now',
+      style: {
+        position: 'absolute', bottom: '-1px', left: '7.05%',
+        width: '2px', height: '20px', background: '#22242B',
+      },
+    }));
+    ticks.push(React.createElement('div', {
+      key: 'nowlabel',
+      style: {
+        position: 'absolute', bottom: '22px', left: '7.05%',
+        fontFamily: "'Martian Mono',monospace", fontSize: '10px', color: '#22242B',
+        transform: 'translateX(-4px)', whiteSpace: 'nowrap',
+      },
+    }, 'today'));
+
+    const win = React.createElement('div', { style: { position: 'relative', height: '40px' } }, [
+      React.createElement('div', { key: 'l', style: { position: 'absolute', left: 0, right: 0, top: '19px', height: '1px', background: '#22242B' } }),
+      React.createElement('div', { key: 't1', style: { position: 'absolute', left: 0, top: '11px', width: '1px', height: '17px', background: '#22242B' } }),
+      React.createElement('div', { key: 't2', style: { position: 'absolute', right: 0, top: '11px', width: '1px', height: '17px', background: '#22242B' } }),
+      React.createElement('div', { key: 'n', style: { position: 'absolute', left: '7.05%', top: '8px', width: '2px', height: '23px', background: '#8E2F6B' } }),
+      React.createElement('div', { key: 'nl', style: { position: 'absolute', left: '7.05%', top: '33px', fontFamily: "'Martian Mono',monospace", fontSize: '10px', color: '#8E2F6B', transform: 'translateX(-10px)', whiteSpace: 'nowrap' } }, 'today'),
+      React.createElement('div', { key: 'c', style: { position: 'absolute', left: 0, right: 0, top: 0, textAlign: 'center', fontFamily: "'Martian Mono',monospace", fontSize: '11px', letterSpacing: '.09em', color: '#666A73' } }, '22 YEARS'),
+    ]);
+
+    return {
+      ruler: React.createElement('div', { style: { position: 'relative', height: '100%' } }, ticks),
+      window: win,
+      context: [
+        { who: 'Ministry of Finance', when: '1 February 2025', kind: 'stated purpose',
+          text: 'The Nuclear Energy Mission targets 100 GW of nuclear energy capacity by 2047, described in the Budget speech as essential for the energy transition.',
+          cite: 'Budget Speech 2025-26, para 61' },
+        { who: 'Department of Atomic Energy', when: '19 March 2025', kind: 'stated plan',
+          text: 'Five indigenously designed Small Modular Reactors are to be operational by 2033, with amendments to the Atomic Energy Act enabling private participation.',
+          cite: 'Lok Sabha unstarred question 2417' },
+        { who: 'Parliament of India', when: '12 December 2025', kind: 'recorded event',
+          text: 'The SHANTI Act 2025 was enacted, placing the 100 GW by 2047 objective in statute.',
+          cite: 'Gazette of India, Part II Section 1' },
+      ],
+      sources: [
+        { k: 'Target', v: 'Union Budget 2025-26, Speech of the Finance Minister, paragraph 61.',
+          meta: 'Announced 2025-02-01 · retrieved 2026-08-29 · verified by nishtha.sharma on 2026-08-30' },
+        { k: 'Achieved', v: 'CEA Installed Capacity Report, as on 2026-07-31. ALL INDIA, Total, Nuclear.',
+          meta: 'Retrieved 2026-08-29 by cea-harvester · verified by nishtha.sharma on 2026-08-30' },
+        { k: 'Measure', v: 'CEA Monthly Installed Capacity Report, ALL INDIA Total, Nuclear column.',
+          meta: 'Installed nuclear generation capacity in service, all-India, utilities · unit GW' },
+        { k: 'Coverage', v: 'All 78 readings in this series have been checked against their source documents.',
+          meta: 'Unverified readings are recorded but not published, and appear in no figure above' },
+        { k: 'Leaves out', v: 'Capacity built but under long-term outage. CEA removed 100 MW with effect from 31 May 2025, to be added back if it generates again. This is capacity in service, not capacity that exists.',
+          meta: 'Recorded with the measure, not written for this page' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

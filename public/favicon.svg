@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Antar">
+  <!-- अं reversed out of plum. Full-bleed tile, no padding, no rounded corners:
+       the platform rounds it. The anusvara pushes the visual centre down, so the
+       glyph sits 1px above geometric centre. -->
+  <rect width="64" height="64" fill="#8E2F6B"/>
+  <text x="32" y="31" fill="#FFFFFF" font-size="50" text-anchor="middle"
+        dominant-baseline="central"
+        font-family="Tiro Devanagari Hindi, Noto Serif Devanagari, serif">अं</text>
+</svg>

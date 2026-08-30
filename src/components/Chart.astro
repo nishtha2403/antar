@@ -1,33 +1,144 @@
 ---
 import type { SeriesPoint } from '../lib/view.ts';
+import type { Copy } from '../lib/ui.ts';
 
-interface Props { points: readonly SeriesPoint[]; target: number; unit: string; label: string }
-const { points, target, unit, label } = Astro.props;
+/**
+ * The 8.78-against-100 figure.
+ *
+ * A truthful axis flattens six years of real movement to a few pixels at the
+ * bottom of the frame. A zoomed axis makes the trend legible and makes a
+ * ninety-gigawatt gap look like a rounding error. The resolution is not to
+ * choose: both scales are drawn in one figure and the magnification is stated
+ * as a number.
+ *
+ * The two panels are one component and must not be separated. A magnified axis
+ * without its parent frame is the exact misreading this figure exists to
+ * prevent, which is why the magnified panel is never rendered alone — not on
+ * the category page, not in a social card, not in an embed.
+ */
+interface Props {
+  points: readonly SeriesPoint[];
+  target: number;
+  unit: string;
+  dueBy: number;
+  requiredAnnual: number | null;
+  copy: Copy;
+}
+const { points, target, unit, dueBy, requiredAnnual, copy: c } = Astro.props;
 
-const W = 640, H = 170, L = 8, R = 8, T = 18, B = 26;
-const max = Math.max(target, ...points.map((p) => p.value)) * 1.04;
-const x = (i: number) => L + (points.length <= 1 ? (W - L - R) / 2 : (i * (W - L - R)) / (points.length - 1));
-const y = (v: number) => T + (1 - v / max) * (H - T - B);
-const line = points.map((p, i) => `${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(' ');
-const area = points.length > 1 ? `${line} ${x(points.length - 1).toFixed(1)},${H - B} ${x(0).toFixed(1)},${H - B}` : '';
-const last = points.at(-1);
-const first = points.at(0);
+const last = points.at(-1)!;
+const first = points.at(0)!;
+const year = (iso: string) => Number(iso.slice(0, 4)) + (Number(iso.slice(5, 7)) - 1) / 12;
+
+/* The magnified band is a round number just above the readings, so the
+   magnification is a whole multiple a reader can hold in their head. */
+const peak = Math.max(...points.map((p) => p.value));
+const band = peak <= 1 ? 1 : Math.pow(10, Math.ceil(Math.log10(peak)));
+const magnification = Math.round(target / band);
+
+/* ---------- full-scale panel: drawn to the target ---------- */
+const FW = 400, FH = 250, FL = 34, FR = 12, FT = 16, FB = 30;
+const fx0 = year(first.asOf), fx1 = dueBy + 1;
+const fx = (v: number) => FL + ((v - fx0) / (fx1 - fx0)) * (FW - FL - FR);
+const fy = (v: number) => FT + (1 - v / target) * (FH - FT - FB);
+const fLine = points.map((p) => `${fx(year(p.asOf)).toFixed(1)},${fy(p.value).toFixed(1)}`).join(' ');
+const fTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => ({ v: target * f, y: fy(target * f) }));
+
+/* ---------- magnified panel: the outlined band, at scale ---------- */
+const MW = 250, MH = 250, ML = 30, MR = 34, MT = 16, MB = 30;
+const mx0 = year(first.asOf), mx1 = year(last.asOf);
+const mx = (v: number) => ML + (mx1 === mx0 ? 0.5 : (v - mx0) / (mx1 - mx0)) * (MW - ML - MR);
+const my = (v: number) => MT + (1 - v / band) * (MH - MT - MB);
+const mLine = points.map((p) => `${mx(year(p.asOf)).toFixed(1)},${my(p.value).toFixed(1)}`).join(' ');
+
+/* Capacity arrives in steps. Label each one where the series actually moves. */
+const steps = points
+  .map((p, i) => ({ p, delta: i === 0 ? 0 : p.value - points[i - 1]!.value }))
+  .filter((s) => Math.abs(s.delta) > 0.001);
 ---
-<div class="chart">
-  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} preserveAspectRatio="none">
-    <line x1={L} y1={y(target)} x2={W - R} y2={y(target)} stroke="var(--rule)" stroke-dasharray="3 4" stroke-width="1" />
-    <text x={L} y={y(target) - 5} font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--dim)">
-      {target} {unit}
-    </text>
-    <line x1={L} y1={H - B} x2={W - R} y2={H - B} stroke="var(--line)" stroke-width="1" />
-    {area && <polygon points={area} fill="var(--slate)" opacity="0.10" />}
-    {points.length > 1 && <polyline points={line} fill="none" stroke="var(--slate)" stroke-width="2" vector-effect="non-scaling-stroke" />}
-    {last && <circle cx={x(points.length - 1)} cy={y(last.value)} r="3.5" fill="var(--slate)" />}
-    {last && (
-      <text x={x(points.length - 1) - 6} y={y(last.value) - 9} text-anchor="end"
-            font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--slate)">{last.value}</text>
-    )}
-    {first && <text x={L} y={H - 8} font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--dim)">{first.asOf}</text>}
-    {last && <text x={W - R} y={H - 8} text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--dim)">{last.asOf}</text>}
-  </svg>
+<div class="figure-block">
+  <div class="panels">
+    <div class="panel">
+      <p class="cap">{c.chartFullScale(0, target, unit)}</p>
+      <svg viewBox={`0 0 ${FW} ${FH}`} role="img" aria-label={c.chartAria(points.length, target, unit)}>
+        {fTicks.map((t) => (
+          <g>
+            <line x1={FL} y1={t.y} x2={FW - FR} y2={t.y} stroke="var(--hair)" stroke-width="1" />
+            <text x={FL - 6} y={t.y + 3} text-anchor="end" font-family="Martian Mono, monospace"
+                  font-size="9" fill="var(--ink-dim)">{Math.round(t.v)}</text>
+          </g>
+        ))}
+        <line x1={FL} y1={fy(target)} x2={FW - FR} y2={fy(target)}
+              stroke="var(--ink-mid)" stroke-width="1" />
+
+        {/* The band the right-hand panel magnifies, outlined in place. */}
+        <rect x={FL} y={fy(band)} width={FW - FL - FR} height={fy(0) - fy(band)}
+              fill="none" stroke="var(--ink-dim)" stroke-dasharray="2 3" stroke-width="1" />
+
+        {/* Arithmetic, not a forecast: the rate that reaches the target. */}
+        {requiredAnnual !== null && (
+          <line x1={fx(year(last.asOf))} y1={fy(last.value)} x2={fx(dueBy)} y2={fy(target)}
+                stroke="var(--gap-line)" stroke-width="1.5" stroke-dasharray="4 4" />
+        )}
+
+        {/* The gap drawn as a measured distance rather than an emptiness. */}
+        <line x1={fx(dueBy)} y1={fy(last.value)} x2={fx(dueBy)} y2={fy(target)}
+              stroke="var(--gap)" stroke-width="1.5" />
+        <line x1={fx(dueBy) - 4} y1={fy(target)} x2={fx(dueBy) + 4} y2={fy(target)} stroke="var(--gap)" stroke-width="1.5" />
+        <line x1={fx(dueBy) - 4} y1={fy(last.value)} x2={fx(dueBy) + 4} y2={fy(last.value)} stroke="var(--gap)" stroke-width="1.5" />
+        <text x={fx(dueBy) - 8} y={(fy(last.value) + fy(target)) / 2} text-anchor="end"
+              font-family="Martian Mono, monospace" font-size="11" fill="var(--gap)">
+          {(target - last.value).toFixed(2)} {unit}
+        </text>
+
+        {points.length > 1 && <polyline points={fLine} fill="none" stroke="var(--ink)" stroke-width="2" />}
+        <circle cx={fx(year(last.asOf))} cy={fy(last.value)} r="3" fill="var(--ink)" />
+
+        <line x1={FL} y1={fy(0)} x2={FW - FR} y2={fy(0)} stroke="var(--rule)" stroke-width="1" />
+        <text x={FL} y={FH - 10} font-family="Martian Mono, monospace" font-size="9" fill="var(--ink-dim)">
+          {first.asOf.slice(0, 4)}
+        </text>
+        <text x={fx(dueBy)} y={FH - 10} text-anchor="end" font-family="Martian Mono, monospace"
+              font-size="9" fill="var(--ink-dim)">{dueBy}</text>
+      </svg>
+    </div>
+
+    <div class="panel">
+      <p class="cap">{c.chartMagnified(magnification, band, unit)}</p>
+      <svg viewBox={`0 0 ${MW} ${MH}`} role="img" aria-label={c.chartMagnifiedAria(magnification)}>
+        {[0, 0.5, 1].map((f) => (
+          <g>
+            <line x1={ML} y1={my(band * f)} x2={MW - MR} y2={my(band * f)} stroke="var(--hair)" stroke-width="1" />
+            <text x={ML - 6} y={my(band * f) + 3} text-anchor="end" font-family="Martian Mono, monospace"
+                  font-size="9" fill="var(--ink-dim)">{band * f}</text>
+          </g>
+        ))}
+        {steps.map((s) => (
+          <g>
+            <line x1={mx(year(s.p.asOf))} y1={my(s.p.value)} x2={mx(year(s.p.asOf))} y2={my(0)}
+                  stroke="var(--rule)" stroke-width="1" stroke-dasharray="2 3" />
+            <text x={mx(year(s.p.asOf))} y={my(s.p.value) - 7} text-anchor="middle"
+                  font-family="Martian Mono, monospace" font-size="9" fill="var(--ink-mid)">
+              +{s.delta.toFixed(2)}
+            </text>
+          </g>
+        ))}
+        {points.length > 1 && <polyline points={mLine} fill="none" stroke="var(--ink)" stroke-width="2" />}
+        <circle cx={mx(year(last.asOf))} cy={my(last.value)} r="3" fill="var(--ink)" />
+        <text x={MW - MR + 5} y={my(last.value) + 3} font-family="Martian Mono, monospace"
+              font-size="11" fill="var(--ink)">{last.value}</text>
+        <line x1={ML} y1={my(0)} x2={MW - MR} y2={my(0)} stroke="var(--rule)" stroke-width="1" />
+        <text x={ML} y={MH - 10} font-family="Martian Mono, monospace" font-size="9" fill="var(--ink-dim)">
+          {first.asOf}
+        </text>
+        <text x={MW - MR} y={MH - 10} text-anchor="end" font-family="Martian Mono, monospace"
+              font-size="9" fill="var(--ink-dim)">{last.asOf}</text>
+      </svg>
+    </div>
+  </div>
+
+  <p class="chart-note">
+    {c.chartCaption(points.length, first.asOf, last.asOf)}
+    {requiredAnnual !== null && ` ${c.chartArithmetic(requiredAnnual, unit, dueBy)}`}
+  </p>
 </div>

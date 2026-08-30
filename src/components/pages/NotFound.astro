@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import { COPY } from '../../lib/ui.ts';
+import { type Locale, localePrefix } from '../../lib/locales.ts';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const c = COPY[locale];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base locale={locale} title={c.notFoundTitle} path="/404">
+  <h1>{c.notFoundTitle}</h1>
+  <p class="lede">{c.notFoundLede}</p>
+  <ul class="sources">
+    <li><a href={`${base}${localePrefix(locale)}`}>{c.navIndicators}</a></li>
+    <li><a href={`${base}${localePrefix(locale)}/search`}>{c.navSearch}</a></li>
+    <li><a href={`${base}${localePrefix(locale)}/method`}>{c.navMethod}</a></li>
+    <li><a href={`${base}${localePrefix(locale)}/corrections`}>{c.navCorrections}</a></li>
+  </ul>
+</Base>

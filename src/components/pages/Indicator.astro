@@ -1,6 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Chart from '../Chart.astro';
+import Meters from '../Meters.astro';
+import PromiseWindow from '../PromiseWindow.astro';
 import Text from '../Text.astro';
 import { COPY, stateLabel } from '../../lib/ui.ts';
 import { type Locale, localePrefix } from '../../lib/locales.ts';
@@ -46,7 +48,7 @@ const untranslated = [
   ...page.context.flatMap((n) => [n.attributedTo, n.statement]),
 ].filter((t) => !t.translated).length;
 ---
-<Base locale={locale} title={page.title.text} description={page.measure.text} path={path} current="indicators">
+<Base locale={locale} title={page.title.text} description={page.measure.text} path={path} current="indicators" ogSlug={page.slug}>
   <div class="tags">
     <span class={`tag ${page.classification.toLowerCase()}`}>{classLabel}</span>
     {page.states.map((s) => <span class={`tag ${s}`}>{stateLabel(s, c)}</span>)}
@@ -55,49 +57,53 @@ const untranslated = [
   <h1><Text value={page.title} /></h1>
   <p class="lede"><Text value={page.measure} /> · {c.announcedBy(page.announcedBy.text, page.announcedOn)}</p>
 
+  <PromiseWindow
+    promisedYear={page.promisedYear}
+    promisedOn={page.announcedOn}
+    dueBy={page.dueBy}
+    elapsedPercent={page.elapsedPercent}
+    copy={c}
+  />
+
   <div class="figures">
-    <div class="figure-row">
-      <span class="lab">{c.target}</span>
-      <span class="num">{page.target.display}</span>
-      <span class="when">{c.by(page.dueBy)}</span>
-    </div>
-    <div class="figure-row">
-      <span class="lab">{c.inService}</span>
-      <span class="num">{page.observed.display}</span>
-      <span class="when">{page.observedAsOf}</span>
-    </div>
-    <div class="figure-row gap">
-      <span class="lab">{c.remaining}</span>
-      <span class="num">{page.remaining}</span>
-      <span class="when">{page.yearsRemaining > 0 ? c.yearsLeft(page.yearsRemaining) : ''}</span>
-    </div>
+    {[
+      { lab: c.target, value: page.target.display, when: c.by(page.dueBy), gap: false },
+      { lab: c.inService, value: page.observed.display, when: c.asOf(page.observedAsOf ?? ''), gap: false },
+      { lab: c.remaining, value: page.remaining, when: page.yearsRemaining > 0 ? c.yearsLeft(page.yearsRemaining) : '', gap: true },
+    ].map((row) => {
+      const [num, ...rest] = row.value.split(' ');
+      return (
+        <div class={`figure-row${row.gap ? ' gap' : ''}`}>
+          <span class="lab">{row.lab}</span>
+          <span class="val">{num}<span class="unit"> {rest.join(' ')}</span></span>
+          <span class="when">{row.when}</span>
+        </div>
+      );
+    })}
   </div>
 
   {page.points.length > 1 && (
-    <Fragment>
-      <Chart
-        points={page.points}
-        target={Number(page.target.display.split(' ')[0])}
-        unit={page.target.display.split(' ').slice(1).join(' ')}
-        label={c.chartCaption(page.points.length, page.points[0]!.asOf, page.points.at(-1)!.asOf)}
-      />
-      <p class="chart-cap">{c.chartCaption(page.points.length, page.points[0]!.asOf, page.points.at(-1)!.asOf)}</p>
-    </Fragment>
+    <Chart
+      points={page.points}
+      target={Number(page.target.display.split(' ')[0])}
+      unit={page.target.display.split(' ').slice(1).join(' ')}
+      dueBy={page.dueBy}
+      requiredAnnual={page.requiredAnnual ? Number(page.requiredAnnual.split(' ')[0]) : null}
+      copy={c}
+    />
   )}
 
-  <div class="meter">
-    <div class="meter-head"><span>{c.achievedMeter}</span><b>{page.achievedLabel}</b></div>
-    <div class="bar"><i style={`width:${Math.max(0, Math.min(100, page.achievedPercent ?? 0))}%`}></i></div>
-    <p class="meter-foot">{c.asOf(page.observedAsOf ?? '')}</p>
-  </div>
-
-  {page.elapsedPercent !== null && (
-    <div class="meter">
-      <div class="meter-head"><span>{c.elapsedMeter}</span><b>{page.elapsedPercent.toFixed(2)} %</b></div>
-      <div class="bar time"><i style={`width:${Math.max(0, Math.min(100, page.elapsedPercent))}%`}></i></div>
-      <p class="meter-foot">{c.elapsedDetail(page.yearsElapsed, page.windowYears)}</p>
-    </div>
-  )}
+  <Meters
+    achievedPercent={page.achievedPercent ?? 0}
+    achievedLabel={page.achievedLabel}
+    achievedFoot={`${page.observed.display} / ${page.target.display}`}
+    observedAsOf={page.observedAsOf ?? ''}
+    elapsedPercent={page.elapsedPercent}
+    elapsedFoot={c.elapsedDetail(page.yearsElapsed, page.windowYears)}
+    promisedYear={page.promisedYear}
+    dueBy={page.dueBy}
+    copy={c}
+  />
 
   <p class="note">{c.noVerdict}</p>
 

@@ -17,6 +17,18 @@ const en = {
   navMethod: 'Method',
   navCorrections: 'Corrections',
   navAbout: 'About',
+  navSearch: 'Search',
+  filterLabel: 'Filter indicators',
+  filterAll: 'All',
+  notFoundTitle: 'No such page',
+  notFoundLede:
+    'Nothing is published at this address. Links to indicators change when a target is recategorised; ' +
+    'the list below is always current.',
+  searchLede: 'Across every indicator, method note and correction on this site.',
+  searchPlaceholder: 'Search indicators',
+  searchNeedsJs: 'Search needs JavaScript. Everything it would find is reachable from the indicator list.',
+  searchReady: 'Type to search.',
+  searchNoResults: 'Nothing found.',
   otherLocale: 'हिन्दी में पढ़ें',
 
   dueThisDecade: 'Due this decade',
@@ -36,6 +48,10 @@ const en = {
   classBenchmark: 'benchmark',
   classFloor: 'statutory floor',
 
+  windowPromised: 'Promised',
+  windowDue: 'Due',
+  windowToday: 'today',
+  windowYears: (n: number) => `${n} years`,
   target: 'Target',
   inService: 'Achieved',
   remaining: 'Remaining',
@@ -55,6 +71,17 @@ const en = {
 
   chartCaption: (n: number, from: string, to: string) =>
     `${n} verified readings, ${from} to ${to}. Each checked against its source report.`,
+  chartFullScale: (from: number, to: number, unit: string) =>
+    `Full scale · ${from}–${to} ${unit}`,
+  chartMagnified: (times: number, band: number, unit: string) =>
+    `Magnified ×${times} · 0–${band} ${unit}`,
+  chartAria: (n: number, target: number, unit: string) =>
+    `${n} verified readings plotted against a target of ${target} ${unit}, drawn to the full scale of the target.`,
+  chartMagnifiedAria: (times: number) =>
+    `The same readings, with the vertical scale magnified ${times} times so the movement is legible.`,
+  chartArithmetic: (rate: number, unit: string, due: number) =>
+    `The dashed line is ${rate} ${unit} per year to ${due}, the arithmetic that reaches the target. It is division, not a forecast.`,
+
 
   contextHeading: 'What the government says',
   contextCaveat:
@@ -127,6 +154,18 @@ const hi: Copy = {
   navMethod: 'पद्धति',
   navCorrections: 'सुधार',
   navAbout: 'परिचय',
+  navSearch: 'खोज',
+  filterLabel: 'संकेतक छाँटें',
+  filterAll: 'सभी',
+  notFoundTitle: 'यह पृष्ठ नहीं है',
+  notFoundLede:
+    'इस पते पर कुछ प्रकाशित नहीं है। संकेतक की कड़ियाँ तब बदलती हैं जब किसी लक्ष्य की श्रेणी बदलती है; ' +
+    'नीचे की सूची हमेशा वर्तमान रहती है।',
+  searchLede: 'इस साइट के हर संकेतक, पद्धति-टिप्पणी और सुधार में।',
+  searchPlaceholder: 'संकेतक खोजें',
+  searchNeedsJs: 'खोज के लिए जावास्क्रिप्ट चाहिए। जो कुछ यह खोजेगी वह संकेतक-सूची से भी मिल जाएगा।',
+  searchReady: 'खोजने के लिए लिखें।',
+  searchNoResults: 'कुछ नहीं मिला।',
   otherLocale: 'Read in English',
 
   dueThisDecade: 'इस दशक की समय सीमा',
@@ -146,6 +185,10 @@ const hi: Copy = {
   classBenchmark: 'मानक',
   classFloor: 'वैधानिक न्यूनतम',
 
+  windowPromised: 'वादा',
+  windowDue: 'समय सीमा',
+  windowToday: 'आज',
+  windowYears: (n: number) => `${n} वर्ष`,
   target: 'लक्ष्य',
   inService: 'अब तक',
   remaining: 'शेष',
@@ -165,6 +208,17 @@ const hi: Copy = {
 
   chartCaption: (n: number, from: string, to: string) =>
     `${from} से ${to} तक ${n} सत्यापित पाठ। हर एक अपनी स्रोत रिपोर्ट से मिलाकर जाँचा गया।`,
+  chartFullScale: (from: number, to: number, unit: string) =>
+    `पूर्ण पैमाना · ${from}–${to} ${unit}`,
+  chartMagnified: (times: number, band: number, unit: string) =>
+    `${times} गुना बड़ा · 0–${band} ${unit}`,
+  chartAria: (n: number, target: number, unit: string) =>
+    `${target} ${unit} के लक्ष्य के सामने ${n} सत्यापित पाठ, लक्ष्य के पूर्ण पैमाने पर।`,
+  chartMagnifiedAria: (times: number) =>
+    `वही पाठ, ऊर्ध्वाधर पैमाना ${times} गुना बड़ा किया गया ताकि बदलाव दिख सके।`,
+  chartArithmetic: (rate: number, unit: string, due: number) =>
+    `बिंदुदार रेखा ${due} तक ${rate} ${unit} प्रति वर्ष है — वह भाग जो लक्ष्य तक पहुँचता है। यह भाग है, पूर्वानुमान नहीं।`,
+
 
   contextHeading: 'सरकार क्या कहती है',
   contextCaveat:

@@ -1,0 +1,55 @@
+---
+import type { Copy } from '../lib/ui.ts';
+
+/**
+ * Quantity and time, as deliberately different objects.
+ *
+ * Two identical bars side by side invite the eye to subtract one from the
+ * other, which is the single reading this page must not permit. So achieved is
+ * a filled bar — a continuous quantity, no ticks. Elapsed is a dated ruler with
+ * one tick per year and a marker at today, never filled. They share no
+ * geometry, no fill and no axis, so there is no visual arithmetic between them.
+ */
+interface Props {
+  achievedPercent: number;
+  achievedLabel: string;
+  achievedFoot: string;
+  observedAsOf: string;
+  elapsedPercent: number | null;
+  elapsedFoot: string;
+  promisedYear: number;
+  dueBy: number;
+  copy: Copy;
+}
+const {
+  achievedPercent, achievedLabel, achievedFoot, observedAsOf,
+  elapsedPercent, elapsedFoot, promisedYear, dueBy, copy: c,
+} = Astro.props;
+
+const years = Array.from({ length: dueBy - promisedYear + 1 }, (_, i) => promisedYear + i);
+const at = (y: number) => ((y - promisedYear) / (dueBy - promisedYear)) * 100;
+---
+<div class="meter">
+  <div class="meter-head">
+    <span class="name">{c.achievedMeter}</span>
+    <span class="val">{achievedLabel}</span>
+  </div>
+  <div class="bar"><i style={`width:${Math.max(0, Math.min(100, achievedPercent))}%`}></i></div>
+  <div class="meter-foot"><span>{achievedFoot}</span><span>{c.asOf(observedAsOf)}</span></div>
+</div>
+
+{elapsedPercent !== null && (
+  <div class="meter">
+    <div class="meter-head">
+      <span class="name">{c.elapsedMeter}</span>
+      <span class="val">{elapsedPercent.toFixed(2)} %</span>
+    </div>
+    <div class="ruler" aria-hidden="true">
+      {years.map((y) => (
+        <span class={`tick${y % 10 === 0 ? ' decade' : ''}`} style={`left:${at(y)}%`}></span>
+      ))}
+      <span class="now" style={`left:${Math.max(0, Math.min(100, elapsedPercent))}%`}></span>
+    </div>
+    <div class="meter-foot"><span>{elapsedFoot}</span><span>{promisedYear} → {dueBy}</span></div>
+  </div>
+)}

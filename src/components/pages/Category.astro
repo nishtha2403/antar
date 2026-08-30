@@ -1,10 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Filters from '../Filters.astro';
 import IndicatorList from '../IndicatorList.astro';
-import { COPY, stateLabel } from '../../lib/ui.ts';
+import { COPY } from '../../lib/ui.ts';
 import type { Locale } from '../../lib/locales.ts';
 import { categoryName, loadRecords } from '../../lib/records.ts';
-import { summarise, type MeasurementState } from '../../lib/view.ts';
+import { summarise } from '../../lib/view.ts';
 import { TODAY } from '../../lib/today.ts';
 
 interface Props { locale: Locale; category: string }
@@ -17,12 +18,6 @@ const items = records.targets
   .filter((t) => t.category === category)
   .map((t) => summarise(t, records.series.get(t.series), locale, table, TODAY));
 
-// Views a reader can run themselves, rather than assertions the site makes.
-const views: { state: MeasurementState; items: typeof items }[] = (
-  ['deadline-passed', 'revised', 'no-data'] as MeasurementState[]
-)
-  .map((state) => ({ state, items: items.filter((i) => i.states.includes(state)) }))
-  .filter((v) => v.items.length > 0);
 const name = categoryName(category, locale);
 ---
 <Base locale={locale} title={name} description={c.tagline} path={`/${category}`} current="indicators">
@@ -33,12 +28,9 @@ const name = categoryName(category, locale);
   </p>
 
   <h2>{c.allIndicators}</h2>
-  <IndicatorList items={items} locale={locale} />
+  <div>
+    <Filters items={items} copy={c} />
+    <IndicatorList items={items} locale={locale} />
+  </div>
 
-  {views.map((v) => (
-    <Fragment>
-      <h2>{stateLabel(v.state, c)}</h2>
-      <IndicatorList items={v.items} locale={locale} />
-    </Fragment>
-  ))}
 </Base>

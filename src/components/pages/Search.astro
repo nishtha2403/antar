@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import { COPY } from '../../lib/ui.ts';
+import type { Locale } from '../../lib/locales.ts';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const c = COPY[locale];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base locale={locale} title={c.navSearch} description={c.searchLede} path="/search" current="search">
+  <h1>{c.navSearch}</h1>
+  <p class="lede">{c.searchLede}</p>
+
+  <div class="search">
+    <label class="skip" for="q">{c.searchPlaceholder}</label>
+    <input type="search" id="q" placeholder={c.searchPlaceholder} autocomplete="off" />
+  </div>
+  <ul class="search-results" id="results"></ul>
+  <p class="search-empty" id="status">{c.searchNeedsJs}</p>
+</Base>
+
+{/* Pagefind indexes the built output; this is the only script on the site.
+    Without it the page still explains itself rather than appearing broken. */}
+<script is:inline define:vars={{ base, noResults: c.searchNoResults, ready: c.searchReady }}>
+  (async () => {
+    const status = document.getElementById('status');
+    const input = document.getElementById('q');
+    const list = document.getElementById('results');
+    let pagefind;
+    try {
+      pagefind = await import(`${base}/_pagefind/pagefind.js`);
+      await pagefind.options({ baseUrl: `${base}/` });
+    } catch {
+      status.textContent = 'Search index unavailable.';
+      return;
+    }
+    status.textContent = ready;
+
+    let token = 0;
+    const run = async (term) => {
+      const mine = ++token;
+      list.innerHTML = '';
+      if (!term.trim()) { status.textContent = ready; return; }
+      const search = await pagefind.search(term);
+      if (mine !== token) return;
+      const results = await Promise.all(search.results.slice(0, 20).map((r) => r.data()));
+      if (mine !== token) return;
+      status.textContent = results.length ? '' : noResults;
+      list.innerHTML = results
+        .map((r) => `<li><a href="${r.url}">${r.meta?.title ?? r.url}</a><p>${r.excerpt}</p></li>`)
+        .join('');
+    };
+
+    let timer;
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => run(input.value), 120);
+    });
+    const initial = new URLSearchParams(location.search).get('q');
+    if (initial) { input.value = initial; run(initial); }
+  })();
+</script>

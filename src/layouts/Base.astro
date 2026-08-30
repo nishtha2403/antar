@@ -7,52 +7,71 @@ interface Props {
   locale: Locale;
   title: string;
   description?: string;
-  /** Path after the locale prefix, e.g. "/energy". Used for hreflang and the switch. */
+  /** Path after the locale prefix, e.g. "/energy". Drives hreflang and the switch. */
   path: string;
-  current?: 'indicators' | 'method' | 'corrections' | 'about';
+  current?: 'indicators' | 'search' | 'method' | 'corrections' | 'about';
+  /** Share-card slug, for indicator pages. */
+  ogSlug?: string;
 }
 
-const { locale, title, description, path, current } = Astro.props;
+const { locale, title, description, path, current, ogSlug } = Astro.props;
 const c = COPY[locale];
 const other: Locale = locale === 'en' ? 'hi' : 'en';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const href = (l: Locale, p: string) => `${base}${localePrefix(l)}${p}` || '/';
-const fonts =
-  locale === 'hi'
-    ? 'family=Noto+Serif+Devanagari:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500&family=IBM+Plex+Mono:wght@400;500'
-    : 'family=Noto+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500';
+
+/* One family across both scripts for display; the text face swaps by locale so
+   an English page never downloads Devanagari. Tiro carries the Latin companion,
+   so it stays loaded in both. */
+const fonts = [
+  'family=Tiro+Devanagari+Hindi:ital@0;1',
+  locale === 'hi' ? 'family=Anek+Devanagari:wght@100..800' : 'family=Anek+Latin:wght@100..800',
+  'family=Martian+Mono:wght@300..700',
+].join('&');
 ---
 <!doctype html>
 <html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} — {c.siteName}</title>
+    <title>{title === c.siteName ? title : `${title} — ${c.siteName}`}</title>
     {description && <meta name="description" content={description} />}
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    {/* Only the script this page needs: an English page never downloads Devanagari. */}
     <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${fonts}&display=swap`} />
     <link rel="alternate" hreflang="en" href={href('en', path)} />
     <link rel="alternate" hreflang="hi" href={href('hi', path)} />
     <link rel="canonical" href={href(locale, path)} />
+    <link rel="alternate" type="application/rss+xml" title="Antar" href={`${base}/rss.xml`} />
     <meta property="og:title" content={title} />
     {description && <meta property="og:description" content={description} />}
     <meta property="og:type" content="website" />
+    {ogSlug && <meta property="og:image" content={`${Astro.site ?? ''}${base}/og/${ogSlug}.png`.replace(/([^:])\/\//g, '$1/')} />}
+    {ogSlug && <meta name="twitter:card" content="summary_large_image" />}
+    <meta name="theme-color" content="#8E2F6B" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <div class="shell">
       <header class="masthead">
-        <a class="mark" href={href(locale, '')}>{c.siteName}</a>
+        {/* Devanagari leads in both locales — the English page does not flip the
+            lockup. The rule between the scripts is the same dimension-line
+            device the site uses for the promise window. */}
+        <a class="mark" href={href(locale, '')} aria-label={c.siteName}>
+          <span class="deva">अंतर</span>
+          <span class="rule" aria-hidden="true"></span>
+          <span class="latin">Antar</span>
+        </a>
         <nav aria-label="Sections">
           <a href={href(locale, '')} aria-current={current === 'indicators' ? 'page' : undefined}>{c.navIndicators}</a>
+          <a href={href(locale, '/search')} aria-current={current === 'search' ? 'page' : undefined}>{c.navSearch}</a>
           <a href={href(locale, '/method')} aria-current={current === 'method' ? 'page' : undefined}>{c.navMethod}</a>
           <a href={href(locale, '/corrections')} aria-current={current === 'corrections' ? 'page' : undefined}>{c.navCorrections}</a>
           <a href={href(locale, '/about')} aria-current={current === 'about' ? 'page' : undefined}>{c.navAbout}</a>
         </nav>
         <span class="spacer"></span>
-        <a class="lang-switch" href={href(other, path)} hreflang={other} lang={other}>{c.otherLocale}</a>
+        <a class="lang" href={href(other, path)} hreflang={other} lang={other}>{c.otherLocale}</a>
       </header>
 
       <main id="main">

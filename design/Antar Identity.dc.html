@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Anek+Devanagari:wght@100..800&family=Anek+Latin:wght@100..800&family=Martian+Mono:wght@300..700&display=swap">
+<style>
+  body { margin:0; background:#EFEFF1; }
+  a { color:#8E2F6B; text-underline-offset:2px; }
+  a:hover { color:#6E2453; }
+</style>
+</helmet>
+
+<div style="background:#EFEFF1; color:#22242B; font-family:'Anek Latin',system-ui,sans-serif; padding:64px 40px 120px;">
+<div style="max-width:1040px; margin:0 auto; display:flex; flex-direction:column; gap:96px;">
+
+  <header style="display:flex; flex-direction:column; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:32px;">
+    <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Antar · design specification · sheet 1 of 6</div>
+    <h1 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:44px; line-height:1.14; margin:0; letter-spacing:-.01em;">Identity, palette, typography</h1>
+    <p style="margin:0; max-width:62ch; font-size:17px; line-height:1.6; color:#575B65;">Every value on this sheet is in <code style="font-family:'Martian Mono',monospace; font-size:.85em;">design/tokens.css</code>, ready to replace the <code style="font-family:'Martian Mono',monospace; font-size:.85em;">:root</code> block in <code style="font-family:'Martian Mono',monospace; font-size:.85em;">src/styles/site.css</code>.</p>
+  </header>
+
+  <!-- ================= WORDMARK ================= -->
+  <section style="display:flex; flex-direction:column; gap:32px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">01</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Wordmark</h2>
+    </div>
+
+    <p style="margin:0; max-width:62ch; font-size:17px; line-height:1.6; color:#575B65;">The mark is the word, set in Tiro Devanagari Hindi and not redrawn. A hand-drawn logotype would be the one element on the site that cites nothing. What carries the meaning instead is the measured gap: in the lockup, the two scripts are held apart by a dimension line with end ticks — the distance made into a typographic device rather than an illustration.</p>
+
+    <!-- primary -->
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:72px 56px; display:flex; flex-direction:column; gap:12px;">
+      <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Primary mark</div>
+      <div style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-size:112px; line-height:1.34; color:#22242B;">अंतर</div>
+      <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73; line-height:1.7;">Tiro Devanagari Hindi Regular · optical size ≥ 24px · tracking 0 · never letterspaced, never outlined, never set in the accent colour</div>
+    </div>
+
+    <!-- lockup -->
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:56px; display:flex; flex-direction:column; gap:40px;">
+      <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Masthead lockup — horizontal</div>
+      <div style="display:flex; align-items:center; gap:28px;">
+        <div style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-size:56px; line-height:1.34; color:#22242B;">अंतर</div>
+        <div style="position:relative; width:104px; height:26px; flex:0 0 auto;">
+          <div style="position:absolute; left:0; top:12px; width:104px; height:1px; background:#8E2F6B;"></div>
+          <div style="position:absolute; left:0; top:6px; width:1px; height:13px; background:#8E2F6B;"></div>
+          <div style="position:absolute; right:0; top:6px; width:1px; height:13px; background:#8E2F6B;"></div>
+        </div>
+        <div style="font-family:'Anek Latin',sans-serif; font-weight:600; font-size:26px; letter-spacing:.24em; color:#22242B;">ANTAR</div>
+      </div>
+      <div style="height:1px; background:#E4E5E9;"></div>
+      <div style="display:flex; gap:64px; flex-wrap:wrap;">
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Stacked</div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
+            <div style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-size:44px; line-height:1.2; color:#22242B;">अंतर</div>
+            <div style="width:78px; height:1px; background:#8E2F6B;"></div>
+            <div style="font-family:'Anek Latin',sans-serif; font-weight:600; font-size:14px; letter-spacing:.24em; color:#575B65;">ANTAR</div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">In-page masthead, 20px</div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-size:22px; line-height:1.34; color:#22242B;">अंतर</div>
+            <div style="width:22px; height:1px; background:#8E2F6B;"></div>
+            <div style="font-family:'Anek Latin',sans-serif; font-weight:600; font-size:12px; letter-spacing:.2em; color:#22242B;">ANTAR</div>
+          </div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73; line-height:1.7; max-width:34ch;">Below 20px the dimension ticks are dropped and the rule alone remains.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1px; background:#E4E5E9; border:1px solid #E4E5E9;">
+      <div style="background:#FFFFFF; padding:20px 22px; display:flex; flex-direction:column; gap:6px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Clear space</div>
+        <div style="font-size:15px; line-height:1.6; color:#575B65;">One <b style="font-family:'Tiro Devanagari Hindi',serif; font-weight:400;">अ</b>-height on all sides. The ascending matra counts as part of the mark.</div>
+      </div>
+      <div style="background:#FFFFFF; padding:20px 22px; display:flex; flex-direction:column; gap:6px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Minimum size</div>
+        <div style="font-size:15px; line-height:1.6; color:#575B65;">18px for अंतर alone. 20px for the lockup — below that the Latin tracking closes up.</div>
+      </div>
+      <div style="background:#FFFFFF; padding:20px 22px; display:flex; flex-direction:column; gap:6px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Order</div>
+        <div style="font-size:15px; line-height:1.6; color:#575B65;">Devanagari leads in both locales. The English page does not flip the lockup.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAVICON ================= -->
+  <section style="display:flex; flex-direction:column; gap:32px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">02</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Favicon — अं</h2>
+    </div>
+    <p style="margin:0; max-width:62ch; font-size:17px; line-height:1.6; color:#575B65;">अं survives 16px because it is two marks with air between them: one closed counter and one dot. Reversed out of plum, the dot stays separate at every size tested below. Set in Tiro at 78% of the tile height, optically centred — the anusvara pushes the visual centre down, so the glyph sits 1px above geometric centre.</p>
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:48px 56px; display:flex; align-items:flex-end; gap:56px; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+        <div style="width:128px; height:128px; background:#8E2F6B; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Tiro Devanagari Hindi',serif; font-size:86px; line-height:1; color:#FFFFFF; transform:translateY(-2px);">अं</span></div>
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">128</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+        <div style="width:64px; height:64px; background:#8E2F6B; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Tiro Devanagari Hindi',serif; font-size:43px; line-height:1; color:#FFFFFF; transform:translateY(-1px);">अं</span></div>
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">64</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+        <div style="width:32px; height:32px; background:#8E2F6B; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Tiro Devanagari Hindi',serif; font-size:22px; line-height:1; color:#FFFFFF;">अं</span></div>
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">32</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+        <div style="width:16px; height:16px; background:#8E2F6B; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Tiro Devanagari Hindi',serif; font-size:12px; line-height:1; color:#FFFFFF;">अं</span></div>
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">16</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+        <div style="width:64px; height:64px; background:#22242B; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Tiro Devanagari Hindi',serif; font-size:43px; line-height:1; color:#EFEFF1; transform:translateY(-1px);">अं</span></div>
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">mono</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+        <div style="width:64px; height:64px; background:#FFFFFF; border:1px solid #D6D7DC; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Tiro Devanagari Hindi',serif; font-size:43px; line-height:1; color:#22242B; transform:translateY(-1px);">अं</span></div>
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">light UI</div>
+      </div>
+    </div>
+    <div style="font-family:'Martian Mono',monospace; font-size:12px; line-height:1.9; color:#575B65; background:#FFFFFF; border:1px solid #E4E5E9; padding:18px 22px;">Ship as SVG (any size) + 180px apple-touch-icon PNG + 32/16 ICO.<br>Full-bleed tile, no padding inside the square, no rounded corners — the platform rounds it.</div>
+  </section>
+
+  <!-- ================= PALETTE ================= -->
+  <section style="display:flex; flex-direction:column; gap:32px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">03</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Palette</h2>
+    </div>
+    <p style="margin:0; max-width:64ch; font-size:17px; line-height:1.6; color:#575B65;">Colour is used for exactly one thing: the gap. Nothing else on the site is coloured — status, category, verification state and roadmap stage are carried by weight, outline, hatch and rule instead. That is not restraint for its own sake. A palette with one accent has no slot for a good/bad pair, so the page cannot code a verdict even by accident, and the saffron-and-green problem never arises because there is no second hue to reach for.</p>
+    <p style="margin:0; max-width:64ch; font-size:17px; line-height:1.6; color:#575B65;">Plum sits outside Indian party colour — not saffron, not green, not the blues of AAP and BSP, not the reds of the left. The ground moves from cream to a cool grey: cream reads as a literary blog, cool grey reads as a document. At 6.6:1 on paper the accent is legible as <i>text</i>, not only as a fill, which matters because the remaining figure is set in it.</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:1px; background:#D6D7DC; border:1px solid #D6D7DC;">
+      <sc-for list="{{ lightSwatches }}" as="s" hint-placeholder-count="7">
+        <div style="background:#FFFFFF; display:flex; flex-direction:column;">
+          <div style="height:96px;">{{ s.chip }}</div>
+          <div style="padding:14px 16px; display:flex; flex-direction:column; gap:3px;">
+            <div style="font-family:'Martian Mono',monospace; font-size:12px; color:#22242B;">{{ s.hex }}</div>
+            <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">{{ s.name }}</div>
+            <div style="font-size:13px; line-height:1.5; color:#575B65; margin-top:4px;">{{ s.use }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Dark</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:1px; background:#34363E; border:1px solid #34363E;">
+        <sc-for list="{{ darkSwatches }}" as="s" hint-placeholder-count="7">
+          <div style="background:#1E2026; display:flex; flex-direction:column;">
+            <div style="height:96px;">{{ s.chip }}</div>
+            <div style="padding:14px 16px; display:flex; flex-direction:column; gap:3px;">
+              <div style="font-family:'Martian Mono',monospace; font-size:12px; color:#E9E9ED;">{{ s.hex }}</div>
+              <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#7C808A;">{{ s.name }}</div>
+              <div style="font-size:13px; line-height:1.5; color:#A6A9B2; margin-top:4px;">{{ s.use }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px; background:#FFFFFF; border:1px solid #E4E5E9; padding:24px 26px;">
+      <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Texture, in place of a second and third hue</div>
+      <div style="display:flex; gap:40px; flex-wrap:wrap;">
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="width:150px; height:22px; background:#22242B;"></div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#575B65;">built · solid ink</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="width:150px; height:22px; border:1px solid #575B65;"></div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#575B65;">committed · outline</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="width:150px; height:22px; border:1px solid #666A73; background:repeating-linear-gradient(45deg,#666A73 0 1px,transparent 1px 6px);"></div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#575B65;">planned · hatch</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="width:150px; height:22px; background:repeating-linear-gradient(45deg,#C77BAB 0 1px,transparent 1px 7px); border:1px solid #C77BAB;"></div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#575B65;">the gap · plum hatch</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TYPE ================= -->
+  <section style="display:flex; flex-direction:column; gap:32px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">04</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Typography</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1px; background:#E4E5E9; border:1px solid #E4E5E9;">
+      <div style="background:#FFFFFF; padding:26px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Display · Tiro Devanagari Hindi</div>
+        <div style="font-family:'Tiro Devanagari Hindi',serif; font-size:38px; line-height:1.34; color:#22242B;">वादा और आँकड़ा</div>
+        <div style="font-family:'Tiro Devanagari Hindi',serif; font-size:38px; line-height:1.14; color:#22242B;">Promise and figure</div>
+        <div style="font-size:14px; line-height:1.6; color:#575B65;">One family, both scripts, drawn together by Tiro Typeworks — the Latin is a companion designed to the Devanagari, not a substitution. Regular and Italic only, which is a constraint the hierarchy is built around: size and space do the work weight would.</div>
+      </div>
+      <div style="background:#FFFFFF; padding:26px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Text · Anek Devanagari / Anek Latin</div>
+        <div style="font-family:'Anek Devanagari',sans-serif; font-size:19px; line-height:1.78; color:#22242B;">हर आँकड़े के साथ वह दस्तावेज़ है जिससे वह आया।</div>
+        <div style="font-family:'Anek Latin',sans-serif; font-size:19px; line-height:1.6; color:#22242B;">Every figure carries the document it came from.</div>
+        <div style="font-size:14px; line-height:1.6; color:#575B65;">Indian Type Foundry, one variable design across nine scripts. Wide weight range, tall x-height, and Devanagari counters that stay open at 13px on a cheap LCD in daylight.</div>
+      </div>
+      <div style="background:#FFFFFF; padding:26px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Figures · Martian Mono</div>
+        <div style="font-family:'Martian Mono',monospace; font-weight:500; font-size:38px; letter-spacing:-.02em; color:#22242B;">8.78</div>
+        <div style="font-family:'Martian Mono',monospace; font-size:14px; color:#575B65;">0123456789 · GW ₹ %</div>
+        <div style="font-size:14px; line-height:1.6; color:#575B65;">Tabular by construction, so a column of readings aligns without a feature setting. Only ever sets digits, units and Latin micro-labels; in Hindi the micro-labels fall back to Anek Devanagari at 13px rather than being letterspaced.</div>
+      </div>
+    </div>
+
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9;">
+      <div style="display:grid; grid-template-columns:110px 92px 1fr; gap:0; font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:#666A73; padding:14px 26px; border-bottom:1px solid #E4E5E9;">
+        <div>token</div><div>size</div><div>specimen</div>
+      </div>
+      <sc-for list="{{ scale }}" as="r" hint-placeholder-count="9">
+        <div style="display:grid; grid-template-columns:110px 92px 1fr; gap:0; align-items:baseline; padding:16px 26px; border-bottom:1px solid #E4E5E9;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#8E2F6B;">{{ r.token }}</div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">{{ r.px }}</div>
+          <div>{{ r.spec }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:24px 26px; display:flex; flex-direction:column; gap:10px;">
+      <div style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">Devanagari is not the same numbers with a different name</div>
+      <ul style="margin:0; padding-left:20px; font-size:16px; line-height:1.7; color:#575B65; max-width:64ch;">
+        <li>Body leading 1.78 in Hindi against 1.6 in English. Matras sit above the shirorekha and conjuncts below the baseline; 1.6 collides them.</li>
+        <li>Headline leading 1.34 against 1.14.</li>
+        <li>No uppercase transform and no letterspacing on Devanagari, ever — tracking breaks the shirorekha. Hindi micro-labels are set at 13px instead of 11px shouted.</li>
+        <li>Hindi body runs one step larger where the two sit side by side, so the two columns have equal optical weight.</li>
+        <li>Measure 64ch in Latin, 52ch in Devanagari: the same character count is a longer line.</li>
+        <li>Each page loads only the script it needs, as today. Tiro Devanagari Hindi carries both, so the English page still gets a co-designed Latin.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= SPACING ================= -->
+  <section style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; align-items:baseline; gap:16px; border-bottom:1px solid #D6D7DC; padding-bottom:10px;">
+      <span style="font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:#666A73;">05</span>
+      <h2 style="font-family:'Tiro Devanagari Hindi',Georgia,serif; font-weight:400; font-size:26px; margin:0;">Spacing and measure</h2>
+    </div>
+    <div style="background:#FFFFFF; border:1px solid #E4E5E9; padding:26px; display:flex; flex-direction:column; gap:18px;">
+      <sc-for list="{{ spacing }}" as="s" hint-placeholder-count="10">
+        <div style="display:grid; grid-template-columns:64px 56px 1fr; gap:16px; align-items:center;">
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#8E2F6B;">{{ s.token }}</div>
+          <div style="font-family:'Martian Mono',monospace; font-size:11px; color:#666A73;">{{ s.px }}</div>
+          <div>{{ s.bar }}</div>
+        </div>
+      </sc-for>
+      <div style="height:1px; background:#E4E5E9; margin-top:6px;"></div>
+      <div style="font-size:15px; line-height:1.7; color:#575B65; max-width:64ch;">Shell 44rem. Gutter 16px at 320px, 20px from 480px, 40px from 900px. Vertical rhythm is section 48px / subsection 24px / row 12px. Corner radius 2px throughout: rounded corners read as product UI, and this is a record.</div>
+    </div>
+  </section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const chip = (bg, border) => React.createElement('div', {
+  style: { height: '100%', background: bg, borderBottom: '1px solid ' + (border || 'transparent') }
+});
+const bar = (w) => React.createElement('div', {
+  style: { height: '10px', width: w + 'px', background: '#8E2F6B' }
+});
+
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      lightSwatches: [
+        { hex: '#EFEFF1', name: '--paper',    use: 'Page ground',                       chip: chip('#EFEFF1', '#D6D7DC') },
+        { hex: '#FFFFFF', name: '--sheet',    use: 'Insets, chart frames, cards',        chip: chip('#FFFFFF', '#D6D7DC') },
+        { hex: '#22242B', name: '--ink',      use: 'Body, figures. 13.5:1',              chip: chip('#22242B') },
+        { hex: '#575B65', name: '--ink-mid',  use: 'Lede, captions. 5.9:1',              chip: chip('#575B65') },
+        { hex: '#666A73', name: '--ink-dim',  use: 'Micro-labels only. 4.7:1',           chip: chip('#666A73') },
+        { hex: '#D6D7DC', name: '--rule',     use: 'Axis lines, meter troughs',          chip: chip('#D6D7DC') },
+        { hex: '#E4E5E9', name: '--hair',     use: 'Row separators',                     chip: chip('#E4E5E9') },
+        { hex: '#8E2F6B', name: '--gap',      use: 'The gap, and nothing else. 6.6:1',   chip: chip('#8E2F6B') },
+        { hex: '#F0DCE9', name: '--gap-soft', use: 'Gap area fill',                      chip: chip('#F0DCE9') },
+        { hex: '#C77BAB', name: '--gap-line', use: 'Hatch, arithmetic line',             chip: chip('#C77BAB') },
+      ],
+      darkSwatches: [
+        { hex: '#17181C', name: '--paper',    use: 'Page ground',              chip: chip('#17181C', '#34363E') },
+        { hex: '#1E2026', name: '--sheet',    use: 'Insets, chart frames',     chip: chip('#1E2026', '#34363E') },
+        { hex: '#E9E9ED', name: '--ink',      use: 'Body, figures. 14.7:1',    chip: chip('#E9E9ED') },
+        { hex: '#A6A9B2', name: '--ink-mid',  use: 'Lede, captions. 7.6:1',    chip: chip('#A6A9B2') },
+        { hex: '#7C808A', name: '--ink-dim',  use: 'Micro-labels. 4.5:1',      chip: chip('#7C808A') },
+        { hex: '#34363E', name: '--rule',     use: 'Axis lines',               chip: chip('#34363E') },
+        { hex: '#272930', name: '--hair',     use: 'Row separators',           chip: chip('#272930') },
+        { hex: '#E48CC2', name: '--gap',      use: 'The gap. 7.5:1',           chip: chip('#E48CC2') },
+        { hex: '#3A2233', name: '--gap-soft', use: 'Gap area fill',            chip: chip('#3A2233') },
+        { hex: '#8A4E70', name: '--gap-line', use: 'Hatch, arithmetic line',   chip: chip('#8A4E70') },
+      ],
+      scale: [
+        { token: '--t-display', px: '44 → 80', spec: React.createElement('span', { style: { fontFamily: "'Tiro Devanagari Hindi',serif", fontSize: '52px', lineHeight: 1.34, color: '#22242B' } }, 'अंतर') },
+        { token: '--t-figure',  px: '32 → 56', spec: React.createElement('span', { style: { fontFamily: "'Martian Mono',monospace", fontWeight: 500, fontSize: '40px', letterSpacing: '-.02em', color: '#22242B' } }, '8.78 GW') },
+        { token: '--t-h1',      px: '28 → 44', spec: React.createElement('span', { style: { fontFamily: "'Tiro Devanagari Hindi',serif", fontSize: '34px', lineHeight: 1.14, color: '#22242B' } }, '100 GW of nuclear capacity by 2047') },
+        { token: '--t-h2',      px: '26',      spec: React.createElement('span', { style: { fontFamily: "'Tiro Devanagari Hindi',serif", fontSize: '26px', color: '#22242B' } }, 'Where these figures come from') },
+        { token: '--t-h3',      px: '21',      spec: React.createElement('span', { style: { fontFamily: "'Anek Latin',sans-serif", fontWeight: 600, fontSize: '21px', color: '#22242B' } }, 'Promise window') },
+        { token: '--t-lede',    px: '19',      spec: React.createElement('span', { style: { fontFamily: "'Anek Latin',sans-serif", fontSize: '19px', color: '#575B65' } }, 'Announced by the Union government on 1 February 2025.') },
+        { token: '--t-body',    px: '16',      spec: React.createElement('span', { style: { fontFamily: "'Anek Latin',sans-serif", fontSize: '16px', color: '#22242B' } }, 'Installed nuclear capacity in service, all-India, utilities.') },
+        { token: '--t-small',   px: '13',      spec: React.createElement('span', { style: { fontFamily: "'Anek Latin',sans-serif", fontSize: '13px', color: '#575B65' } }, 'Verified by nishtha.sharma on 30 August 2026.') },
+        { token: '--t-micro',   px: '11',      spec: React.createElement('span', { style: { fontFamily: "'Martian Mono',monospace", fontSize: '11px', letterSpacing: '.11em', textTransform: 'uppercase', color: '#666A73' } }, 'retrieved 2026-08-29') },
+      ],
+      spacing: [
+        { token: '--s1',  px: '2px',  bar: bar(2) },
+        { token: '--s2',  px: '4px',  bar: bar(4) },
+        { token: '--s3',  px: '8px',  bar: bar(8) },
+        { token: '--s4',  px: '12px', bar: bar(12) },
+        { token: '--s5',  px: '16px', bar: bar(16) },
+        { token: '--s6',  px: '24px', bar: bar(24) },
+        { token: '--s7',  px: '32px', bar: bar(32) },
+        { token: '--s8',  px: '48px', bar: bar(48) },
+        { token: '--s9',  px: '64px', bar: bar(64) },
+        { token: '--s10', px: '96px', bar: bar(96) },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
