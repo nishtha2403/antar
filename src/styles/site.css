@@ -236,6 +236,10 @@ ul.sources li strong { color: var(--ink); font-weight: 500; }
 .search-results p { font-size: var(--t-small); color: var(--ink-mid); margin: var(--s2) 0 0; }
 .search-empty { font-size: var(--t-small); color: var(--ink-mid); margin: var(--s4) 0 0; }
 
+/* Search highlights. Pagefind marks matches with <mark>; the browser default
+   is a yellow that belongs to no palette on this site. */
+mark { background: var(--gap-soft); color: var(--gap-ink); padding: 0 2px; }
+
 /* ---- untranslated marker ---- */
 .untranslated { border-bottom: 1px dotted var(--ink-dim); }
 
