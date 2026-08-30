@@ -60,8 +60,11 @@ for (const file of pages) {
   }
   // Two scripts are expected: search and the filter chips. Both are
   // progressive — every page is readable and complete without them.
+  // Expected: the pre-paint theme stamp, the theme control, and whichever of
+  // search or the filter chips this page carries. All progressive — every page
+  // is readable and complete without any of them.
   const scripts = (page.match(/<script/gi) ?? []).length;
-  const expected = (page.includes('pagefind') ? 1 : 0) + (page.includes('data-filters') ? 1 : 0);
+  const expected = 2 + (page.includes('pagefind') ? 1 : 0) + (page.includes('data-filters') ? 1 : 0);
   if (scripts > expected) fail(file, `${scripts} script tags, expected at most ${expected}`);
 }
 

@@ -42,6 +42,9 @@ body { margin: 0; background: var(--paper); color: var(--ink);
 .lang { font-size: var(--t-small); color: var(--ink-mid); text-decoration: none;
         border: 1px solid var(--rule); border-radius: var(--radius); padding: 4px 10px; }
 .lang:hover { border-color: var(--ink); color: var(--ink); }
+button.lang { font: inherit; font-size: var(--t-small); background: none; cursor: pointer;
+              min-height: 32px; }
+button.lang[hidden] { display: none; }
 
 /* ---- headings ---- */
 h1 { font-family: var(--face-display); font-weight: 400; font-size: var(--t-h1);

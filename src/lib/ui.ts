@@ -30,6 +30,10 @@ const en = {
   searchReady: 'Type to search.',
   searchNoResults: 'Nothing found.',
   otherLocale: 'हिन्दी में पढ़ें',
+  themeLabel: 'Colour scheme',
+  themeSystem: 'System',
+  themeLight: 'Light',
+  themeDark: 'Dark',
 
   dueThisDecade: 'Due this decade',
   allIndicators: 'All indicators',
@@ -167,6 +171,10 @@ const hi: Copy = {
   searchReady: 'खोजने के लिए लिखें।',
   searchNoResults: 'कुछ नहीं मिला।',
   otherLocale: 'Read in English',
+  themeLabel: 'रंग योजना',
+  themeSystem: 'सिस्टम',
+  themeLight: 'उजला',
+  themeDark: 'गहरा',
 
   dueThisDecade: 'इस दशक की समय सीमा',
   allIndicators: 'सभी संकेतक',

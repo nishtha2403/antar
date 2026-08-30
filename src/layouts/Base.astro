@@ -37,6 +37,16 @@ const fonts = [
     <title>{title === c.siteName ? title : `${title} — ${c.siteName}`}</title>
     {description && <meta name="description" content={description} />}
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <script is:inline>
+      // Runs before paint: a stored choice must be applied before the first
+      // frame, or the page flashes the system scheme and then corrects itself.
+      try {
+        const saved = localStorage.getItem('antar-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+      } catch (e) { /* private mode, or storage blocked: fall back to the system scheme */ }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${fonts}&display=swap`} />
@@ -71,6 +81,9 @@ const fonts = [
           <a href={href(locale, '/about')} aria-current={current === 'about' ? 'page' : undefined}>{c.navAbout}</a>
         </nav>
         <span class="spacer"></span>
+        <button type="button" class="lang theme" id="theme" hidden
+                data-label={c.themeLabel} data-system={c.themeSystem}
+                data-light={c.themeLight} data-dark={c.themeDark}></button>
         <a class="lang" href={href(other, path)} hreflang={other} lang={other}>{c.otherLocale}</a>
       </header>
 
@@ -85,5 +98,36 @@ const fonts = [
         <a href="https://github.com/nishtha2403/antar">antar</a>
       </footer>
     </div>
+
+    <script is:inline>
+      // Three states, not two: "system" is the default and has to remain
+      // reachable, because following the reader's own setting is the correct
+      // behaviour and a two-way switch would strand them out of it.
+      (() => {
+        const button = document.getElementById('theme');
+        if (!button) return;
+        const names = { system: button.dataset.system, light: button.dataset.light, dark: button.dataset.dark };
+        const order = ['system', 'light', 'dark'];
+        const read = () => {
+          try { return localStorage.getItem('antar-theme') ?? 'system'; } catch { return 'system'; }
+        };
+        const paint = (mode) => {
+          if (mode === 'system') document.documentElement.removeAttribute('data-theme');
+          else document.documentElement.setAttribute('data-theme', mode);
+          button.textContent = names[mode];
+          // The accessible name has to carry the state. A fixed aria-label
+          // overrides the visible text, so a screen reader would hear the
+          // control's purpose and never which setting is active.
+          button.setAttribute('aria-label', button.dataset.label + ': ' + names[mode]);
+        };
+        paint(read());
+        button.hidden = false;
+        button.addEventListener('click', () => {
+          const next = order[(order.indexOf(read()) + 1) % order.length];
+          try { localStorage.setItem('antar-theme', next); } catch { /* nothing to persist to */ }
+          paint(next);
+        });
+      })();
+    </script>
   </body>
 </html>
